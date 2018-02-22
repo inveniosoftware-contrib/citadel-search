@@ -1,0 +1,32 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_string": true,
+    "index.mapping.total_fields.limit": 3000
+  },
+  "mappings": {
+    "doc-v0.0.1": {
+      "numeric_detection": true,
+      "_all": {
+        "analyzer": "english"
+      },
+      "properties": {
+        "title": {
+          "type": "string",
+          "analyzer": "english"
+        },
+        "description": {
+          "type": "string",
+          "analyzer": "english"
+        },
+        "custom_pid": {
+          "type": "string",
+          "index": "not_analyzed"
+        },
+        "$schema": {
+          "type": "string",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}

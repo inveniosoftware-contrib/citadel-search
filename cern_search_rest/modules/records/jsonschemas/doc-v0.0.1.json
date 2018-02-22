@@ -1,0 +1,22 @@
+{
+  "title": "Custom record schema v0.0.1",
+  "id": "http://localhost:5000/schemas/doc-v0.0.1.json",
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "type": "object",
+  "properties": {
+    "title": {
+      "type": "string",
+      "description": "Record title."
+    },
+    "description": {
+      "type": "string",
+      "description": "Description for record."
+    },
+    "custom_pid": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}
