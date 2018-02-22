@@ -1,0 +1,8 @@
+# Intellij project files
+
+*.iml
+.idea/
+
+# Python compiled files
+
+*pyc
