@@ -1,6 +1,11 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function
+from .modules.records.permissions import (record_read_permission_factory,
+                                          record_create_permission_factory,
+                                          record_update_permission_factory,
+                                          record_delete_permission_factory)
 
 
 def _(x):
@@ -47,7 +52,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
-        search_class=' invenio_search.api.RecordsSearch',
+        search_class='invenio_search.api.RecordsSearch',
         # search_factory_imp=search_factory(), # Default TODO
         search_index='records',
         search_serializers={
@@ -57,10 +62,10 @@ RECORDS_REST_ENDPOINTS = dict(
         # suggesters= {}, # TODO
         # use_options_view=True, # TODO
         max_result_window=10000,
-        read_permission_factory_imp=permission_check_factory(),
-        create_permission_factory_imp=deposit_read_permission_factory,
-        update_permission_factory_imp=permission_check_factory(),
-        delete_permission_factory_imp=deposit_read_permission_factory,
+        read_permission_factory_imp=record_read_permission_factory,
+        create_permission_factory_imp=record_create_permission_factory,
+        update_permission_factory_imp=record_update_permission_factory,
+        delete_permission_factory_imp=record_delete_permission_factory,
         # error_handlers={}, # TODO
     )
 )
