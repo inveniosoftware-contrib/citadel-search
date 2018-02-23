@@ -1,3 +1,4 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 
 import os
@@ -39,6 +40,7 @@ for name, reqs in extras_require.items():
 setup_requires = []
 
 install_requires = [
+    'invenio-access>=1.0.0b1',
     'invenio-app>=1.0.0b1,<1.1.0',
     'invenio-base>=1.0.0a15,<1.1.0',
     'invenio-config>=1.0.0b3,<1.1.0',
@@ -76,10 +78,10 @@ setup(
             'cern_search_rest = cern_search_rest.config',
         ],
         'invenio_search.mappings': [
-            'records = cern_search_rest.mappings',
+            'records = cern_search_rest.modules.records.mappings',
         ],
         'invenio_jsonschemas.schemas': [
-            'cern_search_rest_schemas = cern_search_rest.jsonschemas'
+            'cern_search_rest_schemas = cern_search_rest.modules.records.jsonschemas'
         ],
     },
     extras_require=extras_require,
@@ -96,6 +98,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules',
         'Programming Language :: Python :: 2',
         'Programming Language :: Python :: 2.7',
-        'Development Status :: 2 - Pre-Alpha',
+        'Development Status :: 1 - Pre-Alpha',
     ],
 )
