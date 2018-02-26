@@ -21,6 +21,12 @@ JSONSCHEMAS_HOST = '0.0.0.0'
 # Do not register the endpoints on the UI app."""
 JSONSCHEMAS_REGISTER_ENDPOINTS_UI = False
 
+# Indexer
+# =======
+
+INDEXER_DEFAULT_DOC_TYPE = 'doc-v0.0.1'
+INDEXER_DEFAULT_INDEX = 'records-doc-v0.0.1'
+
 # Search configuration
 # =====================
 
@@ -54,7 +60,7 @@ RECORDS_REST_ENDPOINTS = dict(
         },
         search_class='invenio_search.api.RecordsSearch',
         # search_factory_imp=search_factory(), # Default TODO
-        search_index='records',
+        search_index='records-doc-v0.0.1',
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
@@ -69,3 +75,8 @@ RECORDS_REST_ENDPOINTS = dict(
         # error_handlers={}, # TODO
     )
 )
+
+# SQLAlchemy DB configuration
+# ==========================
+
+SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:@localhost/cernsearch'
