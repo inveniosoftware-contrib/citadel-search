@@ -50,7 +50,6 @@ install_requires = [
     'invenio-rest[cors]>=1.0.0b2',
     'invenio-search>=1.0.0a10,<1.1.0',
     'redis>=2.10.0',
-    'marshmallow>=2.0.0,<3.0.0',  # Due to https://github.com/inveniosoftware/troubleshooting/issues/33
 ]
 
 packages = find_packages()
