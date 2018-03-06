@@ -1,0 +1,10 @@
+invenio-access>=1.0.0b1
+invenio-app>=1.0.0b1,<1.1.0
+invenio-base>=1.0.0a15,<1.1.0
+invenio-config>=1.0.0b3,<1.1.0
+invenio-jsonschemas>=1.0.0a5,<1.1.0
+invenio-records-rest>=1.0.0b1,<1.1.0
+invenio-records[mysql]>=1.0.0b2
+invenio-rest[cors]>=1.0.0b2
+invenio-search[elasticsearch5]>=1.0.0a10,<1.1.0
+redis>=2.10.0
