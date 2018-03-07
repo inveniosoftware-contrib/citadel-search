@@ -1,0 +1,363 @@
+kind: Template
+apiVersion: v1
+metadata:
+  name: cern-search-rest
+  annotations:
+    descriptino: "CERN Search RESTful API and necessary services OpenShift Template"
+labels:
+  template: "cern-search-rest"
+
+objects:
+
+##############################
+########## SERVICES ##########
+##############################
+# Service for the RESTful API
+- kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-api
+    name: restapi
+  spec:
+    ports:
+    - name: 5000-tcp
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+    selector:
+      app: cern-search-api
+      deploymentconfig: restapi
+    sessionAffinity: None
+    type: ClusterIP
+# Service for the Redis server
+- kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-api
+    name: redis
+  spec:
+    ports:
+    - name: 6379-tcp
+      port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: cern-search-api
+      deploymentconfig: redis
+    sessionAffinity: None
+    type: ClusterIP
+# Service for the Elasticsearch server
+- kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-api
+    name: elasticsearch
+  spec:
+    ports:
+    - name: 9200-tcp
+      port: 9200
+      protocol: TCP
+      targetPort: 9200
+    - name: 9300-tcp
+      port: 9300
+      protocol: TCP
+      targetPort: 9300
+    selector:
+      app: cern-search-api
+      deploymentconfig: elasticsearch
+    sessionAffinity: None
+    type: ClusterIP
+# Service for the RabbitMQ server
+- kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-api
+    name: rabbitmq
+  spec:
+    ports:
+    - name: 4369-tcp
+      port: 4369
+      protocol: TCP
+      targetPort: 4369
+    - name: 5672-tcp
+      port: 5672
+      protocol: TCP
+      targetPort: 5672
+    selector:
+      app: cern-search-api
+      deploymentconfig: rabbitmq
+    sessionAffinity: None
+    type: ClusterIP
+
+##############################
+########### ROUTES ###########
+##############################
+- kind: Route
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-api
+    name: restapi
+  spec:
+    port:
+      targetPort: 5000-tcp
+    to:
+      kind: Service
+      name: restapi
+      weight: 100
+    tls:
+      termination: "edge"
+      insecureEdgeTerminationPolicy: Redirect
+
+# TODO: Delete when automated in OpenShift/GitLab CI
+##############################
+######## IMAGE STREAM ########
+##############################
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+      openshift.io/image.dockerRepositoryCheck: 2018-03-07T09:29:26Z
+    creationTimestamp: null
+    generation: 3
+    labels:
+      app: cern-search-api
+    name: cern-search-api
+  spec:
+    dockerImageRepository: gitlab-registry.cern.ch/ppanero/cern_search_rest
+    lookupPolicy:
+      local: false
+    tags:
+    - annotations: null
+      from:
+        kind: DockerImage
+        name: gitlab-registry.cern.ch/ppanero/cern_search_rest:latest
+      generation: 3
+      importPolicy: {}
+      name: latest
+      referencePolicy:
+        type: Source
+  status:
+    dockerImageRepository: ""
+
+##############################
+##### DEPLOYMENT CONFIGS #####
+##############################
+
+### CERN Search RESTful API
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    annotations:
+      openshift.io/generated-by: OpenShiftNewApp
+    creationTimestamp: null
+    generation: 1
+    labels:
+      app: cern-search-api
+    name: cern-search-api
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      app: cern-search-api
+      deploymentconfig: cern-search-api
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        annotations:
+          openshift.io/generated-by: OpenShiftNewApp
+        creationTimestamp: null
+        labels:
+          app: cern-search-api
+          deploymentconfig: cern-search-api
+      spec:
+        containers:
+        - image: gitlab-registry.cern.ch/ppanero/cern_search_rest@sha256:18c4f0f6e287c1f6387b08bf349d62cb692ce1ef29ae54e8fe73232491575438
+          imagePullPolicy: Always
+          name: cern-search-api
+          ports:
+          - containerPort: 5000
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+          env: # TODO
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: DISCOURSE_CONFIG_DB_HOST
+              valueFrom:
+                configMapKeyRef:
+                  key: DISCOURSE_DB_HOST_KEY
+                  name: env-configmap
+            - name: PUMA_WORKERS
+              value: '1'
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+
+        #### INIT CONTEINERS
+        initContainers:
+          - name: init-cern-search
+            command:
+              - ./scripts/populate-instance.sh
+            env:
+            # TODO
+              - name: NAMESPACE
+                valueFrom:
+                  fieldRef:
+                    apiVersion: v1
+                    fieldPath: metadata.namespace
+              - name: DISCOURSE_CONFIG_DB_HOST
+                valueFrom:
+                  configMapKeyRef:
+                    key: DISCOURSE_DB_HOST_KEY
+                    name: env-configmap
+              - name: PUMA_WORKERS
+                value: '1'
+            image: gitlab-registry.cern.ch/ppanero/cern_search_rest@sha256:18c4f0f6e287c1f6387b08bf349d62cb692ce1ef29ae54e8fe73232491575438
+            imagePullPolicy: IfNotPresent
+            resources:
+              limits:
+                cpu: '1'
+                memory: 1Gi
+              requests:
+                cpu: 200m
+                memory: 320Mi
+            volumeMounts:
+              - mountPath: /tmp/discourse-configmap
+                name: discourse-configmap
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - init-cern-search
+        - cern-search-api
+        from:
+          kind: ImageStreamTag
+          name: cern-search-api:latest
+          namespace: test-cern-search
+      type: ImageChange
+  status:
+    availableReplicas: 0
+    latestVersion: 0
+    observedGeneration: 0
+    replicas: 0
+    unavailableReplicas: 0
+    updatedReplicas: 0
+
+### Redis Server
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: redis
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          app: redis
+      spec:
+        containers:
+        - name: redis
+          image: redis
+          ports:
+          - containerPort: 5432
+            name: tcp
+          volumeMounts:
+            - name: data
+              mountPath: /data
+        volumes:
+          - name: data
+            emptyDir: {}
+
+
+### Elasticsearch
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: elasticsearch
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          app: elasticsearch
+      spec:
+        containers:
+        - name: elasticsearch
+          image: elasticsearch:5.5.2
+          ports:
+          - containerPort: 9200
+          - containerPort: 9300
+          volumeMounts:
+            - mountPath: /usr/share/elasticsearch/data/elasticsearch
+              name: data
+        volumes:
+          - name: data
+            emptyDir: {}
+
+
+### RabbitMQ
+
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    name: rabbitmq
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          app: rabbitmq
+      spec:
+        containers:
+        - name: rabbitmq
+          image: rabbitmq
+          ports:
+          - containerPort: 4369
+          - containerPort: 5672
+
+- kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    name: env-configmap
+  data:
+    # Invenio
+    APP_INSTANCE_PATH_KEY: ${APP_INSTANCE_PATH}
+    # Redis
+    APP_CACHE_REDIS_HOST: 'redis'
+    APP_CACHE_REDIS_URL: 'redis://redis:6379/0'
+    APP_ACCOUNTS_SESSION_REDIS_URL: 'redis://cache:6379/1'
+    # Celery
+    APP_CELERY_RESULT_BACKEND: 'redis://cache:6379/2'
+    # Elasticsearch
+    APP_SEARCH_ELASTIC_HOSTS: 'elasticsearch'
+    APP_COLLECT_STORAGE: flask_collect.storage.file
+    APP_CELERY_BROKER_URL: 'amqp://invenio:invenio@rabbitmq:5672/' # TODO: Take care of secrets, here just for testing
+
+
+parameters:
+  - name: APP_INSTANCE_PATH
+    description: "Invenio instance path for CERN Search application."
+    required: true
