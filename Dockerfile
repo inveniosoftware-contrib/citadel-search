@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Use CentOS7:
-FROM centos:7
+FROM cern/cc7-base
 
 # Install pre-requisites
 RUN yum update -y && \
@@ -22,11 +22,7 @@ ADD . /code
 RUN chmod +x /code/scripts/create-instance.sh && \
     sh /code/scripts/create-instance.sh && \
     adduser --uid 1000 invenio --gid 0 && \
-    chown -R invenio:root /code && \
-    invenio db init && \
-    invenio db create && \
-    invenio index init && \
-    invenio index queue init
+    chown -R invenio:root /code
 
 USER 1000
 
