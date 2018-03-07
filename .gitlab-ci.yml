@@ -1,0 +1,34 @@
+variables:
+
+  OPENSHIFT_SERVER: https://openshift-dev.cern.ch
+
+### By default, there are 6 stages that we may use:
+### Feel free to adapt this to your specific case.
+stages:
+  - build
+
+
+### 'Build' stage
+### Build the image and store it in the registry. It is important that this step
+### doesn't override the image the applications are running, as we haven't tested the image yet
+### The build will be tagged with latest whenever we push to any branch except in the case
+### where we push a tag
+build_dev_version:
+  stage: build
+  except:
+    - tags
+  environment: dev
+  tags:
+    - docker-image-build
+  script: 'echo "Building Docker Dev image..."'
+
+### When building tags, use the git tag as the docker tag of the image
+build_tagged_version:
+  stage: build
+  only:
+    - tags
+  tags:
+    - docker-image-build
+  script: 'echo "Building Docker Tag image..."'
+  variables:
+    TO: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
