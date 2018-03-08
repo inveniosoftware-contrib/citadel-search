@@ -22,10 +22,12 @@ ENV FLASK_DEBUG=1
 WORKDIR /code
 ADD . /code
 
-ENV INVENIO_INSTANCE_PATH=/code
+ENV INVENIO_INSTANCE_PATH=/usr/local/var/cernsearch/var/cernsearch-instance
 
 RUN chmod +x /code/scripts/create-instance.sh && \
     sh /code/scripts/create-instance.sh && \
+    chgrp -R 0 ${INVENIO_INSTANCE_PATH} && \
+    chmod -R g=u ${INVENIO_INSTANCE_PATH} &&\
     adduser --uid 1000 invenio --gid 0 && \
     chown -R invenio:root /code
 
