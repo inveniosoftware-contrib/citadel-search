@@ -12,6 +12,9 @@ RUN yum update -y && \
         gcc && \
     pip install --upgrade pip setuptools wheel
 
+ADD requirements.txt /tmp
+RUN pip install -r /tmp/requirements.txt
+
 # For PoC purposes
 ENV FLASK_DEBUG=1
 
