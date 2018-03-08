@@ -31,6 +31,8 @@ RUN chmod +x /code/scripts/create-instance.sh && \
     adduser --uid 1000 invenio --gid 0 && \
     chown -R invenio:root /code
 
+RUN chmod -R 777 /code && chmod -R 777 ${INVENIO_INSTANCE_PATH}
+
 USER 1000
 
 # ENTRYPOINT invenio
