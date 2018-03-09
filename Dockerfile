@@ -25,7 +25,7 @@ ADD . /code
 ENV INVENIO_INSTANCE_PATH=/usr/local/var/cernsearch/var/cernsearch-instance
 
 RUN chmod g=u /etc/passwd && \
-    chmod +x /code/scripts/create-instance.sh && \
+    chmod +x /code/scripts/*.sh && \
     sh /code/scripts/create-instance.sh && \
     chgrp -R 0 ${INVENIO_INSTANCE_PATH} && \
     chmod -R g=u ${INVENIO_INSTANCE_PATH} &&\
@@ -35,4 +35,4 @@ RUN chmod g=u /etc/passwd && \
 USER 1000
 
 # ENTRYPOINT invenio
-CMD invenio run
+CMD ["/code/scripts/manage-user.sh","invenio run"]
