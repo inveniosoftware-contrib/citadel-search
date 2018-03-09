@@ -24,14 +24,13 @@ ADD . /code
 
 ENV INVENIO_INSTANCE_PATH=/usr/local/var/cernsearch/var/cernsearch-instance
 
-RUN chmod +x /code/scripts/create-instance.sh && \
+RUN chmod g=u /etc/passwd && \
+    chmod +x /code/scripts/create-instance.sh && \
     sh /code/scripts/create-instance.sh && \
     chgrp -R 0 ${INVENIO_INSTANCE_PATH} && \
     chmod -R g=u ${INVENIO_INSTANCE_PATH} &&\
     adduser --uid 1000 invenio --gid 0 && \
     chown -R invenio:root /code
-
-RUN chmod -R 777 /code && chmod -R 777 ${INVENIO_INSTANCE_PATH}
 
 USER 1000
 
