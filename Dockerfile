@@ -34,4 +34,4 @@ RUN chmod g=u /etc/passwd && \
 
 USER 1000
 
-CMD "/code/scripts/manage-user.sh && invenio run"
+ENTRYPOINT ["/code/scripts/manage-user.sh && invenio run"]
