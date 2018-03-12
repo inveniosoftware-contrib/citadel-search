@@ -34,4 +34,6 @@ RUN chmod g=u /etc/passwd && \
 
 USER 1000
 
+EXPOSE 5000
+
 CMD ["/bin/sh", "-c", "/code/scripts/manage-user.sh && invenio run"]
