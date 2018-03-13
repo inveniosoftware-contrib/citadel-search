@@ -187,7 +187,7 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: cern-search-api
+      app: redis
     name: redis
   spec:
     ports:
@@ -196,7 +196,7 @@ objects:
       protocol: TCP
       targetPort: 6379
     selector:
-      app: cern-search-api
+      app: redis
       deploymentconfig: redis
     sessionAffinity: None
     type: ClusterIP
@@ -205,7 +205,7 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: cern-search-api
+      app: elasticsearch
     name: elasticsearch
   spec:
     ports:
@@ -218,7 +218,7 @@ objects:
       protocol: TCP
       targetPort: 9300
     selector:
-      app: cern-search-api
+      app: elasticsearch
       deploymentconfig: elasticsearch
     sessionAffinity: None
     type: ClusterIP
@@ -227,7 +227,7 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: cern-search-api
+      app: rabbitmq
     name: rabbitmq
   spec:
     ports:
@@ -240,7 +240,7 @@ objects:
       protocol: TCP
       targetPort: 5672
     selector:
-      app: cern-search-api
+      app: rabbitmq
       deploymentconfig: rabbitmq
     sessionAffinity: None
     type: ClusterIP
