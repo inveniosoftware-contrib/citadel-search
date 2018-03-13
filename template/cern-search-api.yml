@@ -47,6 +47,9 @@ objects:
             - /bin/sh
             - '-c'
             - /code/scripts/manage-user.sh && invenio run -h 0.0.0.0
+          envFrom:
+            - configMapRef:
+                name: env-configmap
           image: gitlab-registry.cern.ch/ppanero/cern_search_rest:latest
           imagePullPolicy: Always
           name: cern-search-api
