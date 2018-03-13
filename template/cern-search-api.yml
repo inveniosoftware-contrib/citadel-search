@@ -291,7 +291,7 @@ objects:
     name: env-configmap
   data:
     # Invenio
-    INVENIO_INSTANCE_PATH_KEY: ${APP_INSTANCE_PATH}
+    INVENIO_INSTANCE_PATH: ${APP_INSTANCE_PATH}
     # Redis
     INVENIO_CACHE_REDIS_HOST: 'redis'
     INVENIO_CACHE_REDIS_URL: 'redis://redis:6379/0'
