@@ -295,9 +295,14 @@ objects:
     # Elasticsearch
     INVENIO_SEARCH_ELASTIC_HOSTS: 'elasticsearch'
     INVENIO_COLLECT_STORAGE: flask_collect.storage.file
+    # PostgreSQL
+    INVENIO_SQLALCHEMY_DATABASE_URI: ''.join("postgresql+psycopg2://postgres@",${DATABASE_HOST},":6601/cernsearch")
 
 
 parameters:
   - name: APP_INSTANCE_PATH
     description: "Invenio instance path for CERN Search application."
+    required: true
+  - name: DATABASE_HOST
+    description: "PostgreSQL host for the CERN Search instance (NOTE: Only PostgreSQL is supported)."
     required: true

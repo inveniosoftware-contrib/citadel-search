@@ -75,8 +75,3 @@ RECORDS_REST_ENDPOINTS = dict(
         # error_handlers={}, # TODO
     )
 )
-
-# SQLAlchemy DB configuration
-# ==========================
-
-SQLALCHEMY_DATABASE_URI='mysql+pymysql://root:@localhost/cernsearch'
