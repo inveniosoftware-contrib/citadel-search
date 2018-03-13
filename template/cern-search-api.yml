@@ -46,7 +46,7 @@ objects:
         - command:
             - /bin/sh
             - '-c'
-            - /code/scripts/manage-user.sh && invenio run
+            - /code/scripts/manage-user.sh && invenio run -h 0.0.0.0
           image: gitlab-registry.cern.ch/ppanero/cern_search_rest:latest
           imagePullPolicy: Always
           name: cern-search-api
@@ -167,7 +167,7 @@ objects:
   metadata:
     labels:
       app: cern-search-api
-    name: restapi
+    name: cern-search-api
   spec:
     ports:
     - name: 5000-tcp
@@ -176,9 +176,9 @@ objects:
       targetPort: 5000
     selector:
       app: cern-search-api
-      deploymentconfig: restapi
+      deploymentconfig: cern-search-api
     sessionAffinity: None
-    type: ClusterIP
+    type: LoadBalancer
 # Service for the Redis server
 - kind: Service
   apiVersion: v1
@@ -250,17 +250,14 @@ objects:
   metadata:
     labels:
       app: cern-search-api
-    name: restapi
+    name: cern-search-api
   spec:
     port:
       targetPort: 5000-tcp
     to:
       kind: Service
-      name: restapi
+      name: cern-search-api
       weight: 100
-    tls:
-      termination: "edge"
-      insecureEdgeTerminationPolicy: Redirect
 
 # TODO: Delete when automated in OpenShift/GitLab CI
 ##############################
@@ -269,30 +266,11 @@ objects:
 - kind: ImageStream
   apiVersion: v1
   metadata:
-    annotations:
-      openshift.io/generated-by: OpenShiftNewApp
-      openshift.io/image.dockerRepositoryCheck: 2018-03-07T09:29:26Z
-    creationTimestamp: null
-    generation: 3
-    labels:
-      app: cern-search-api
-    name: cern-search-api
+   labels:
+     app: cern-search-api
+   name: cern-search-api
   spec:
-    dockerImageRepository: gitlab-registry.cern.ch/ppanero/cern_search_rest
-    lookupPolicy:
-      local: false
-    tags:
-    - annotations: null
-      from:
-        kind: DockerImage
-        name: gitlab-registry.cern.ch/ppanero/cern_search_rest:latest
-      generation: 3
-      importPolicy: {}
-      name: latest
-      referencePolicy:
-        type: Source
-  status:
-    dockerImageRepository: ""
+   dockerImageRepository: gitlab-registry.cern.ch/ppanero/cern_search_rest
 
 ##############################
 ######### CONFIG MAP #########
