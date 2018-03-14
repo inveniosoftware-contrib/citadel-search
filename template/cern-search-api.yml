@@ -146,27 +146,6 @@ objects:
             emptyDir: {}
 
 
-### RabbitMQ
-
-- kind: DeploymentConfig
-  apiVersion: v1
-  metadata:
-    name: rabbitmq
-  spec:
-    replicas: 1
-    template:
-      metadata:
-        labels:
-          app: rabbitmq
-      spec:
-        containers:
-        - name: rabbitmq
-          image: rabbitmq
-          ports:
-          - containerPort: 4369
-          - containerPort: 5672
-
-
 ##############################
 ########## SERVICES ##########
 ##############################
@@ -228,28 +207,6 @@ objects:
       deploymentconfig: elasticsearch
     sessionAffinity: None
     type: ClusterIP
-# Service for the RabbitMQ server
-- kind: Service
-  apiVersion: v1
-  metadata:
-    labels:
-      app: rabbitmq
-    name: rabbitmq
-  spec:
-    ports:
-    - name: 4369-tcp
-      port: 4369
-      protocol: TCP
-      targetPort: 4369
-    - name: 5672-tcp
-      port: 5672
-      protocol: TCP
-      targetPort: 5672
-    selector:
-      app: rabbitmq
-      deploymentconfig: rabbitmq
-    sessionAffinity: None
-    type: ClusterIP
 
 ##############################
 ########### ROUTES ###########
@@ -295,12 +252,8 @@ objects:
     # Redis
     INVENIO_CACHE_REDIS_HOST: 'redis'
     INVENIO_CACHE_REDIS_URL: 'redis://redis:6379/0'
-    # Celery
-    INVENIO_CELERY_RESULT_BACKEND: 'redis://redis:6379/2'
-    INVENIO_CELERY_BROKER_URL: 'amqp://invenio:invenio@rabbitmq:5672/' # TODO: Take care of secrets, here just for testing
     # Elasticsearch
     INVENIO_SEARCH_ELASTIC_HOSTS: 'elasticsearch'
-    INVENIO_COLLECT_STORAGE: flask_collect.storage.file
 
 parameters:
   - name: APP_INSTANCE_PATH
