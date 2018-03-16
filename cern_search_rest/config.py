@@ -2,6 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from __future__ import absolute_import, print_function
+
+import copy
+from invenio_oauthclient.contrib import cern
+
 from .modules.records.permissions import (record_read_permission_factory,
                                           record_create_permission_factory,
                                           record_update_permission_factory,
@@ -12,6 +16,19 @@ def _(x):
     """Identity function used to trigger string extraction."""
     return x
 
+
+# OAuth Client
+# ============
+
+CERN_REMOTE_APP = copy.deepcopy(cern.REMOTE_APP)
+CERN_REMOTE_APP["params"].update(dict(request_token_params={
+    "resource": "pcitois110.dyndns.cern.ch", # "test-cern-search.cern.ch",  # replace with your server
+    "scope": "Name Email Bio Groups",
+}))
+
+OAUTHCLIENT_REMOTE_APPS = dict(
+    cern=CERN_REMOTE_APP,
+)
 
 # JSON Schemas configuration
 # ==========================
@@ -34,7 +51,7 @@ SEARCH_MAPPINGS = ['records']
 # SEARCH_ELASTIC_HOSTS = None # default localhost
 
 # Records REST configuration
-# =====================
+# ===========================
 
 #: Records REST API configuration
 
