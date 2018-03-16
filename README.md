@@ -9,3 +9,14 @@ metadata:
 stringData:
   dburi: postgresql+psycopg2://user:password@host:port/databasename
 ```
+
+POST example:
+
+```
+curl -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' -i 'http://localhost:5000/api/records/' --data '
+   {
+    "description": "This is an awesome description",
+    "title": "Registered"
+   }
+   '
+```
