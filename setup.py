@@ -48,6 +48,7 @@ install_requires = [
     'invenio-records-rest>=1.0.0b1,<1.1.0',
     'invenio-records[postgresql]>=1.0.0b2',
     'invenio-rest[cors]>=1.0.0b2',
+    'invenio-oauthclient>=1.0.0b5',
     'invenio-search>=1.0.0a10,<1.1.0',
     'redis>=2.10.0',
 ]
