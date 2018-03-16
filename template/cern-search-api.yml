@@ -54,8 +54,18 @@ objects:
             - name: INVENIO_SQLALCHEMY_DATABASE_URI
               valueFrom:
                 secretKeyRef:
-                  name: srchdb-dev
+                  name: srchdb
                   key: dburi
+            - name: CERN_APP_CREDENTIALS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: oauth
+                  key: clientid
+            - name: CERN_APP_CREDENTIALS_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: oauth
+                  key: clientkey
           image: gitlab-registry.cern.ch/ppanero/cern_search_rest:latest
           imagePullPolicy: Always
           name: cern-search-api

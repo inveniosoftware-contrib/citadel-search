@@ -11,3 +11,8 @@ cern_search_rest.egg-info/
 # OpenShift Secrets
 
 secrets/
+
+# SSL files
+
+*.key
+*.crt
