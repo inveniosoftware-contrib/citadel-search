@@ -163,6 +163,24 @@ curl -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' \
         '
 ```
 
+### Delete documents
+
+To delete a document we need to perform a *DELETE* operation. For this we simply need to specify the document _ID_ by
+querying the _record_ endpoint:
+
+```bash
+curl -XDELETE -H 'Content-Type: application/json' -H 'Accept: application/json' \
+  'http://<host:port>/api/record/5'
+```
+
+If afterwards we query (get,put,delete) for the specific item we will obtain a 410:
+
+```json
+{
+  "status": 410, 
+  "message": "PID has been deleted."
+}
+```
 ## Setup
 
 An instance can be deployed using the OpenShift template (can be found in _template/cern-search-api.yml_)
