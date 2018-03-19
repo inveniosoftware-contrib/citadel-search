@@ -97,8 +97,8 @@ curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' \
 ### Query documents
 
 In order to query documents we need to perform a *GET* operation. We can specify the amount of 
-documents to be returned (in total and per page), among other options. For a full list check refer to 
-{TODO INSERT LINK}
+documents to be returned (in total and per page), among other options. For a full list check
+[here](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html).
 
 An example query for the terms _awesome_ and _document_ looks like this:
 
