@@ -107,6 +107,44 @@ curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' \
   'http://<host:port>/records/?q=awesome+document'
 ```
 
+We can use pagination to restrict the amount of results. for example we are going to obtain the second page of a query
+that get one element per page:
+```bash
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' \
+  'http://test-cern-search.web.cern.ch/api/records/?page=2&size=1'
+```
+
+The answer would look something similar to:
+```json
+{
+  "aggregations": {}, 
+  "hits": {
+    "hits": [
+      {
+        "created": "2018-03-19T08:16:53.218017+00:00", 
+        "id": 5, 
+        "links": {
+          "self": "http://test-cern-search.web.cern.ch/api/record/5"
+        }, 
+        "metadata": {
+          "control_number": "5", 
+          "description": "This is an awesome description for our first uploaded document", 
+          "title": "Demo document"
+        }, 
+        "updated": "2018-03-19T08:16:53.218042+00:00"
+      }
+    ], 
+    "total": 2
+  }, 
+  "links": {
+    "prev": "http://test-cern-search.web.cern.ch/api/records/?page=1&size=1", 
+    "self": "http://test-cern-search.web.cern.ch/api/records/?page=2&size=1"
+  }
+}
+```
+
+Note the *links* field, which is very useful to process the results. Allowing us to get the current, next and previous
+pages (only the _next_ for the first page, and only the _previous_ for the last page).
 ## Setup
 
 An instance can be deployed using the OpenShift template (can be found in _template/cern-search-api.yml_)
