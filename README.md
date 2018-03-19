@@ -111,7 +111,7 @@ We can use pagination to restrict the amount of results. for example we are goin
 that get one element per page:
 ```bash
 curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' \
-  'http://test-cern-search.web.cern.ch/api/records/?page=2&size=1'
+  'http://<host:port>/api/records/?page=2&size=1'
 ```
 
 The answer would look something similar to:
@@ -124,7 +124,7 @@ The answer would look something similar to:
         "created": "2018-03-19T08:16:53.218017+00:00", 
         "id": 5, 
         "links": {
-          "self": "http://test-cern-search.web.cern.ch/api/record/5"
+          "self": "http://<host:port>/api/record/5"
         }, 
         "metadata": {
           "control_number": "5", 
