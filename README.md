@@ -137,14 +137,32 @@ The answer would look something similar to:
     "total": 2
   }, 
   "links": {
-    "prev": "http://test-cern-search.web.cern.ch/api/records/?page=1&size=1", 
-    "self": "http://test-cern-search.web.cern.ch/api/records/?page=2&size=1"
+    "prev": "http://<host:port>/api/records/?page=1&size=1", 
+    "self": "http://<host:port>/api/records/?page=2&size=1"
   }
 }
 ```
 
 Note the *links* field, which is very useful to process the results. Allowing us to get the current, next and previous
 pages (only the _next_ for the first page, and only the _previous_ for the last page).
+
+### Update documents
+
+To update a document we need to perform a *PUT* operation over the _record_ endpoint. Therefore, the _ID_ or ETag of the
+record is part of the URL. Nonetheless, due to workflow issues the data of the request *must* also contain this _ID_ in
+the _control_number_ field.
+
+```bash
+curl -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' \
+    -i 'http://<host:port>/api/record/5' --data '
+        {   
+            "control_number": "5",
+            "description": "This is an awesome updated description",
+            "title": "Update Test 1"
+        }
+        '
+```
+
 ## Setup
 
 An instance can be deployed using the OpenShift template (can be found in _template/cern-search-api.yml_)
