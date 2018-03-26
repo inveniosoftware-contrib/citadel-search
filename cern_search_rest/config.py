@@ -16,6 +16,10 @@ def _(x):
     """Identity function used to trigger string extraction."""
     return x
 
+# CERN Search
+# ===========
+CERN_SEARCH_DEFAULT_INDEX_PREFIX = 'cern_search'
+CERN_SEARCH_INDEX_PREFIX = 'cern_search'
 
 # OAuth Client
 # ============
