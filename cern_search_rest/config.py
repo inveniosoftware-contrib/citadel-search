@@ -41,6 +41,8 @@ JSONSCHEMAS_REGISTER_ENDPOINTS_UI = False
 # Indexer
 # =======
 
+# TODO use ES central service. Change INDEXER_RECORD_TO_INDEX = 'invenio_indexer.utils.default_record_to_index'
+
 INDEXER_DEFAULT_DOC_TYPE = 'doc-v0.0.1'
 INDEXER_DEFAULT_INDEX = 'records-doc-v0.0.1'
 
