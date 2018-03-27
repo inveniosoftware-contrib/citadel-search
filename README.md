@@ -181,6 +181,65 @@ If afterwards we query (get,put,delete) for the specific item we will obtain a 4
   "message": "PID has been deleted."
 }
 ```
+
+## ACLs and permissions
+
+Permissions are implemented in a CRUD fashion.
+
+Read, Update and Delete follow the same pattern. The user has to be authenticated and to be allowed
+to perform the action on the document, meaning one of its egroups is in the corresponding __access_ field.
+Create also needs the user to be authenticated, but in this case the ownership/permissions are not check on
+a document but on the mapping. The egroups allowed to create are specified in the mapping when setting up the 
+Search instance.
+
+Search is not treated as a normal read. It passes through the _cern_filter_. This filter applies the following rules:
+
+``public | read_restricted ``
+
+Which will get the documents that are public and those that are restricted but the user egroups match the _read_ field
+of the __access_ property.
+
+An example mapping containing the permission fields is:
+
+```json
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_string": true,
+    "index.mapping.total_fields.limit": 3000
+  },
+  "mappings": {
+    "cern-search-example-v0.0.1": {
+      "_meta": { 
+        "class": "cern-search-example",
+        "_owner": "egroup_owner_one, egroup_owner_two,egroup_owner_three"
+      },
+      "properties": {
+        "_access": {
+          "type": "nested",
+          "properties": {
+            "read":{
+              "type": "string"
+            },
+            "update":{
+              "type": "string"
+            }, 
+            "delete":{
+              "type": "string"
+            }
+          }  
+        },
+        "title": {
+          "type": "string"
+        },
+        ...
+      }
+    }
+  }
+}
+```
+
+Note that there is no _create_ permission, that is specified by the __owner_ field in the metadata.
+
 ## Setup
 
 An instance can be deployed using the OpenShift template (can be found in _template/cern-search-api.yml_)
