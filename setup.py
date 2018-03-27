@@ -78,14 +78,17 @@ setup(
     platforms='any',
     entry_points={
         'invenio_config.module': [
-            'cern_search_rest = cern_search_rest.config',
+            'cern_search_rest = cern_search_rest.config'
         ],
         'invenio_search.mappings': [
-            'records = cern_search_rest.modules.records.mappings',
+            'records = cern_search_rest.modules.records.mappings'
         ],
         'invenio_jsonschemas.schemas': [
             'cern_search_rest_schemas = cern_search_rest.modules.records.jsonschemas'
         ],
+        'invenio_base.api_blueprints': [
+            'invenio_oauthclient = invenio_oauthclient.views.client:blueprint'
+        ]
     },
     extras_require=extras_require,
     install_requires=install_requires,
