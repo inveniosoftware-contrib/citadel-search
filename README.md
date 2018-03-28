@@ -257,3 +257,19 @@ metadata:
 stringData:
   dburi: postgresql+psycopg2://user:password@host:port/databasename
 ```
+
+OAuth secret
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: oauth
+stringData:
+  # Localhost
+  oauth_credentials: "{'consumer_key':'consumer_id','consumer_secret':'consumer_secret'}"
+```
+
+Starting command throw ssl:
+``bash
+gunicorn -b :5000 --certfile=ssl.crt --keyfile=ssl.key cern_search_rest.wsgi
+``
