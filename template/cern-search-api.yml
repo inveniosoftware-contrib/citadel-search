@@ -46,14 +46,14 @@ objects:
         - command:
             - /bin/sh
             - '-c'
-            - /code/scripts/manage-user.sh && invenio run -h 0.0.0.0
+            - /code/scripts/manage-user.sh && gunicorn -b :5000 cern_search_rest.wsgi
           envFrom:
             - configMapRef:
                 name: env-configmap
           env:
-              - name: INVENIO_SEARCH_ELASTIC_HOSTS
+            - name: INVENIO_SEARCH_ELASTIC_HOSTS
               valueFrom:
-                secreteKeyRef:
+                secretKeyRef:
                   name: es
                   key: es_credentials
             - name: INVENIO_SQLALCHEMY_DATABASE_URI
