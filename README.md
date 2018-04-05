@@ -13,7 +13,7 @@ Lets assume the following JSON schema and Elasticsearch mapping for our demo doc
 ```json
 {
   "title": "Custom record schema v0.0.1",
-  "id": "http://localhost:5000/schemas/doc-v0.0.1.json",
+  "id": "http://localhost:5000/schemas/cernsearch-test-doc_v0.0.1.json",
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
@@ -208,5 +208,5 @@ metadata:
   name: es
 stringData:
   # Localhost
-  es_credentials: "{'host': 'localhost', 'port': 443, 'use_ssl': True, 'verify_certs': False, 'http_auth': ('user','pass')}"
+  es_credentials: "[{'host': 'endpoint', 'url_prefix': '/es', 'port': 443, 'use_ssl': True, 'verify_certs': True, 'ca_certs':'/etc/pki/tls/certs/ca-bundle.trust.crt', 'http_auth': ('user','password')}]"
 ```
