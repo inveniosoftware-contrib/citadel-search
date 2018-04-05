@@ -52,6 +52,7 @@ install_requires = [
     'invenio-oauthclient>=1.0.0b5',
     'invenio-search[elasticsearch5]>=1.0.0a10,<1.1.0',
     'redis>=2.10.0',
+    'gunicorn',
 ]
 
 packages = find_packages()
