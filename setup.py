@@ -44,11 +44,13 @@ install_requires = [
     'invenio-app>=1.0.0b1,<1.1.0',
     'invenio-base>=1.0.0a15,<1.1.0',
     'invenio-config>=1.0.0b3,<1.1.0',
+    'invenio-indexer[elasticsearch5]>=1.0.0,<1.1.0',
     'invenio-jsonschemas>=1.0.0a5,<1.1.0',
-    'invenio-records-rest>=1.0.0b1,<1.1.0',
+    'invenio-records-rest[elasticsearch5]>=1.0.0b1,<1.1.0',
     'invenio-records[postgresql]>=1.0.0b2',
     'invenio-rest[cors]>=1.0.0b2',
-    'invenio-search>=1.0.0a10,<1.1.0',
+    'invenio-oauthclient>=1.0.0b5',
+    'invenio-search[elasticsearch5]>=1.0.0a10,<1.1.0',
     'redis>=2.10.0',
 ]
 
@@ -78,10 +80,10 @@ setup(
             'cern_search_rest = cern_search_rest.config',
         ],
         'invenio_search.mappings': [
-            'records = cern_search_rest.modules.records.mappings',
+            'cernsearch = cern_search_rest.modules.cernsearch.mappings',
         ],
         'invenio_jsonschemas.schemas': [
-            'cern_search_rest_schemas = cern_search_rest.modules.records.jsonschemas'
+            'cern_search_rest_schemas = cern_search_rest.modules.cernsearch.jsonschemas'
         ],
     },
     extras_require=extras_require,
