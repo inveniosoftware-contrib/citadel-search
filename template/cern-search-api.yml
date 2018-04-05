@@ -51,21 +51,21 @@ objects:
             - configMapRef:
                 name: env-configmap
           env:
+              - name: INVENIO_SEARCH_ELASTIC_HOSTS
+              valueFrom:
+                secreteKeyRef:
+                  name: es
+                  key: es_credentials
             - name: INVENIO_SQLALCHEMY_DATABASE_URI
               valueFrom:
                 secretKeyRef:
                   name: srchdb
                   key: dburi
-            - name: CERN_APP_CREDENTIALS_KEY
+            - name: INVENIO_CERN_APP_CREDENTIALS
               valueFrom:
                 secretKeyRef:
                   name: oauth
-                  key: clientid
-            - name: CERN_APP_CREDENTIALS_SECRET
-              valueFrom:
-                secretKeyRef:
-                  name: oauth
-                  key: clientkey
+                  key: oauth_credentials
           image: gitlab-registry.cern.ch/ppanero/cern_search_rest:latest
           imagePullPolicy: Always
           name: cern-search-api

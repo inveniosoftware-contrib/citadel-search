@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 3000
   },
   "mappings": {
-    "doc-v0.0.1": {
+    "test-doc_v0.0.1": {
       "numeric_detection": true,
       "_all": {
         "analyzer": "english"
