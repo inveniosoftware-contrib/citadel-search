@@ -17,10 +17,10 @@ build_dev_version:
   stage: build
   except:
     - tags
-  environment: dev
+  environment: master
   tags:
     - docker-image-build
-  script: 'echo "Building Docker Dev image..."'
+  script: 'echo "Building Docker Master image..."'
 
 ### When building tags, use the git tag as the docker tag of the image
 build_tagged_version:
