@@ -21,7 +21,7 @@ def _(x):
 
 CERN_REMOTE_APP = copy.deepcopy(cern.REMOTE_APP)
 CERN_REMOTE_APP["params"].update(dict(request_token_params={
-    "resource": "pcitois110.dyndns.cern.ch",  # "test-cern-search.cern.ch",  # replace with your server
+    "resource": "test-cern-search.cern.ch",  # replace with your server
     "scope": "Name Email Bio Groups",
 }))
 
