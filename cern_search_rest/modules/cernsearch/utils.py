@@ -8,7 +8,7 @@ from flask import current_app
 from invenio_search import current_search
 from invenio_search.utils import schema_to_index
 
-INDEX_PREFIX = current_app.config['CERN_SEARCH_DEFAULT_INDEX_PREFIX']
+
 
 
 def get_user_provides():
@@ -16,7 +16,7 @@ def get_user_provides():
     return [need.value for need in g.identity.provides]
 
 
-def default_record_to_index(record):
+def cern_search_record_to_index(record):
     """Get index/doc_type given a record.
     It tries to extract from `record['$schema']` the index and doc_type,
     the index has `CERN_SEARCH_INDEX_PREFIX` as prefix or `CERN_SEARCH_DEFAULT_INDEX_PREFIX`
@@ -25,6 +25,8 @@ def default_record_to_index(record):
     :param record: The record object.
     :returns: Tuple (index, doc_type).
     """
+    INDEX_PREFIX = current_app.config['CERN_SEARCH_DEFAULT_INDEX_PREFIX']
+
     index_names = current_search.mappings.keys()
     schema = record.get('$schema', '')
     if isinstance(schema, dict):
@@ -36,7 +38,7 @@ def default_record_to_index(record):
     index, doc_type = schema_to_index(schema, index_names=index_names)
 
     if index and doc_type:
-        return '{0}{1}'.format(INDEX_PREFIX,index), doc_type
+        return '{0}{1}'.format(INDEX_PREFIX, index), doc_type
     else:
         return ('{0}{1}'.format(current_app.config['CERN_SEARCH_DEFAULT_INDEX_PREFIX'],
                                 current_app.config['INDEXER_DEFAULT_INDEX']),
