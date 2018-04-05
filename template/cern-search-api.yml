@@ -127,35 +127,6 @@ objects:
             emptyDir: {}
 
 
-### Elasticsearch
-- kind: DeploymentConfig
-  apiVersion: v1
-  metadata:
-    name: elasticsearch
-  spec:
-    replicas: 1
-    template:
-      metadata:
-        labels:
-          app: elasticsearch
-      spec:
-        containers:
-        - name: elasticsearch
-          image: 'elasticsearch:latest'
-          ports:
-          - containerPort: 9200
-            protocol: TCP
-          - containerPort: 9300
-            protocol: TCP
-          volumeMounts:
-            - mountPath: /usr/share/elasticsearch/data
-              name: elasticsearch-data
-        securityContext: {}
-        volumes:
-          - name: elasticsearch-data
-            emptyDir: {}
-
-
 ##############################
 ########## SERVICES ##########
 ##############################
@@ -193,28 +164,6 @@ objects:
     selector:
       app: redis
       deploymentconfig: redis
-    sessionAffinity: None
-    type: ClusterIP
-# Service for the Elasticsearch server
-- kind: Service
-  apiVersion: v1
-  metadata:
-    labels:
-      app: elasticsearch
-    name: elasticsearch
-  spec:
-    ports:
-    - name: 9200-tcp
-      port: 9200
-      protocol: TCP
-      targetPort: 9200
-    - name: 9300-tcp
-      port: 9300
-      protocol: TCP
-      targetPort: 9300
-    selector:
-      app: elasticsearch
-      deploymentconfig: elasticsearch
     sessionAffinity: None
     type: ClusterIP
 
@@ -262,8 +211,6 @@ objects:
     # Redis
     INVENIO_CACHE_REDIS_HOST: 'redis'
     INVENIO_CACHE_REDIS_URL: 'redis://redis:6379/0'
-    # Elasticsearch
-    INVENIO_SEARCH_ELASTIC_HOSTS: 'elasticsearch'
 
 parameters:
   - name: APP_INSTANCE_PATH
