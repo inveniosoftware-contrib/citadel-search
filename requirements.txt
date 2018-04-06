@@ -1,3 +1,5 @@
+flask
+gunicorn
 invenio-access>=1.0.0b1
 invenio-app>=1.0.0b1,<1.1.0
 invenio-base>=1.0.0a15,<1.1.0
@@ -9,4 +11,3 @@ invenio-rest[cors]>=1.0.0b2
 invenio-oauthclient>=1.0.0b5
 invenio-search[elasticsearch5]>=1.0.0a10,<1.1.0
 redis>=2.10.0
-gunicorn

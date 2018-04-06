@@ -9,8 +9,6 @@ from invenio_search import current_search
 from invenio_search.utils import schema_to_index
 
 
-
-
 def get_user_provides():
     """Extract the user's provides from g."""
     return [need.value for need in g.identity.provides]

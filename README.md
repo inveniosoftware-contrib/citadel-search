@@ -181,6 +181,65 @@ If afterwards we query (get,put,delete) for the specific item we will obtain a 4
   "message": "PID has been deleted."
 }
 ```
+
+## ACLs and permissions
+
+Permissions are implemented in a CRUD fashion.
+
+Read, Update and Delete follow the same pattern. The user has to be authenticated and to be allowed
+to perform the action on the document, meaning one of its egroups is in the corresponding __access_ field.
+Create also needs the user to be authenticated, but in this case the ownership/permissions are not check on
+a document but on the mapping. The egroups allowed to create are specified in the mapping when setting up the 
+Search instance.
+
+Search is not treated as a normal read. It passes through the _cern_filter_. This filter applies the following rules:
+
+``public | read_restricted ``
+
+Which will get the documents that are public and those that are restricted but the user egroups match the _read_ field
+of the __access_ property.
+
+An example mapping containing the permission fields is:
+
+```json
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_string": true,
+    "index.mapping.total_fields.limit": 3000
+  },
+  "mappings": {
+    "cern-search-example-v0.0.1": {
+      "_meta": { 
+        "class": "cern-search-example",
+        "_owner": "egroup_owner_one, egroup_owner_two,egroup_owner_three"
+      },
+      "properties": {
+        "_access": {
+          "type": "nested",
+          "properties": {
+            "read":{
+              "type": "string"
+            },
+            "update":{
+              "type": "string"
+            }, 
+            "delete":{
+              "type": "string"
+            }
+          }  
+        },
+        "title": {
+          "type": "string"
+        },
+        ...
+      }
+    }
+  }
+}
+```
+
+Note that there is no _create_ permission, that is specified by the __owner_ field in the metadata.
+
 ## Setup
 
 An instance can be deployed using the OpenShift template (can be found in _template/cern-search-api.yml_)
@@ -190,6 +249,7 @@ Take into account:
 The URI of the SQL database is set through a secret since it has to carry the user and password to access it. Therefore,
 a secret must be created in OpenShift (e.g. running oc create -f <secret_file>). The following can be used as template:
 
+Database (PostgreSQL) Secret
 ```yaml
 apiVersion: v1
 kind: Secret
@@ -209,4 +269,20 @@ metadata:
 stringData:
   # Localhost
   es_credentials: "[{'host': 'endpoint', 'url_prefix': '/es', 'port': 443, 'use_ssl': True, 'verify_certs': True, 'ca_certs':'/etc/pki/tls/certs/ca-bundle.trust.crt', 'http_auth': ('user','password')}]"
+```
+
+OAuth Secret
+```yaml
+apiVersion: v1
+kind: Secret
+metadata:
+  name: oauth
+stringData:
+  # Localhost
+  oauth_credentials: "{'consumer_key':'consumer_id','consumer_secret':'consumer_secret'}"
+```
+
+Starting command throw ssl:
+```bash
+gunicorn -b :5000 --certfile=ssl.crt --keyfile=ssl.key cern_search_rest.wsgi
 ```

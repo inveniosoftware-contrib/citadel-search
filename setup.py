@@ -40,19 +40,20 @@ for name, reqs in extras_require.items():
 setup_requires = []
 
 install_requires = [
-    'invenio-access>=1.0.0b1',
-    'invenio-app>=1.0.0b1,<1.1.0',
-    'invenio-base>=1.0.0a15,<1.1.0',
-    'invenio-config>=1.0.0b3,<1.1.0',
-    'invenio-indexer[elasticsearch5]>=1.0.0,<1.1.0',
-    'invenio-jsonschemas>=1.0.0a5,<1.1.0',
-    'invenio-records-rest[elasticsearch5]>=1.0.0b1,<1.1.0',
-    'invenio-records[postgresql]>=1.0.0b2',
-    'invenio-rest[cors]>=1.0.0b2',
-    'invenio-oauthclient>=1.0.0b5',
-    'invenio-search[elasticsearch5]>=1.0.0a10,<1.1.0',
-    'redis>=2.10.0',
+    'flask',
     'gunicorn',
+    'invenio-access>=1.0.0,<1.1.0',
+    'invenio-app>=1.0.0,<1.1.0',
+    'invenio-base>=1.0.0,<1.1.0',
+    'invenio-config>=1.0.0,<1.1.0',
+    'invenio-indexer[elasticsearch5]>=1.0.0,<1.1.0',
+    'invenio-jsonschemas>=1.0.0,<1.1.0',
+    'invenio-records-rest[elasticsearch5]>=1.0.0,<1.1.0',
+    'invenio-records[postgresql]>=1.0.0,<1.1.0',
+    'invenio-rest[cors]>=1.0.0,<1.1.0',
+    'invenio-oauthclient>=1.0.0,<1.1.0',
+    'invenio-search[elasticsearch5]>=1.0.0,<1.1.0',
+    'redis>=2.10.0',
 ]
 
 packages = find_packages()
@@ -78,7 +79,7 @@ setup(
     platforms='any',
     entry_points={
         'invenio_config.module': [
-            'cern_search_rest = cern_search_rest.config',
+            'cern_search_rest = cern_search_rest.config'
         ],
         'invenio_search.mappings': [
             'cernsearch = cern_search_rest.modules.cernsearch.mappings',
@@ -86,6 +87,9 @@ setup(
         'invenio_jsonschemas.schemas': [
             'cern_search_rest_schemas = cern_search_rest.modules.cernsearch.jsonschemas'
         ],
+        'invenio_base.api_blueprints': [
+            'invenio_oauthclient = invenio_oauthclient.views.client:blueprint'
+        ]
     },
     extras_require=extras_require,
     install_requires=install_requires,
