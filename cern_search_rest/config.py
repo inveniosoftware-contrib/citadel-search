@@ -92,3 +92,12 @@ RECORDS_REST_ENDPOINTS = dict(
         # error_handlers={}, # TODO
     )
 )
+
+
+# Flask Security
+# ==============
+# Avoid error upon registration with email sending
+# FIXME flask_security/registrable:40 "Too many values to unpack"
+SECURITY_SEND_REGISTER_EMAIL = False
+SECURITY_CONFIRM_REGISTRATION = False
+SECURITY_CONFIRMABLE = False

@@ -6,10 +6,27 @@
   "mappings": {
     "test-doc_v0.0.1": {
       "numeric_detection": true,
+      "_meta": {
+        "_owner": "CernSearch-Administrators@cern.ch"
+      },
       "_all": {
         "analyzer": "english"
       },
       "properties": {
+        "_access": {
+          "type": "nested",
+          "properties": {
+            "read": {
+              "type": "string"
+            },
+            "update": {
+              "type": "string"
+            },
+            "delete": {
+              "type": "string"
+            }
+          }
+        },
         "title": {
           "type": "string",
           "analyzer": "english"

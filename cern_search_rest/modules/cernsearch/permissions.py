@@ -2,7 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from flask_security import current_user
-from flask import request
+from flask import request, g
+from invenio_search import current_search, current_search_client
+
+from invenio_search.utils import schema_to_index
 
 """Access control for CERN Search."""
 
@@ -60,13 +63,13 @@ class RecordPermission(object):
         """Create a record permission."""
         # Allow everything for testing
         if action in cls.create_actions:
-            return cls(record, allow, user)  # return cls(record, has_admin_permission, user)
+            return cls(record, has_create_permission, user)
         elif action in cls.read_actions:
-            return cls(record, allow, user)  # return cls(record, has_read_record_permission, user)
+            return cls(record, has_read_record_permission, user)
         elif action in cls.update_actions:
-            return cls(record, allow, user)  # return cls(record, has_update_permission, user)
+            return cls(record, has_update_permission, user)
         elif action in cls.delete_actions:
-            return cls(record, allow, user)  # return cls(record, has_admin_permission, user)
+            return cls(record, has_delete_permission, user)
         else:
             return cls(record, deny, user)
 
@@ -76,13 +79,27 @@ def has_create_permission(user, record):
     if user.is_authenticated:
         # Allow based in the '_access' key
         user_provides = get_user_provides()
-        search = request._methodview.search_class()
-        mapping = search.get_mapping(str(record.index))
-        # set.isdisjoint() is faster than set.intersection()
-        create_access_groups = mapping['_meta']['_owner']
-        if user_provides and not set(user_provides).isdisjoint(set(create_access_groups)):
-            return True
+        user_index = request.args.get("index")
+        index_exists, es_index = parse_index(user_index)
+        if index_exists and current_search_client.indices.exists([es_index]):
+            # TODO How to query the index to get the owner?
+            mapping = current_search_client.indices.get_mapping([es_index])
+            if mapping is not None:
+                # set.isdisjoint() is faster than set.intersection()
+                create_access_groups = mapping[es_index]['mappings'][user_index]['_meta']['_owner'].split(',')
+                if user_provides and not set(user_provides).isdisjoint(set(create_access_groups)):
+                    return True
     return False
+
+
+INDEX_PREFIX = 'cernsearch'
+
+
+def parse_index(index):
+    if index is not None:
+        return True, '{0}-{1}'.format(INDEX_PREFIX, index)
+    else:
+        return False, None
 
 
 def has_update_permission(user, record):
@@ -91,7 +108,7 @@ def has_update_permission(user, record):
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
-        update_access_groups = record['_access']['update']
+        update_access_groups = record['_access']['update'].split(',')
         if user_provides and not set(user_provides).isdisjoint(set(update_access_groups)):
             return True
     return False
@@ -103,7 +120,7 @@ def has_read_record_permission(user, record):
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
-        read_access_groups = record['_access']['read']
+        read_access_groups = record['_access']['read'].split(',')
         if user_provides and not set(user_provides).isdisjoint(set(read_access_groups)):
             return True
     return False
@@ -115,7 +132,7 @@ def has_delete_permission(user, record):
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
-        delete_access_groups = record['_access']['delete']
+        delete_access_groups = record['_access']['delete'].split(',')
         if user_provides and not set(user_provides).isdisjoint(set(delete_access_groups)):
             return True
     return False
