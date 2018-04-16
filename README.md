@@ -240,6 +240,38 @@ An example mapping containing the permission fields is:
 
 Note that there is no _create_ permission, that is specified by the __owner_ field in the metadata.
 
+### Importante note
+
+There is a bug in invenio-oauthclient. Once the user SSO token expires there is no way of updating the egroups 
+(and other information) of the user, failing with a _401 Unauthorized_ from the SSO (due to expired token). There is an 
+issue opened ([link](https://github.com/inveniosoftware/invenio-oauthclient/issues/154)). In the meanwhile the solution is to edit the _invenio-oauthclient/contrib/cern.py:account_groups_ 
+with the following lines:
+
+```python
+    def account_groups(account, resource, refresh_timedelta=None):
+        """Fetch account groups from resource if necessary."""
+        updated = datetime.utcnow()
+        modified_since = updated
+        if refresh_timedelta is not None:
+            modified_since += refresh_timedelta
+        modified_since = modified_since.isoformat()
+        last_update = account.extra_data.get('updated', modified_since)
+    
+        #if last_update > modified_since:
+        groups_db = account.extra_data.get('groups', [])
+        if groups_db is not None and groups_db:
+            return account.extra_data.get('groups', [])
+    
+        groups = fetch_groups(resource['Group'])
+        account.extra_data.update(
+            groups=groups,
+            updated=updated.isoformat(),
+        )
+        return groups
+``` 
+
+This means the groups will be taken upon the first login of the user and never updated. A fix will come soon.
+
 ## Setup
 
 An instance can be deployed using the OpenShift template (can be found in _template/cern-search-api.yml_)

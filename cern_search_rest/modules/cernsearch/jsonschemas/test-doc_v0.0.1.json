@@ -4,6 +4,20 @@
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "read":{
+          "type": "string"
+        },
+        "update":{
+          "type": "string"
+        },
+        "delete":{
+          "type": "string"
+        }
+      }
+    },
     "title": {
       "type": "string",
       "description": "Record title."

@@ -43,6 +43,8 @@ install_requires = [
     'flask',
     'gunicorn',
     'invenio-access>=1.0.0,<1.1.0',
+    'invenio-admin>=1.0.0,<1.1.0',
+    'invenio-accounts>=1.0.0,<1.1.0',
     'invenio-app>=1.0.0,<1.1.0',
     'invenio-base>=1.0.0,<1.1.0',
     'invenio-config>=1.0.0,<1.1.0',
@@ -52,7 +54,9 @@ install_requires = [
     'invenio-records[postgresql]>=1.0.0,<1.1.0',
     'invenio-rest[cors]>=1.0.0,<1.1.0',
     'invenio-oauthclient>=1.0.0,<1.1.0',
+    'invenio_oauth2server>=1.0.0,<1.1.0',
     'invenio-search[elasticsearch5]>=1.0.0,<1.1.0',
+    'invenio-theme>=1.0.0,<1.1.0',
     'redis>=2.10.0',
 ]
 
@@ -87,11 +91,9 @@ setup(
         'invenio_jsonschemas.schemas': [
             'cern_search_rest_schemas = cern_search_rest.modules.cernsearch.jsonschemas'
         ],
-        'invenio_base.api_blueprints': [
-            'invenio_oauthclient = invenio_oauthclient.views.client:blueprint'
-        ]
     },
     extras_require=extras_require,
+
     install_requires=install_requires,
     setup_requires=setup_requires,
     tests_require=tests_require,

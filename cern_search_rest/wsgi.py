@@ -3,8 +3,9 @@
 
 """CERN Search WSGI app instantiation."""
 
-from __future__ import absolute_import, division, print_function
 
-from .factory import create_api
+from __future__ import absolute_import, print_function
 
-application = create_api()
+from invenio_app.wsgi import application
+
+__all__ = ('application', )
