@@ -3,9 +3,7 @@
 
 from flask_security import current_user
 from flask import request, g
-from invenio_search import current_search, current_search_client
-
-from invenio_search.utils import schema_to_index
+from invenio_search import current_search_client
 
 """Access control for CERN Search."""
 
