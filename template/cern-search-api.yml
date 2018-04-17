@@ -211,8 +211,12 @@ objects:
     # Redis
     INVENIO_CACHE_REDIS_HOST: 'redis'
     INVENIO_CACHE_REDIS_URL: 'redis://redis:6379/0'
-
+    # App to allow hosts
+    INVENIO_APP_ALLOWED_HOSTS: ${APP_ALLOWED_HOSTS}
 parameters:
   - name: APP_INSTANCE_PATH
     description: "Invenio instance path for CERN Search application."
+    required: true
+  - name: APP_ALLOWED_HOSTS
+    description: "Invenio App allowed hosts"
     required: true
