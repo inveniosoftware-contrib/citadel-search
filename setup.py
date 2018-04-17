@@ -48,6 +48,7 @@ install_requires = [
     'invenio-app>=1.0.0,<1.1.0',
     'invenio-base>=1.0.0,<1.1.0',
     'invenio-config>=1.0.0,<1.1.0',
+    'invenio-db[postgresql,versioning]>=1.0.0,<1.1.0',
     'invenio-indexer[elasticsearch5]>=1.0.0,<1.1.0',
     'invenio-jsonschemas>=1.0.0,<1.1.0',
     'invenio-records-rest[elasticsearch5]>=1.0.0,<1.1.0',
