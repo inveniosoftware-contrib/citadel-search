@@ -9,7 +9,8 @@ RUN yum update -y && \
     yum install -y \
         python-devel \
         python-pip \
-        gcc && \
+        gcc \
+        npm && \
     pip install --upgrade pip setuptools wheel
 
 ADD requirements.txt /tmp
