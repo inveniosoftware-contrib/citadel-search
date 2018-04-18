@@ -157,10 +157,10 @@ objects:
     name: redis
   spec:
     ports:
-    - name: 6379-tcp
-      port: 6379
+    - name: 5432-tcp
+      port: 5432
       protocol: TCP
-      targetPort: 6379
+      targetPort: 5432
     selector:
       app: redis
       deploymentconfig: redis
@@ -209,10 +209,11 @@ objects:
     # Invenio
     INVENIO_INSTANCE_PATH: ${APP_INSTANCE_PATH}
     # Redis
-    INVENIO_CACHE_REDIS_HOST: 'redis'
-    INVENIO_CACHE_REDIS_URL: 'redis://redis:6379/0'
+    INVENIO_ACCOUNTS_SESSION_REDIS_URL: 'redis://redis:5432/0'
+    INVENIO_CACHE_REDIS_URL: 'redis://redis:5432/0'
     # App to allow hosts
     INVENIO_APP_ALLOWED_HOSTS: ${APP_ALLOWED_HOSTS}
+
 parameters:
   - name: APP_INSTANCE_PATH
     description: "Invenio instance path for CERN Search application."
