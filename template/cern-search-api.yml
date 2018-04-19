@@ -46,11 +46,15 @@ objects:
         - command:
             - /bin/sh
             - '-c'
-            - /code/scripts/manage-user.sh && gunicorn -b :5000 cern_search_rest.wsgi
+            - /code/scripts/manage-user.sh && gunicorn -b :5000 --certfile=${INVENIO_INSTANCE_PATH}/ssl.crt --keyfile=${INVENIO_INSTANCE_PATH}/ssl.key cern_search_rest.wsgi
           envFrom:
             - configMapRef:
                 name: env-configmap
           env:
+            - name: INVENIO_ACCOUNTS_SESSION_REDIS_URL
+              value: 'redis://$(REDIS_SERVICE_HOST):$(REDIS_SERVICE_PORT)/1'
+            - name: INVENIO_CACHE_REDIS_URL
+              value: 'redis://$(REDIS_SERVICE_HOST):$(REDIS_SERVICE_PORT)/0'
             - name: INVENIO_SEARCH_ELASTIC_HOSTS
               valueFrom:
                 secretKeyRef:
@@ -117,7 +121,7 @@ objects:
         - name: redis
           image: redis
           ports:
-          - containerPort: 5432
+          - containerPort: 6379
             name: tcp
           volumeMounts:
             - name: data
@@ -157,10 +161,10 @@ objects:
     name: redis
   spec:
     ports:
-    - name: 5432-tcp
-      port: 5432
+    - name: 6379-tcp
+      port: 6379
       protocol: TCP
-      targetPort: 5432
+      targetPort: 6379
     selector:
       app: redis
       deploymentconfig: redis
@@ -208,9 +212,6 @@ objects:
   data:
     # Invenio
     INVENIO_INSTANCE_PATH: ${APP_INSTANCE_PATH}
-    # Redis
-    INVENIO_ACCOUNTS_SESSION_REDIS_URL: 'redis://redis:5432/0'
-    INVENIO_CACHE_REDIS_URL: 'redis://redis:5432/0'
     # App to allow hosts
     INVENIO_APP_ALLOWED_HOSTS: ${APP_ALLOWED_HOSTS}
 
