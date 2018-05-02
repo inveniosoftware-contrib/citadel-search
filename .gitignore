@@ -16,3 +16,7 @@ secrets/
 
 *.key
 *.crt
+
+# Local env source
+
+env.sh

@@ -1,11 +1,11 @@
 apiVersion: v1
 kind: Template
 metadata:
-  name: cern-search-rest
+  name: cern-search-rest-api
   annotations:
     descriptino: "CERN Search RESTful API and necessary services OpenShift Template"
 labels:
-  template: "cern-search-rest"
+  template: "cern-search-rest-api"
 
 objects:
 
@@ -46,7 +46,7 @@ objects:
         - command:
             - /bin/sh
             - '-c'
-            - /code/scripts/manage-user.sh && gunicorn -b :5000 --certfile=${INVENIO_INSTANCE_PATH}/ssl.crt --keyfile=${INVENIO_INSTANCE_PATH}/ssl.key cern_search_rest.wsgi
+            - /code/scripts/manage-user.sh && uwsgi --module ${UWSGI_WSGI_MODULE} --socket 0.0.0.0:${UWSGI_PORT} --master --processes ${UWSGI_PROCESSES} --threads ${UWSGI_THREADS} --stats /tmp/stats.socket
           envFrom:
             - configMapRef:
                 name: env-configmap
@@ -90,25 +90,19 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - init-cern-search
         - cern-search-api
         from:
           kind: ImageStreamTag
           name: cern-search-api:latest
           namespace: test-cern-search
       type: ImageChange
-  status:
-    availableReplicas: 0
-    latestVersion: 0
-    observedGeneration: 0
-    replicas: 0
-    unavailableReplicas: 0
-    updatedReplicas: 0
 
 ### Redis Server
 - kind: DeploymentConfig
   apiVersion: v1
   metadata:
+    labels:
+      app: redis
     name: redis
   spec:
     replicas: 1
@@ -129,7 +123,60 @@ objects:
         volumes:
           - name: data
             emptyDir: {}
+    triggers:
+    - type: ConfigChange
 
+### Nginx proxy pass
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    labels:
+      app: proxy
+    name: proxy
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        name: proxy
+        labels:
+          app: proxy
+      spec:
+        containers:
+        - name: proxy
+          image: 'nginx:stable-alpine'
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/nginx/tls
+              name: nginx-tls
+              readOnly: true
+            - mountPath: /etc/nginx/conf.d
+              name: nginx-config
+            - mountPath: /var/cache/nginx
+              name: nginx-cache
+            - mountPath: /var/run
+              name: nginx-run
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+          - name: nginx-tls
+            secret:
+              defaultMode: 420
+              secretName: nginx-tls
+          - configMap:
+              defaultMode: 420
+              name: nginx-config
+            name: nginx-config
+          - emptyDir: {}
+            name: nginx-cache
+          - emptyDir: {}
+            name: nginx-run
+    triggers:
+      - type: ConfigChange
 
 ##############################
 ########## SERVICES ##########
@@ -151,7 +198,7 @@ objects:
       app: cern-search-api
       deploymentconfig: cern-search-api
     sessionAffinity: None
-    type: LoadBalancer
+    type: ClusterIP
 # Service for the Redis server
 - kind: Service
   apiVersion: v1
@@ -170,6 +217,23 @@ objects:
       deploymentconfig: redis
     sessionAffinity: None
     type: ClusterIP
+# Service for the Nginx proxy
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: proxy-https
+    labels:
+      app: proxy
+    annotations:
+      service.alpha.openshift.io/serving-cert-secret-name: nginx-tls
+  spec:
+    ports:
+    - name: 'https'
+      port: 8080
+      targetPort: 8080
+    selector:
+      app: proxy
+    type: LoadBalancer
 
 ##############################
 ########### ROUTES ###########
@@ -178,15 +242,34 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: cern-search-api
-    name: cern-search-api
+      app: proxy
+      template: cern-search-rest-api
+    name: nginx-proxy
   spec:
     port:
-      targetPort: 5000-tcp
+      targetPort: https
+    tls:
+      destinationCACertificate: |
+        -----BEGIN COMMENT-----
+        This is an empty PEM file created to provide backwards compatibility
+        for reencrypt routes that have no destinationCACertificate. This
+        content will only appear for routes accessed via /oapi/v1/routes.
+        -----END COMMENT-----
+      insecureEdgeTerminationPolicy: Redirect
+      termination: reencrypt
     to:
       kind: Service
-      name: cern-search-api
+      name: proxy-https
       weight: 100
+    wildcardPolicy: None
+  status:
+    ingress:
+      - conditions:
+          - status: 'True'
+            type: Admitted
+        routerName: router
+        wildcardPolicy: None
+
 
 # TODO: Delete when automated in OpenShift/GitLab CI
 ##############################
@@ -208,6 +291,40 @@ objects:
 - kind: ConfigMap
   apiVersion: v1
   metadata:
+    labels:
+      app: proxy
+    name: nginx-config
+  data:
+    nginx.conf: |
+
+      # Configuration for Nginx
+
+      server {
+          # Running port
+          listen 8080 ssl;
+          ssl_certificate /etc/nginx/tls/tls.crt;
+          ssl_certificate_key /etc/nginx/tls/tls.key;
+
+          # Proxying connections to application servers
+          location / {
+              include            uwsgi_params;
+              uwsgi_pass         cern-search-api:5000;
+
+              proxy_redirect     off;
+              proxy_set_header   Host $host;
+              proxy_set_header   X-Real-IP $remote_addr;
+              proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header   X-Forwarded-Host $server_name;
+
+          }
+      }
+
+
+- kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-api
     name: env-configmap
   data:
     # Invenio
@@ -220,5 +337,5 @@ parameters:
     description: "Invenio instance path for CERN Search application."
     required: true
   - name: APP_ALLOWED_HOSTS
-    description: "Invenio App allowed hosts"
+    description: "Invenio App allowed hosts. Without protocol (e.g. http) nor salsh ('/') at the end"
     required: true

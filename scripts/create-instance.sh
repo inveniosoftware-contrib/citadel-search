@@ -8,6 +8,7 @@ npm update && npm install --silent -g node-sass@3.8.0 clean-css@3.4.19 uglify-js
 pip install -r requirements.txt
 pip install -e .[all,postgresql,elasticsearch5]
 
+# Needed for invenio-admin UI
 invenio npm
 export BACKPATH=$(pwd)
 cd ${INVENIO_INSTANCE_PATH}/static

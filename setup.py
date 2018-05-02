@@ -41,7 +41,6 @@ setup_requires = []
 
 install_requires = [
     'flask',
-    'gunicorn',
     'invenio-access>=1.0.0,<1.1.0',
     'invenio-admin>=1.0.0,<1.1.0',
     'invenio-accounts>=1.0.0,<1.1.0',
@@ -60,6 +59,7 @@ install_requires = [
     'invenio-theme>=1.0.0,<1.1.0',
     'redis>=2.10.0',
     'npm>=0.1.1',
+    'uWSGI>=2.0.16',
 ]
 
 packages = find_packages()
