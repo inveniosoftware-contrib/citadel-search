@@ -331,6 +331,12 @@ objects:
     INVENIO_INSTANCE_PATH: ${APP_INSTANCE_PATH}
     # App to allow hosts
     INVENIO_APP_ALLOWED_HOSTS: ${APP_ALLOWED_HOSTS}
+    # Invenio Theme
+    INVENIO_THEME_FRONTPAGE_TITLE: ${SITE_NAME}
+    INVENIO_THEME_SITENAME: ${SITE_NAME}
+    INVENIO_THEME_LOGO: ${LOGO_PATH}
+    INVENIO_THEME_LOGO_ADMIN: ${LOGO_PATH}
+
 
 parameters:
   - name: APP_INSTANCE_PATH
@@ -339,3 +345,9 @@ parameters:
   - name: APP_ALLOWED_HOSTS
     description: "Invenio App allowed hosts. Without protocol (e.g. http) nor salsh ('/') at the end"
     required: true
+  - name: SITE_NAME
+      description: "CERN Search site name (E.g. EDMS, Indico, etc.)"
+      required: true
+  - name: LOGO_PATH
+      description: "CERN Search site logo. Default path is /code/images/"
+      required: true
