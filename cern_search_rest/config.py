@@ -16,6 +16,11 @@ def _(x):
     """Identity function used to trigger string extraction."""
     return x
 
+
+# Theme
+# =====
+THEME_SEARCHBAR = False
+
 # OAuth Client
 # ============
 

@@ -307,6 +307,7 @@ objects:
 
           # Proxying connections to application servers
           location / {
+              rewrite ^/$ /account/settings/applications/ redirect;
               include            uwsgi_params;
               uwsgi_pass         cern-search-api:5000;
 
@@ -349,5 +350,5 @@ parameters:
       description: "CERN Search site name (E.g. EDMS, Indico, etc.)"
       required: true
   - name: LOGO_PATH
-      description: "CERN Search site logo. Default path is /code/images/"
+      description: "CERN Search site logo (E.g.  /images/cernsearchicon.png)"
       required: true

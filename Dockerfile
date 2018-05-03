@@ -25,7 +25,7 @@ WORKDIR /code
 ADD . /code
 
 ENV INVENIO_INSTANCE_PATH=/usr/local/var/cernsearch/var/cernsearch-instance
-ENV LOGO_PATH=/static/images/cernsearchicon.png
+ENV LOGO_PATH=/images/cernsearchicon.png
 
 RUN chmod g=u /etc/passwd && \
     chmod +x /code/scripts/*.sh && \

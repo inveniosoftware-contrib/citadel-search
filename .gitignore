@@ -17,6 +17,10 @@ secrets/
 *.key
 *.crt
 
+# Dump files
+
+*.rdb
+
 # Local env source
 
 env.sh
