@@ -15,4 +15,4 @@ cd ${INVENIO_INSTANCE_PATH}/static
 npm install
 invenio collect -v
 invenio assets build
-mv /code/${LOGO_PATH} ${INVENIO_INSTANCE_PATH}/${LOGO_PATH}
+mv /code/static/${LOGO_PATH} ${INVENIO_INSTANCE_PATH}/static/${LOGO_PATH}
