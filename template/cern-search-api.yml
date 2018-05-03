@@ -304,10 +304,10 @@ objects:
           listen 8080 ssl;
           ssl_certificate /etc/nginx/tls/tls.crt;
           ssl_certificate_key /etc/nginx/tls/tls.key;
+          rewrite ^/$ /account/settings/applications/;
 
           # Proxying connections to application servers
           location / {
-              rewrite ^/$ /account/settings/applications/ redirect;
               include            uwsgi_params;
               uwsgi_pass         cern-search-api:5000;
 
