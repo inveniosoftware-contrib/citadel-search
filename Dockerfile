@@ -31,6 +31,8 @@ RUN chmod g=u /etc/passwd && \
     chmod +x /code/scripts/*.sh && \
     sh /code/scripts/create-instance.sh && \
     sh /code/scripts/gen-cert.sh && \
+    chmod +x /code/scripts/patch/oauth_patch.sh && \
+    sh /code/scripts/patch/oauth_patch.sh && \
     mv nginx.crt nginx.key ${INVENIO_INSTANCE_PATH} && \
     chgrp -R 0 ${INVENIO_INSTANCE_PATH} && \
     chmod -R g=u ${INVENIO_INSTANCE_PATH} &&\
