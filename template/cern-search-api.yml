@@ -346,7 +346,7 @@ parameters:
     value: /usr/local/var/cernsearch/var/cernsearch-instance
   - name: APP_ALLOWED_HOSTS
     description: "Invenio App allowed hosts. Without protocol (e.g. http) nor salsh ('/') at the end"
-    value: ['test-cern-search.web.cern.ch']
+    value: "['test-cern-search.web.cern.ch']"
   - name: SITE_NAME
     description: "CERN Search site name (E.g. EDMS, Indico, etc.)"
     value: CERN Search
