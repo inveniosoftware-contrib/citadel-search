@@ -24,3 +24,7 @@ secrets/
 # Local env source
 
 env.sh
+
+# Debug and other logs
+
+*.log

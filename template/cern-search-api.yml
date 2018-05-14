@@ -337,18 +337,22 @@ objects:
     INVENIO_THEME_SITENAME: ${SITE_NAME}
     INVENIO_THEME_LOGO: ${LOGO_PATH}
     INVENIO_THEME_LOGO_ADMIN: ${LOGO_PATH}
+    INVENIO_ADMIN_VIEW_ACCESS_GROUPS: ${ADMIN_UI_ACCESS_LIST}
 
 
 parameters:
   - name: APP_INSTANCE_PATH
     description: "Invenio instance path for CERN Search application."
-    required: true
+    value: /usr/local/var/cernsearch/var/cernsearch-instance
   - name: APP_ALLOWED_HOSTS
     description: "Invenio App allowed hosts. Without protocol (e.g. http) nor salsh ('/') at the end"
-    required: true
+    value: ['test-cern-search.web.cern.ch']
   - name: SITE_NAME
-      description: "CERN Search site name (E.g. EDMS, Indico, etc.)"
-      required: true
+    description: "CERN Search site name (E.g. EDMS, Indico, etc.)"
+    value: CERN Search
   - name: LOGO_PATH
-      description: "CERN Search site logo (E.g.  /images/cernsearchicon.png)"
-      required: true
+    description: "CERN Search site logo (E.g.  /images/cernsearchicon.png)"
+    value: /images/cernsearchicon.png
+  - name: ADMIN_UI_ACCESS_LIST
+    description: "List of comma separated egroups that have access to the ADMIN UI (e.g. 'egroup_one,egroup_two')"
+    value: "CernSearch-Administrators"
