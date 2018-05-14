@@ -249,12 +249,7 @@ objects:
     port:
       targetPort: https
     tls:
-      destinationCACertificate: |
-        -----BEGIN COMMENT-----
-        This is an empty PEM file created to provide backwards compatibility
-        for reencrypt routes that have no destinationCACertificate. This
-        content will only appear for routes accessed via /oapi/v1/routes.
-        -----END COMMENT-----
+      destinationCACertificate:
       insecureEdgeTerminationPolicy: Redirect
       termination: reencrypt
     to:
