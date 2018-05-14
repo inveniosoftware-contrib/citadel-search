@@ -30,9 +30,22 @@ CERN_REMOTE_APP["params"].update(dict(request_token_params={
     "scope": "Name Email Bio Groups",
 }))
 
+CERN_REMOTE_APP["authorized_handler"] = 'cern_search_rest.modules.cernsearch.handlers:cern_authorized_signup_handler'
+
 OAUTHCLIENT_REMOTE_APPS = dict(
     cern=CERN_REMOTE_APP,
 )
+
+# Accounts
+# ========
+# FIXME: Needs to be disable for role base auth in SSO. If not invenio_account/sessions:login_listener will crash
+
+ACCOUNTS_SESSION_ACTIVITY_ENABLED = False
+
+# Admin
+# =====
+
+ADMIN_PERMISSION_FACTORY = 'cern_search_rest.modules.cernsearch.permissions:admin_permission_factory'
 
 # JSON Schemas configuration
 # ==========================
@@ -98,7 +111,6 @@ RECORDS_REST_ENDPOINTS = dict(
     )
 )
 
-
 # Flask Security
 # ==============
 # Avoid error upon registration with email sending
@@ -106,3 +118,5 @@ RECORDS_REST_ENDPOINTS = dict(
 SECURITY_SEND_REGISTER_EMAIL = False
 SECURITY_CONFIRM_REGISTRATION = False
 SECURITY_CONFIRMABLE = False
+SECURITY_REGISTERABLE = False  # Avoid user registration outside of CERN SSO
+SECURITY_RECOVERABLE = False  # Avoid user password recovery

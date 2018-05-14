@@ -2,8 +2,10 @@
 # -*- coding: utf-8 -*-
 
 from flask_security import current_user
-from flask import request, g
+from flask import request, g, current_app
 from invenio_search import current_search_client
+
+from cern_search_rest.modules.cernsearch.utils import get_user_provides
 
 """Access control for CERN Search."""
 
@@ -136,6 +138,45 @@ def has_delete_permission(user, record):
     return False
 
 
+"""Access control for CERN Search Admin Web UI."""
+
+
+def admin_permission_factory(view):
+    """Record permission factory."""
+    return AdminPermission.create(view=view)
+
+
+class AdminPermission(object):
+
+    def __init__(self, func, user, view):
+        """Initialize a file permission object."""
+        self.user = user or current_user
+        self.func = func
+        self.view = view
+
+    def can(self):
+        """Determine access."""
+        return self.func(self.user)
+
+    @classmethod
+    def create(cls, user=None, view=None):
+        """Create a record permission."""
+        # Allow everything for testing
+        return cls(has_admin_view_permission, user, view)
+
+
+def has_admin_view_permission(user):
+    admin_access_groups = current_app.config['ADMIN_VIEW_ACCESS_GROUPS']
+    if user.is_authenticated and admin_access_groups:
+        # Allow based in the '_access' key
+        user_provides = get_user_provides()
+        # set.isdisjoint() is faster than set.intersection()
+        admin_access_groups = admin_access_groups.split(',')
+        if user_provides and not set(user_provides).isdisjoint(set(admin_access_groups)):
+            return True
+    return False
+
+
 # Utility functions
 
 
@@ -155,8 +196,3 @@ def is_public(data, action):
     the action is not inside access or is empty.
     """
     return '_access' not in data or not data.get('_access', {}).get(action)
-
-
-def get_user_provides():
-    """Extract the user's provides from g."""
-    return [need.value for need in g.identity.provides]
