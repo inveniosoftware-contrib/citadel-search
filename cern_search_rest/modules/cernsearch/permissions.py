@@ -63,7 +63,7 @@ class RecordPermission(object):
         """Create a record permission."""
         # Allow everything for testing
         if action in cls.create_actions:
-            return cls(record, has_create_permission, user)
+            return cls(record, has_owner_permission, user)
         elif action in cls.read_actions:
             return cls(record, has_read_record_permission, user)
         elif action in cls.update_actions:
@@ -74,7 +74,7 @@ class RecordPermission(object):
             return cls(record, deny, user)
 
 
-def has_create_permission(user, record):
+def has_owner_permission(user, record=None):
     """Check if user is authenticated and has create access"""
     if user.is_authenticated:
         # Allow based in the '_access' key
@@ -82,7 +82,6 @@ def has_create_permission(user, record):
         user_index = request.args.get("index")
         index_exists, es_index = parse_index(user_index)
         if index_exists and current_search_client.indices.exists([es_index]):
-            # TODO How to query the index to get the owner?
             mapping = current_search_client.indices.get_mapping([es_index])
             if mapping is not None:
                 # set.isdisjoint() is faster than set.intersection()
@@ -109,7 +108,8 @@ def has_update_permission(user, record):
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         update_access_groups = record['_access']['update'].split(',')
-        if user_provides and not set(user_provides).isdisjoint(set(update_access_groups)):
+        if (user_provides and not set(user_provides).isdisjoint(set(update_access_groups))) \
+                or has_owner_permission(user):
             return True
     return False
 
@@ -121,7 +121,8 @@ def has_read_record_permission(user, record):
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         read_access_groups = record['_access']['read'].split(',')
-        if user_provides and not set(user_provides).isdisjoint(set(read_access_groups)):
+        if (user_provides and not set(user_provides).isdisjoint(set(read_access_groups))) \
+                or has_owner_permission(user):
             return True
     return False
 
@@ -133,7 +134,8 @@ def has_delete_permission(user, record):
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         delete_access_groups = record['_access']['delete'].split(',')
-        if user_provides and not set(user_provides).isdisjoint(set(delete_access_groups)):
+        if (user_provides and not set(user_provides).isdisjoint(set(delete_access_groups))) \
+                or has_owner_permission(user):
             return True
     return False
 
