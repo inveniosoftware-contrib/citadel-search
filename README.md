@@ -163,6 +163,19 @@ curl -X PUT -H 'Content-Type: application/json' -H 'Accept: application/json' \
         '
 ```
 
+Documents can also be updated partially. To perform this action we need to do a *PATCH*. The endpoint accepts 
+application/json+patch as Content-Type. An example to update the description would be:
+
+```bash
+curl -k -X PATCH -H 'Content-Type: application/json-patch+json' -H 'Accept: application/json' \
+    -i 'https://test-cern-search.web.cern.ch/api/record/9' --data '
+    [
+        {"op": "replace", "path": "/metadata/description", "value": "Description changed with patch partial update"}
+    ]'
+```
+
+More about the options of json+patch can be found [here](http://jsonpatch.com/).
+
 ### Delete documents
 
 To delete a document we need to perform a *DELETE* operation. For this we simply need to specify the document _ID_ by
