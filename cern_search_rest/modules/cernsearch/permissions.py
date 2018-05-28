@@ -3,6 +3,7 @@
 
 from flask_security import current_user
 from flask import request, g, current_app
+from invenio_indexer.utils import default_record_to_index
 from invenio_search import current_search_client
 
 from cern_search_rest.modules.cernsearch.utils import get_user_provides
@@ -79,26 +80,22 @@ def has_owner_permission(user, record=None):
     if user.is_authenticated:
         # Allow based in the '_access' key
         user_provides = get_user_provides()
-        user_index = request.args.get("index")
-        index_exists, es_index = parse_index(user_index)
-        if index_exists and current_search_client.indices.exists([es_index]):
+        es_index, doc = get_index_from_request(record)
+        if current_search_client.indices.exists([es_index]):
             mapping = current_search_client.indices.get_mapping([es_index])
             if mapping is not None:
                 # set.isdisjoint() is faster than set.intersection()
-                create_access_groups = mapping[es_index]['mappings'][user_index]['_meta']['_owner'].split(',')
+                create_access_groups = mapping[es_index]['mappings'][doc]['_meta']['_owner'].split(',')
                 if user_provides and not set(user_provides).isdisjoint(set(create_access_groups)):
                     return True
     return False
 
 
-INDEX_PREFIX = 'cernsearch'
-
-
-def parse_index(index):
-    if index is not None:
-        return True, '{0}-{1}'.format(INDEX_PREFIX, index)
-    else:
-        return False, None
+def get_index_from_request(record=None):
+    if record is not None and record.get('$schema', '') is not None:
+        return default_record_to_index(record)
+    return (current_app.config['INDEXER_DEFAULT_INDEX'],
+            current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
 
 
 def has_update_permission(user, record):
@@ -108,8 +105,9 @@ def has_update_permission(user, record):
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         update_access_groups = record['_access']['update'].split(',')
-        if (user_provides and not set(user_provides).isdisjoint(set(update_access_groups))) \
-                or has_owner_permission(user):
+        if check_elasticsearch(record) and (
+            (user_provides and not set(user_provides).isdisjoint(set(update_access_groups))) \
+                or has_owner_permission(user)):
             return True
     return False
 
@@ -121,8 +119,9 @@ def has_read_record_permission(user, record):
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         read_access_groups = record['_access']['read'].split(',')
-        if (user_provides and not set(user_provides).isdisjoint(set(read_access_groups))) \
-                or has_owner_permission(user):
+        if check_elasticsearch(record) and (
+                (user_provides and not set(user_provides).isdisjoint(set(read_access_groups)))
+                or has_owner_permission(user)):
             return True
     return False
 
@@ -198,3 +197,12 @@ def is_public(data, action):
     the action is not inside access or is empty.
     """
     return '_access' not in data or not data.get('_access', {}).get(action)
+
+
+def check_elasticsearch(record=None):
+    if record is not None:
+        """Try to search for given record."""
+        search = request._methodview.search_class()
+        search = search.get_record(str(record.id))
+        return search.count() == 1
+    return False

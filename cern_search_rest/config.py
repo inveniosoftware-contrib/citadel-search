@@ -61,12 +61,12 @@ JSONSCHEMAS_REGISTER_ENDPOINTS_UI = False
 # TODO use ES central service. Change INDEXER_RECORD_TO_INDEX = 'invenio_indexer.utils.default_record_to_index'
 
 INDEXER_DEFAULT_DOC_TYPE = 'test-doc_v0.0.1'
-INDEXER_DEFAULT_INDEX = 'cernsearch-test-doc_v0.0.1'
+INDEXER_DEFAULT_INDEX = 'cernsearch-test-test-doc_v0.0.1'
 
 # Search configuration
 # =====================
 
-SEARCH_MAPPINGS = ['cernsearch']
+SEARCH_MAPPINGS = ['cernsearch-test']
 
 # Records REST configuration
 # ===========================
@@ -86,28 +86,21 @@ RECORDS_REST_ENDPOINTS = dict(
         list_route='/records/',
         links_factory_imp='invenio_records_rest.links:default_links_factory',
         record_class='cern_search_rest.modules.cernsearch.api:CernSearchRecord',  # TODO
-        # record_loaders={ # TODO
-        #    'application/json': 'mypackage.loaders:json_loader'
-        # },
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
-        search_class='invenio_search.api.RecordsSearch',
-        # search_factory_imp=search_factory(), # Default TODO
-        search_index='cernsearch-test-doc_v0.0.1',
+        search_class='cern_search_rest.modules.cernsearch.search.RecordCERNSearch',
+        search_index='cernsearch-test',  # TODO: Parametrize this, along with the rest of the config file
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
         },
-        # suggesters= {}, # TODO
-        # use_options_view=True, # TODO
         max_result_window=10000,
         read_permission_factory_imp=record_read_permission_factory,
         create_permission_factory_imp=record_create_permission_factory,
         update_permission_factory_imp=record_update_permission_factory,
         delete_permission_factory_imp=record_delete_permission_factory,
-        # error_handlers={}, # TODO
     )
 )
 

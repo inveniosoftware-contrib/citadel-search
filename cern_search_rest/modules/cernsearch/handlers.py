@@ -112,7 +112,7 @@ def cern_authorized_signup_handler(resp, remote, *args, **kwargs):
 
 
 def egroup_admin():
-    admin_access_groups = current_app.config['ADMIN_VIEW_ACCESS_GROUPS']
+    admin_access_groups = current_app.config['ADMIN_ACCESS_GROUPS']
     # Allow based in the '_access' key
     user_provides = get_user_provides()
     # set.isdisjoint() is faster than set.intersection()
