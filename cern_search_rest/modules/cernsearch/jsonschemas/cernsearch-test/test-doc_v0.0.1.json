@@ -1,12 +1,15 @@
 {
   "title": "Custom record schema v0.0.1",
-  "id": "http://localhost:5000/schemas/test-doc_v0.0.1.json",
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://localhost:5000/schemas/cernsearch-test/test-doc_v0.0.1.json",
+  "$schema": "http://localhost:5000/schemas/cernsearch-test/test-doc_v0.0.1.json",
   "type": "object",
   "properties": {
     "_access": {
       "type": "object",
       "properties": {
+        "owner":{
+          "type": "string"
+        },
         "read":{
           "type": "string"
         },

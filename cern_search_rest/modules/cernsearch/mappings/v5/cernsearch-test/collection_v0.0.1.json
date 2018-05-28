@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 3000
   },
   "mappings": {
-    "test-doc_v0.0.1": {
+    "collection_v0.0.1": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch"
@@ -16,6 +16,9 @@
         "_access": {
           "type": "nested",
           "properties": {
+            "owner":{
+              "type": "string"
+            },
             "read": {
               "type": "string"
             },
@@ -27,11 +30,15 @@
             }
           }
         },
-        "title": {
+        "minutes": {
           "type": "string",
           "analyzer": "english"
         },
-        "description": {
+        "content": {
+          "type": "string",
+          "analyzer": "english"
+        },
+        "authors": {
           "type": "string",
           "analyzer": "english"
         },

@@ -79,11 +79,20 @@ In order to upload a document we need to perform a *POST* operation. For example
 curl -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' \
     -i 'http://<host:port>/api/records/' --data '
        {
+           "_access": {
+             "delete": "test-egroup@cern.ch", 
+             "owner": "test-egroup@cern.ch", 
+             "read": "test-egroup@cern.ch", 
+             "update": "test-egroup@cern.ch"
+           }, 
         "description": "This is an awesome description for our first uploaded document",
         "title": "Demo document"
+        "$schema": "http://0.0.0.0/schemas/test-doc_v0.0.1.json"
        }
        '
 ```
+Note: The ``$schema`` field is not mandatory, if it is not set the documents will be inserted in the default schema 
+(defined upon instance creation).
 
 The response should be a code 200 with a selflink to the new inserted document. 
 It should look something similar to the url of the next query. With it we can obtain the document:
@@ -98,9 +107,29 @@ curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' \
 
 In order to query documents we need to perform a *GET* operation. We can specify the amount of 
 documents to be returned (in total and per page), among other options. For a full list check
-[here](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html).
+[here](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html). Note that all the indices of an 
+instance have the same alias, and one per folder of the mappings tree. Therefore, the ``invenio-records-rest`` library can be set with only one search index 
+(that allow searching over multiple indices, but only the allowed ones).
 
-An example query for the terms _awesome_ and _document_ looks like this:
+```
+/cernsearch-test/ 
+      |
+      '---> /type_one/
+      |         |
+      |         '---> mapping_one_a.json
+      |         '---> mapping_one_b.json
+      '---> /type_two/
+      |         |
+      |         '---> mapping_two.json
+      |
+      '---> mapping_test.json
+```
+
+Indices ``mapping_one_a`` and ``mapping_one_b`` will have ``cernsearch-test`` and ``type_one`` aliases, ``mapping_two`` 
+will have ``cernsearch-test`` and ``type_two`` aliases, and finally ``mapping_test`` will have ``cernsearch-test`` as
+alias.
+
+Concerning the queries, an example query for the terms _awesome_ and _document_ looks like this:
 
 ```bash
 curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' \
@@ -230,6 +259,9 @@ An example mapping containing the permission fields is:
         "_access": {
           "type": "nested",
           "properties": {
+            "owner":{
+              "type": "string"
+            },
             "read":{
               "type": "string"
             },
@@ -251,7 +283,10 @@ An example mapping containing the permission fields is:
 }
 ```
 
-Note that there is no _create_ permission, that is specified by the __owner_ field in the metadata.
+Note that there is no _create_ permission, that is specified by the __owner_ field in the metadata. The owner field in 
+the document schema is still needed for querying purposes and should be the owner of the document (in most cases it 
+will be the same than the owner of the document collection or index but it is specified at document indexing time 
+rather than upon index creation).
 
 ### Importante note
 
@@ -331,3 +366,19 @@ Starting command throw ssl:
 ```bash
 gunicorn -b :5000 --certfile=ssl.crt --keyfile=ssl.key cern_search_rest.wsgi
 ```
+
+## Configuration
+
+CERN Search specific parameters:
+
+-
+-
+-
+
+The rest of the configuration comes from the parameters are configurable thought the Invenio Framework. The full list of
+the overwriten ones is show below, nonetheless, if needed others can be overwriten (check documentation of the 
+corresponding project in the [invenio repository](www.github.com/inveniosoftware)):
+
+-
+-
+-
