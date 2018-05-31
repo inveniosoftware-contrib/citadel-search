@@ -324,22 +324,36 @@ objects:
     name: env-configmap
   data:
     # Invenio
-    INVENIO_INSTANCE_PATH: ${APP_INSTANCE_PATH}
+    INVENIO_INSTANCE_PATH: ${INSTANCE_PATH}
     # App to allow hosts
-    INVENIO_APP_ALLOWED_HOSTS: ${APP_ALLOWED_HOSTS}
+    INVENIO_APP_ALLOWED_HOSTS: ${ALLOWED_HOSTS}
     # Invenio Theme
     INVENIO_THEME_FRONTPAGE_TITLE: ${SITE_NAME}
     INVENIO_THEME_SITENAME: ${SITE_NAME}
     INVENIO_THEME_LOGO: ${LOGO_PATH}
     INVENIO_THEME_LOGO_ADMIN: ${LOGO_PATH}
     INVENIO_ADMIN_VIEW_ACCESS_GROUPS: ${ADMIN_UI_ACCESS_LIST}
+    # CERN Search
+    CERN_SEARCH_REMOTE_APP_RESOURCE: ${REMOTE_APP_RESOURCE}
+    CERN_SEARCH_DEFAULT_INDEX: ${DEFAULT_INDEX}
+    CERN_SEARCH_DEFAULT_DOC_TYPE: ${DEFAULT_DOC_TYPE}
+    CERN_SEARCH_INSTANCE: ${SEARCH_INSTANCE}
 
 
 parameters:
-  - name: APP_INSTANCE_PATH
+  - name: INSTANCE_PATH
     description: "Invenio instance path for CERN Search application."
     value: /usr/local/var/cernsearch/var/cernsearch-instance
-  - name: APP_ALLOWED_HOSTS
+  - name: REMOTE_APP_RESOURCE
+    description: "the name of the server / project"
+    value: 'test-cern-search.cern.ch'
+  - name: DEFAULT_INDEX
+    value: 'cernsearch-test-test-doc_v0.0.1'
+  - name: DEFAULT_DOC_TYPE
+    value: 'test-doc_v0.0.1'
+  - name: SEARCH_INSTANCE
+    value: 'cernsearch-test'
+  - name: ALLOWED_HOSTS
     description: "Invenio App allowed hosts. Without protocol (e.g. http) nor salsh ('/') at the end"
     value: "['test-cern-search.web.cern.ch']"
   - name: SITE_NAME

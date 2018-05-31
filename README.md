@@ -371,14 +371,17 @@ gunicorn -b :5000 --certfile=ssl.crt --keyfile=ssl.key cern_search_rest.wsgi
 
 CERN Search specific parameters:
 
--
--
--
+- CERN_SEARCH_REMOTE_APP_RESOURCE: It is the ``Homepage`` value in the OAuth application registration. Note that it
+should not include nor the protocol (``https://``) nor the ending slash (``\``). Basically, this would be the name of 
+your server, which if it is deployed in OpenShift would be like ``you-project-name.web.cern.ch``. 
+- CERN_SEARCH_DEFAULT_INDEX: The default index where to insert data if not index / schema is specified in the request.
+- CERN_SEARCH_DEFAULT_DOC_TYPE: The value of the default document type. It must be part of the default index,
+defined in the above variable.
+- CERN_SEARCH_INSTANCE: The name of the instance. A folder with this name must exist in
+ ``cern_search_rest/modules/cernsearch/jsonschemas/``, therefore, upon index creation an alias will be set for all the 
+ indexes (mappings existing in this folder). This indexes will be the ones over whom searches will be performed.
 
-The rest of the configuration comes from the parameters are configurable thought the Invenio Framework. The full list of
-the overwriten ones is show below, nonetheless, if needed others can be overwriten (check documentation of the 
-corresponding project in the [invenio repository](www.github.com/inveniosoftware)):
-
--
--
--
+The rest of the configuration comes from parameters that are configurable through the Invenio Framework or Flask.
+The full list of the overwritten ones can be found in ``cern_search_rest/config.py``, nonetheless, if needed 
+others can be overwritten (check documentation of the corresponding project in the 
+[invenio repository](www.github.com/inveniosoftware)):
