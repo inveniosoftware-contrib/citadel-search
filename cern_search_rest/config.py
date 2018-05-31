@@ -4,6 +4,7 @@
 from __future__ import absolute_import, print_function
 
 import copy
+import os
 from invenio_oauthclient.contrib import cern
 
 from .modules.cernsearch.permissions import (record_read_permission_factory,
@@ -26,7 +27,7 @@ THEME_SEARCHBAR = False
 
 CERN_REMOTE_APP = copy.deepcopy(cern.REMOTE_APP)
 CERN_REMOTE_APP["params"].update(dict(request_token_params={
-    "resource": "test-cern-search.cern.ch",  # replace with your server
+    "resource": os.getenv('CERN_SEARCH_REMOTE_APP_RESOURCE', 'test-cern-search.cern.ch'),
     "scope": "Name Email Bio Groups",
 }))
 
@@ -60,13 +61,13 @@ JSONSCHEMAS_REGISTER_ENDPOINTS_UI = False
 
 # TODO use ES central service. Change INDEXER_RECORD_TO_INDEX = 'invenio_indexer.utils.default_record_to_index'
 
-INDEXER_DEFAULT_DOC_TYPE = 'test-doc_v0.0.1'
-INDEXER_DEFAULT_INDEX = 'cernsearch-test-test-doc_v0.0.1'
+INDEXER_DEFAULT_DOC_TYPE = os.getenv('CERN_SEARCH_DEFAULT_DOC_TYPE', 'test-doc_v0.0.1')
+INDEXER_DEFAULT_INDEX = os.getenv('CERN_SEARCH_DEFAULT_INDEX', 'cernsearch-test-test-doc_v0.0.1')
 
 # Search configuration
 # =====================
 
-SEARCH_MAPPINGS = ['cernsearch-test']
+SEARCH_MAPPINGS = [os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test')]
 
 # Records REST configuration
 # ===========================
@@ -85,7 +86,7 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/record/<{0}:pid_value>'.format(_Record_PID),
         list_route='/records/',
         links_factory_imp='invenio_records_rest.links:default_links_factory',
-        record_class='cern_search_rest.modules.cernsearch.api:CernSearchRecord',  # TODO
+        record_class='cern_search_rest.modules.cernsearch.api:CernSearchRecord',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
