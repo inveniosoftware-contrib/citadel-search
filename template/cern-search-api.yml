@@ -364,4 +364,4 @@ parameters:
     value: /images/cernsearchicon.png
   - name: ADMIN_UI_ACCESS_LIST
     description: "List of comma separated egroups that have access to the ADMIN UI (e.g. 'egroup_one,egroup_two')"
-    value: "CernSearch-Administrators"
+    value: "CernSearch-Administrators@cern.ch"
