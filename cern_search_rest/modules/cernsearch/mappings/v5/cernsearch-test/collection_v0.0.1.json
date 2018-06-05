@@ -17,16 +17,16 @@
           "type": "nested",
           "properties": {
             "owner":{
-              "type": "string"
+              "type": "keyword"
             },
             "read": {
-              "type": "string"
+              "type": "keyword"
             },
             "update": {
-              "type": "string"
+              "type": "keyword"
             },
             "delete": {
-              "type": "string"
+              "type": "keyword"
             }
           }
         },
