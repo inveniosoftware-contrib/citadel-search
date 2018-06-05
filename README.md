@@ -13,10 +13,27 @@ Lets assume the following JSON schema and Elasticsearch mapping for our demo doc
 ```json
 {
   "title": "Custom record schema v0.0.1",
-  "id": "http://localhost:5000/schemas/cernsearch-test-doc_v0.0.1.json",
-  "$schema": "http://json-schema.org/draft-04/schema#",
+  "id": "http://<host:port>/schemas/cernsearch-test/test-doc_v0.0.1.json",
+  "$schema": "http://<host:port>/schemas/cernsearch-test/test-doc_v0.0.1.json",
   "type": "object",
   "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "string"
+        },
+        "read":{
+          "type": "string"
+        },
+        "update":{
+          "type": "string"
+        },
+        "delete":{
+          "type": "string"
+        }
+      }
+    },
     "title": {
       "type": "string",
       "description": "Record title."
@@ -43,12 +60,32 @@ Lets assume the following JSON schema and Elasticsearch mapping for our demo doc
     "index.mapping.total_fields.limit": 3000
   },
   "mappings": {
-    "doc-v0.0.1": {
+    "test-doc_v0.0.1": {
       "numeric_detection": true,
+      "_meta": {
+        "_owner": "CernSearch-Administrators@cern.ch"
+      },
       "_all": {
         "analyzer": "english"
       },
       "properties": {
+        "_access": {
+          "type": "nested",
+          "properties": {
+            "owner":{
+              "type": "keyword"
+            },
+            "read": {
+              "type": "keyword"
+            },
+            "update": {
+              "type": "keyword"
+            },
+            "delete": {
+              "type": "keyword"
+            }
+          }
+        },
         "title": {
           "type": "string",
           "analyzer": "english"
@@ -80,10 +117,10 @@ curl -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' \
     -i 'http://<host:port>/api/records/' --data '
        {
            "_access": {
-             "delete": "test-egroup@cern.ch", 
-             "owner": "test-egroup@cern.ch", 
-             "read": "test-egroup@cern.ch", 
-             "update": "test-egroup@cern.ch"
+             "delete": ["test-egroup@cern.ch"], 
+             "owner": ["test-egroup@cern.ch"], 
+             "read": ["test-egroup@cern.ch", "test-egroup-two@cern.ch"], 
+             "update": ["test-egroup@cern.ch"]
            }, 
         "description": "This is an awesome description for our first uploaded document",
         "title": "Demo document"
@@ -91,16 +128,15 @@ curl -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' \
        }
        '
 ```
-Note: The ``$schema`` field is not mandatory, if it is not set the documents will be inserted in the default schema 
+Note: The ``$schema`` field is not mandatory, if it is not set the document will be inserted in the default schema 
 (defined upon instance creation).
 
 The response should be a code 200 with a selflink to the new inserted document. 
-It should look something similar to the url of the next query. With it we can obtain the document:
+It should look something similar to the url of the next query. With it you can obtain the document:
 
 ```bash
 curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' \
   'http://<host:port>/api/record/1'
-
 ```
 
 ### Query documents
@@ -108,8 +144,8 @@ curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' \
 In order to query documents we need to perform a *GET* operation. We can specify the amount of 
 documents to be returned (in total and per page), among other options. For a full list check
 [here](https://www.elastic.co/guide/en/elasticsearch/reference/current/query-dsl.html). Note that all the indices of an 
-instance have the same alias, and one per folder of the mappings tree. Therefore, the ``invenio-records-rest`` library can be set with only one search index 
-(that allow searching over multiple indices, but only the allowed ones).
+instance have the same alias, and one per folder of the mappings tree. Therefore, the ``invenio-records-rest`` library 
+can be set with only one search index (that allow searching over multiple indices, but only the allowed ones).
 
 ```
 /cernsearch-test/ 
@@ -129,7 +165,7 @@ Indices ``mapping_one_a`` and ``mapping_one_b`` will have ``cernsearch-test`` an
 will have ``cernsearch-test`` and ``type_two`` aliases, and finally ``mapping_test`` will have ``cernsearch-test`` as
 alias.
 
-Concerning the queries, an example query for the terms _awesome_ and _document_ looks like this:
+Concerning the queries, an example query for the words _awesome_ and _document_ looks like this:
 
 ```bash
 curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' \
@@ -156,6 +192,7 @@ The answer would look something similar to:
           "self": "http://<host:port>/api/record/5"
         }, 
         "metadata": {
+          "_access": {<access details>},
           "control_number": "5", 
           "description": "This is an awesome description for our first uploaded document", 
           "title": "Demo document"
@@ -197,7 +234,7 @@ application/json+patch as Content-Type. An example to update the description wou
 
 ```bash
 curl -k -X PATCH -H 'Content-Type: application/json-patch+json' -H 'Accept: application/json' \
-    -i 'https://test-cern-search.web.cern.ch/api/record/9' --data '
+    -i 'https://<host:port>/api/record/9' --data '
     [
         {"op": "replace", "path": "/metadata/description", "value": "Description changed with patch partial update"}
     ]'
@@ -230,57 +267,36 @@ Permissions are implemented in a CRUD fashion.
 
 Read, Update and Delete follow the same pattern. The user has to be authenticated and to be allowed
 to perform the action on the document, meaning one of its egroups is in the corresponding __access_ field.
+
+For single document read, update or delete an access token needs to be sent in the headers:
+
+```bash
+curl -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' \
+    -i 'http://<host:port>/api/record/5'  -H 'Autorization:Bearer <ACCESS_TOKEN>'
+```
+
+This token can be obtained via the Web UI at ``https://<host:port>/account/settings/applications/`` under 
+``applidations`` in the ``Personal access token`` section. Please store in a safe place the token itself since after you
+have saved it, it will not be shown again.
+
 Create also needs the user to be authenticated, but in this case the ownership/permissions are not check on
-a document but on the mapping. The egroups allowed to create are specified in the mapping when setting up the 
+a document level but on the mapping. The egroups allowed to create are specified in the mapping when setting up the 
 Search instance.
 
-Search is not treated as a normal read. It passes through the _cern_filter_. This filter applies the following rules:
+Search is not treated as a normal read. In this case, along with the access token, the egroups that are allowed to read.
+ It passes through the _cern_filter_. This filter applies the following rules:
 
-``public | read_restricted ``
+``public | read_restricted | write_restricted | owner_restricted``
 
 Which will get the documents that are public and those that are restricted but the user egroups match the _read_ field
-of the __access_ property.
+of the __access_ property. It is assumed that if a user / egroup is allowed to perform a document update or is the owner
+ it is also entitled to read it.
 
-An example mapping containing the permission fields is:
+An example of a search query is:
 
-```json
-{
-  "settings": {
-    "index.percolator.map_unmapped_fields_as_string": true,
-    "index.mapping.total_fields.limit": 3000
-  },
-  "mappings": {
-    "cern-search-example-v0.0.1": {
-      "_meta": { 
-        "class": "cern-search-example",
-        "_owner": "egroup_owner_one, egroup_owner_two,egroup_owner_three"
-      },
-      "properties": {
-        "_access": {
-          "type": "nested",
-          "properties": {
-            "owner":{
-              "type": "string"
-            },
-            "read":{
-              "type": "string"
-            },
-            "update":{
-              "type": "string"
-            }, 
-            "delete":{
-              "type": "string"
-            }
-          }  
-        },
-        "title": {
-          "type": "string"
-        },
-        ...
-      }
-    }
-  }
-}
+```bash
+curl -k -X GET -H 'Content-Type: application/json' -H 'Accept: application/json' 
+    -i 'https://<host:port>/api/records/?access=egroup-one,egroup-two' -H "Authorization:Bearer <ACCESS_TOKEN>"
 ```
 
 Note that there is no _create_ permission, that is specified by the __owner_ field in the metadata. The owner field in 
@@ -292,8 +308,8 @@ rather than upon index creation).
 
 There is a bug in invenio-oauthclient. Once the user SSO token expires there is no way of updating the egroups 
 (and other information) of the user, failing with a _401 Unauthorized_ from the SSO (due to expired token). There is an 
-issue opened ([link](https://github.com/inveniosoftware/invenio-oauthclient/issues/154)). In the meanwhile the solution is to edit the _invenio-oauthclient/contrib/cern.py:account_groups_ 
-with the following lines:
+issue opened ([link](https://github.com/inveniosoftware/invenio-oauthclient/issues/154)). In the meanwhile the solution 
+is to edit the _invenio-oauthclient/contrib/cern.py:account_groups_ with the following lines:
 
 ```python
     def account_groups(account, resource, refresh_timedelta=None):
@@ -334,7 +350,7 @@ Database (PostgreSQL) Secret
 apiVersion: v1
 kind: Secret
 metadata:
-  name: srchdb-dev
+  name: srchdb
 stringData:
   dburi: postgresql+psycopg2://user:password@host:port/databasename
 ```
