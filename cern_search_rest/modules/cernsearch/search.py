@@ -3,26 +3,69 @@
 from elasticsearch_dsl import Q
 from invenio_search import RecordsSearch
 from invenio_search.api import DefaultFilter
+from flask import request
 
-from cern_search_rest.modules.cernsearch.utils import get_user_provides
+"""
+The Filter emulates the following query:
+curl -X GET "localhost:9200/_search" -H 'Content-Type: application/json' -d'
+{
+  "query": {
+    "bool": {
+      "filter": {
+        "bool": {
+          "should": [
+            {"nested": {
+              "path": "_access", 
+              "query": {
+                "bool": {
+                  "should": [
+                    {"terms": {"_access.read": ["egroup-read-one","egroup-read-two"]}},
+                    {"terms": {"_access.update": "egroup-write-one"}},
+                    {"bool": { # Public document
+                      "must_not": {
+                        "exists": {"field": "_access.read"}
+                      } # End must_not
+                    }} # End bool
+                  ] # End should
+                } # End bool
+              } # End query
+            }} # End nested
+          ] # End should
+        } # End bool
+      } # End filter
+    } # End bool
+  } # End query
+}
+'
+"""
 
 
 def cern_search_filter():
     """Filter list of results."""
-    # Get CERN user's provides
-    provides = get_user_provides()  # TODO CHANGE THIS BY LIST PROVIDED BY SERVICE
-
+    provides = get_egroups()
     # Filter for public records
     public = ~Q('exists', field='_access.read')
-    # Filter for restricted records, that the user has access to
-    read_restricted = Q('terms', **{'_access.read': provides})
-    write_restricted = Q('terms', **{'_access.update': provides})
-    # Filter records where the user is owner
-    owner = Q('terms', **{'_access.owner': provides})
-    # OR all the filters
-    combined_filter = public | read_restricted | write_restricted | owner
+    nested_query = public
 
-    return Q('bool', filter=[combined_filter])
+    if provides is not None:
+        # Filter for restricted records, that the user has access to
+        read_restricted = Q('terms', **{'_access.read': provides})
+        write_restricted = Q('terms', **{'_access.update': provides})
+        # Filter records where the user is owner
+        owner = Q('terms', **{'_access.owner': provides})
+        # OR all the filters
+        nested_query = public | read_restricted | write_restricted | owner
+
+    return Q('bool', should=[Q('nested', path='_access', query=nested_query)])
+
+
+def get_egroups():
+    egroups = request.args.get('access', None)
+    try:
+        return ['{0}@cern.ch'.format(egroup) for egroup in egroups.split(',')]
+
+    except AttributeError:
+        return None
 
 
 class RecordCERNSearch(RecordsSearch):
