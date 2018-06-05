@@ -8,16 +8,28 @@
       "type": "object",
       "properties": {
         "owner":{
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "read":{
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "update":{
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         },
         "delete":{
-          "type": "string"
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
         }
       }
     },
