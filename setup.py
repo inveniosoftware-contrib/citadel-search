@@ -60,6 +60,8 @@ install_requires = [
     'redis>=2.10.0',
     'npm>=0.1.1',
     'uWSGI>=2.0.16',
+    'urllib3[secure]>=1.22',
+    'SQLAlchemy-Continuum==1.3.4',
 ]
 
 packages = find_packages()
