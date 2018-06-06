@@ -104,7 +104,7 @@ def has_update_permission(user, record):
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
-        update_access_groups = record['_access']['update'].split(',')
+        update_access_groups = record['_access']['update']
         if check_elasticsearch(record) and (
             (user_provides and not set(user_provides).isdisjoint(set(update_access_groups))) \
                 or has_owner_permission(user)):
@@ -118,7 +118,7 @@ def has_read_record_permission(user, record):
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
-        read_access_groups = record['_access']['read'].split(',')
+        read_access_groups = record['_access']['read']
         if check_elasticsearch(record) and (
                 (user_provides and not set(user_provides).isdisjoint(set(read_access_groups)))
                 or has_owner_permission(user)):
@@ -132,7 +132,7 @@ def has_delete_permission(user, record):
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
-        delete_access_groups = record['_access']['delete'].split(',')
+        delete_access_groups = record['_access']['delete']
         if (user_provides and not set(user_provides).isdisjoint(set(delete_access_groups))) \
                 or has_owner_permission(user):
             return True
