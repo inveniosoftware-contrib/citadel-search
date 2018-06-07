@@ -26,6 +26,11 @@ def record_read_permission_factory(record=None):
     return record_permission_factory(record=record, action='read')
 
 
+def record_read_list_permission_factory(record=None):
+    """Read permission factory."""
+    return record_permission_factory(record=record, action='read_list')
+
+
 def record_update_permission_factory(record=None):
     """Update permission factory."""
     return record_permission_factory(record=record, action='update')
@@ -46,6 +51,7 @@ class RecordPermission(object):
 
     create_actions = ['create']
     read_actions = ['read']
+    read_list_actions = ['read_list']
     update_actions = ['update']
     delete_actions = ['delete']
 
@@ -63,7 +69,9 @@ class RecordPermission(object):
     def create(cls, record, action, user=None):
         """Create a record permission."""
         # Allow everything for testing
-        if action in cls.create_actions:
+        if action in cls.read_list_actions:
+            return cls(record, has_owner_permission, user)
+        elif action in cls.create_actions:
             return cls(record, has_owner_permission, user)
         elif action in cls.read_actions:
             return cls(record, has_read_record_permission, user)
