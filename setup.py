@@ -60,6 +60,7 @@ install_requires = [
     'redis>=2.10.0',
     'npm>=0.1.1',
     'uWSGI>=2.0.16',
+    'idna>=2.5,<2.7',
 ]
 
 packages = find_packages()

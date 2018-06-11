@@ -338,6 +338,7 @@ objects:
     CERN_SEARCH_DEFAULT_INDEX: ${DEFAULT_INDEX}
     CERN_SEARCH_DEFAULT_DOC_TYPE: ${DEFAULT_DOC_TYPE}
     CERN_SEARCH_INSTANCE: ${SEARCH_INSTANCE}
+    INVENIO_ADMIN_USER: ${ADMIN_USER}
 
 
 parameters:
@@ -353,6 +354,8 @@ parameters:
     value: 'test-doc_v0.0.1'
   - name: SEARCH_INSTANCE
     value: 'cernsearch-test'
+  - name: ADMIN_USER:
+    value: 'cernsearch@cern.ch'
   - name: ALLOWED_HOSTS
     description: "Invenio App allowed hosts. Without protocol (e.g. http) nor salsh ('/') at the end"
     value: "['test-cern-search.web.cern.ch']"
