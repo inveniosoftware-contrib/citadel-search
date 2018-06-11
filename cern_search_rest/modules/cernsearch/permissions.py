@@ -105,9 +105,11 @@ def has_update_permission(user, record):
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         update_access_groups = record['_access']['update']
-        if check_elasticsearch(record) and (
-            (user_provides and not set(user_provides).isdisjoint(set(update_access_groups))) \
-                or has_owner_permission(user)):
+        if check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
+            (
+                not set(user_provides).isdisjoint(set(update_access_groups))
+                or is_admin(user)
+            ):
             return True
     return False
 
@@ -119,9 +121,11 @@ def has_read_record_permission(user, record):
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         read_access_groups = record['_access']['read']
-        if check_elasticsearch(record) and (
-                (user_provides and not set(user_provides).isdisjoint(set(read_access_groups)))
-                or has_owner_permission(user)):
+        if check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
+            (
+                not set(user_provides).isdisjoint(set(read_access_groups))
+                or is_admin(user)
+            ):
             return True
     return False
 
@@ -133,8 +137,11 @@ def has_delete_permission(user, record):
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         delete_access_groups = record['_access']['delete']
-        if (user_provides and not set(user_provides).isdisjoint(set(delete_access_groups))) \
-                or has_owner_permission(user):
+        if check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
+            (
+                not set(user_provides).isdisjoint(set(delete_access_groups))
+                or is_admin(user)
+            ):
             return True
     return False
 
@@ -189,6 +196,14 @@ def deny(user, record):
 def allow(user, record):
     """Allow access."""
     return True
+
+
+def is_admin(user):
+    """Check if the user is administrator"""
+    admin_user = current_app.config['ADMIN_USER']
+    if user.email == admin_user or user.email.replace('@cern.ch', '') == admin_user:
+        return True
+    return False
 
 
 def is_public(data, action):

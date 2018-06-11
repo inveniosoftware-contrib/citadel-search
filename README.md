@@ -261,6 +261,13 @@ If afterwards we query (get,put,delete) for the specific item we will obtain a 4
 }
 ```
 
+### Debugging using a superuser
+
+When creating the instance a user account was granted super user rights. This account is set via the ``ADMIN_USER`` 
+environmental variable, its value will be compared against the user's email returned by the OAuth server.
+
+This user will have the rights to read, update, create and delete any document within the instance indexes.
+
 ## ACLs and permissions
 
 Permissions are implemented in a CRUD fashion.
@@ -387,16 +394,17 @@ gunicorn -b :5000 --certfile=ssl.crt --keyfile=ssl.key cern_search_rest.wsgi
 
 CERN Search specific parameters:
 
-- CERN_SEARCH_REMOTE_APP_RESOURCE: It is the ``Homepage`` value in the OAuth application registration. Note that it
+- REMOTE_APP_RESOURCE: It is the ``Homepage`` value in the OAuth application registration. Note that it
 should not include nor the protocol (``https://``) nor the ending slash (``\``). Basically, this would be the name of 
 your server, which if it is deployed in OpenShift would be like ``you-project-name.web.cern.ch``. 
-- CERN_SEARCH_DEFAULT_INDEX: The default index where to insert data if not index / schema is specified in the request.
-- CERN_SEARCH_DEFAULT_DOC_TYPE: The value of the default document type. It must be part of the default index,
+- DEFAULT_INDEX: The default index where to insert data if not index / schema is specified in the request.
+- DEFAULT_DOC_TYPE: The value of the default document type. It must be part of the default index,
 defined in the above variable.
-- CERN_SEARCH_INSTANCE: The name of the instance. A folder with this name must exist in
+- SEARCH_INSTANCE: The name of the instance. A folder with this name must exist in
  ``cern_search_rest/modules/cernsearch/jsonschemas/``, therefore, upon index creation an alias will be set for all the 
  indexes (mappings existing in this folder). This indexes will be the ones over whom searches will be performed.
-
+- ADMIN_USER: Superuser's email account. If it is a non-CERN account, it should go without a domain 
+(``@cern.ch``).
 The rest of the configuration comes from parameters that are configurable through the Invenio Framework or Flask.
 The full list of the overwritten ones can be found in ``cern_search_rest/config.py``, nonetheless, if needed 
 others can be overwritten (check documentation of the corresponding project in the 

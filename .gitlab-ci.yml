@@ -17,7 +17,7 @@ build_dev_version:
   stage: build
   except:
     - tags
-  environment: dev
+  environment: master
   tags:
     - docker-image-build
   script: 'echo "Building Docker Master image..."'
