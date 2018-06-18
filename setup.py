@@ -68,7 +68,7 @@ packages = find_packages()
 
 # Get the version string. Cannot be done with import!
 g = {}
-with open(os.path.join("cern_search_rest", "version.py"), "rt") as fp:
+with open(os.path.join("cern_search_rest_api", "version.py"), "rt") as fp:
     exec(fp.read(), g)
     version = g["__version__"]
 
@@ -87,13 +87,13 @@ setup(
     platforms='any',
     entry_points={
         'invenio_config.module': [
-            'cern_search_rest = cern_search_rest.config'
+            'cern_search_rest_api = cern_search_rest_api.config'
         ],
         'invenio_search.mappings': [
-            'cernsearch-test = cern_search_rest.modules.cernsearch.mappings',
+            'cern_search_rest_api = cern_search_rest_api.modules.cernsearch.mappings',
         ],
         'invenio_jsonschemas.schemas': [
-            'cernsearch-test = cern_search_rest.modules.cernsearch.jsonschemas'
+            'cern_search_rest_api = cern_search_rest_api.modules.cernsearch.jsonschemas'
         ],
     },
     extras_require=extras_require,

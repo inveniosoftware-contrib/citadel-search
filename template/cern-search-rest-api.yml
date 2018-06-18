@@ -70,7 +70,7 @@ objects:
                 secretKeyRef:
                   name: oauth
                   key: oauth_credentials
-          image: gitlab-registry.cern.ch/webservices/cern-search/cern_search_rest:latest
+          image: gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api:latest
           imagePullPolicy: Always
           name: cern-search-api
           ports:
@@ -277,7 +277,7 @@ objects:
      app: cern-search-api
    name: cern-search-api
   spec:
-   dockerImageRepository: gitlab-registry.cern.ch/webservices/cern-search/cern_search_rest
+   dockerImageRepository: gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api
 
 ##############################
 ######### CONFIG MAP #########
