@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 30
   },
   "mappings": {
-    "event_v0.0.1": {
+    "event_v1.0.0": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "indico@cern.ch"
@@ -28,16 +28,28 @@
           }
         },
         "id": {
-          "type": "keyword",
-          "analyzer": "not_analyzed"
-        },
-        "event_type": {
-          "type": "keyword",
-          "analyzer": "not_analyzed"
+          "type": "keyword"
         },
         "category_path": {
-          "type": "keyword",
-          "analyzer": "not_analyzed"
+          "type": "keyword"
+        },
+        "event_type": {
+          "type": "keyword"
+        },
+        "creation_date": {
+          "type": "date",
+          "format": "YYYY-MM-DDZHH:MM"
+        },
+        "start_date": {
+          "type": "date",
+          "format": "YYYY-MM-DDZHH:MM"
+        },
+        "end_date": {
+          "type": "date",
+          "format": "YYYY-MM-DDZHH:MM"
+        },
+        "location": {
+          "type": "text"
         },
         "title": {
           "type": "text",
@@ -55,21 +67,6 @@
               }
             }
           ]
-        },
-        "start_date": {
-          "type": "date",
-          "analyzer": "not_analyzed"
-        },
-        "creation_date": {
-          "type": "date",
-          "analyzer": "not_analyzed"
-        },
-        "end_date": {
-          "type": "date",
-          "analyzer": "not_analyzed"
-        },
-        "location": {
-          "type": "text"
         },
         "description": {
           "type": "text",
@@ -95,8 +92,7 @@
               "type": "text",
               "fields": {
                   "keyword": {
-                    "type": "keyword",
-                    "analyzer": "not_analyzed"
+                    "type": "keyword"
                   }
                 }
             },
@@ -105,13 +101,12 @@
             }
           }
         },
+
         "custom_pid": {
-          "type": "text",
-          "index": "not_analyzed"
+          "type": "keyword"
         },
         "$schema": {
-          "type": "text",
-          "index": "not_analyzed"
+          "type": "keyword"
         }
       }
     }
