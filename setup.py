@@ -61,6 +61,7 @@ install_requires = [
     'npm>=0.1.1',
     'uWSGI>=2.0.16',
     'idna>=2.5,<2.7',
+    'urllib3<1.23', # Needed until invenio-search[elasticsearch] is updated to 6 (depends on central service version)
 ]
 
 packages = find_packages()
