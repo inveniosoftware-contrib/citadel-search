@@ -3,6 +3,76 @@
 CERN Search provides enterprise search capabilities on demand. You can set up your own search instance, submit your 
 documents and search among them when needed!
 
+1. [Document creation](#document-creation)  
+  * [Designing a mapping](#designing-a-mapping)  
+  * [Handling relationshipts](#handling-relationships)  
+  * [Performance tips](#performance-tips)  
+2. [RESTful API](#restful-api)  
+  * [Insert documents](#insert-documents)  
+  * [Query documents](#query-documents)  
+  * [Update documents](#update-documents)  
+  * [Delete documents](#delete-documents)  
+  * [Debugging using a superuser](#debugging-using-a-superuser)  
+3. [ACLs and permissions](#acls-and-permissions)  
+4. [Setup](#setup)  
+5. [Configuration](#configuration)  
+
+
+## Document creation
+
+### Designing a mapping
+
+Generally speaking the mapping will be a model of the document/data that needs to be stored in Elasticsearch. Some possible types are string, integers, flotings, etc. In the relational world, databases are designed, as the name states, to manage relationships while Elastisearch treats all document as if they were flat, making them having to have all information needed to result in a match or not. This is not fully true (see [handle relationships](#handling-relationships)) nonetheless, for the purpose of designing a mapping we have to think of it as so. Extended information and more tips on how to optimize a data model can be found in the ["Modeling your data"](https://www.elastic.co/guide/en/elasticsearch/guide/current/modeling-your-data.html) chapter of the Elasticsearch documentation.
+
+Apart from simple and common types there might be the need to [handle relationships](#handling-relationships), [multiple languages](https://www.elastic.co/guide/en/elasticsearch/reference/current/multi-fields.html) or other properties for the same field, and even more importart is to take into account the read/update frecuency of the documents (see [performance tips](#performance-tips)).
+
+### Handling relationships
+A big problem sometimes are relationships. There are a few ways of solving this:
+
+* Inner Objects: Works well for one-to-one relations. This objects are flatten internally by Elasticsearch, which means that if you have a document like this:
+
+```json
+{
+  "title" : "Event with minutes",
+  "category" : [
+    {
+      "name" : "Minutes",
+      "description" : "This is the minutes category description"
+    },
+    {
+      "name" : "Events",
+      "description" : "This is the event category description"
+    }
+  ]
+}
+```
+Internally it will be representsed like:
+
+```json
+{
+  "title" : "Event with minutes",
+  "category.name" : ["Minutes", "Events"],
+  "category.description" : ["This is the minutes category description", "his is the event category description"]
+}
+```
+
+Which will result in wrong results since they will be matched in cartesian product. You can find more information in [here](https://www.elastic.co/blog/managing-relations-inside-elasticsearch) in the ``inner objects`` section.
+
+* Nested objects: It solves the problem mentioned above with the ``Inner objects`` search. However, it comes at a prices at search/update time and they are not recommended if your data changes often. More information about it can be found on [here](https://www.elastic.co/blog/managing-relations-inside-elasticsearch) in the ``nested objects`` section.
+
+
+* Parent/Child: It fixes the reindexing problem when updating a document that happens when using ``nested objects``, making insert/supdates perform better. However, this can have a high cost in performance and make sorting and scoring very difficult in some situations. More information about it can be found on [here](https://www.elastic.co/blog/managing-relations-inside-elasticsearch) in the ``parent/child objects`` section.
+
+Having seen the possiblities for treating relationships in ES, it is recommended to denormalize as much as possible to avoid performance bottlenecks. Flattening the parent information into the child documents. This also means that relationships need to be handled by us.
+
+### Performance tips
+
+* While changing the data of a single document in Elasticsearch follows the ACID principles, transactions involving multiple documents are not. There is no way to roll back the index to its previous state if part of a transaction fails. Partial updates are changed internally by non-atomic ``get - then - update`` operations, which can lead to version conflicts. These conflicts are solverd internally by a ``last write wins`` policy.
+
+* Denormalize by default, even if it means having redundant data, if possible denormalization will give you a better performance. The data written to disk is highly compressed, and disk space is cheap. Elasticsearch can happily cope with the extra data.
+
+* If grouping is needed, the field must be available in the document in its ``not_analyzed`` form. You might want to use [multi-fields](https://www.elastic.co/guide/en/elasticsearch/reference/current/multi-fields.html)
+
 ## RESTful API
 
 CERN Search as a Service provides a RESTful API through which you interact with your instance.
@@ -273,7 +343,7 @@ This user will have the rights to read, update, create and delete any document w
 Permissions are implemented in a CRUD fashion.
 
 Read, Update and Delete follow the same pattern. The user has to be authenticated and to be allowed
-to perform the action on the document, meaning one of its egroups is in the corresponding __access_ field.
+to perform the action on the document, meaning one of its egroups is in the corresponding _\_access_ field.
 
 For single document read, update or delete an access token needs to be sent in the headers:
 
@@ -296,7 +366,7 @@ Search is not treated as a normal read. In this case, along with the access toke
 ``public | read_restricted | write_restricted | owner_restricted``
 
 Which will get the documents that are public and those that are restricted but the user egroups match the _read_ field
-of the __access_ property. It is assumed that if a user / egroup is allowed to perform a document update or is the owner
+of the _\_access_ property. It is assumed that if a user / egroup is allowed to perform a document update or is the owner
  it is also entitled to read it.
 
 An example of a search query is:
@@ -306,7 +376,7 @@ curl -k -X GET -H 'Content-Type: application/json' -H 'Accept: application/json'
     -i 'https://<host:port>/api/records/?access=egroup-one,egroup-two' -H "Authorization:Bearer <ACCESS_TOKEN>"
 ```
 
-Note that there is no _create_ permission, that is specified by the __owner_ field in the metadata. The owner field in 
+Note that there is no _create_ permission, that is specified by the _\_owner_ field in the metadata. The owner field in 
 the document schema is still needed for querying purposes and should be the owner of the document (in most cases it 
 will be the same than the owner of the document collection or index but it is specified at document indexing time 
 rather than upon index creation).
@@ -408,4 +478,4 @@ defined in the above variable.
 The rest of the configuration comes from parameters that are configurable through the Invenio Framework or Flask.
 The full list of the overwritten ones can be found in ``cern_search_rest/config.py``, nonetheless, if needed 
 others can be overwritten (check documentation of the corresponding project in the 
-[invenio repository](www.github.com/inveniosoftware)):
+[invenio repository](www.github.com/inveniosoftware)).
