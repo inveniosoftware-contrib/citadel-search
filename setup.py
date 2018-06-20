@@ -90,10 +90,10 @@ setup(
             'cern_search_rest_api = cern_search_rest_api.config'
         ],
         'invenio_search.mappings': [
-            'cern_search_rest_api = cern_search_rest_api.modules.cernsearch.mappings',
+            'cernsearch-test = cern_search_rest_api.modules.cernsearch.mappings',
         ],
         'invenio_jsonschemas.schemas': [
-            'cern_search_rest_api = cern_search_rest_api.modules.cernsearch.jsonschemas'
+            'cernsearch-test = cern_search_rest_api.modules.cernsearch.jsonschemas'
         ],
     },
     extras_require=extras_require,
