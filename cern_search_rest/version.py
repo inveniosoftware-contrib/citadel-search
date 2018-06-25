@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """Version information for CERNSearch_REST.
-This file is imported by ``cern_search_rest_api.__init__``,
+This file is imported by ``cern_search_rest.__init__``,
 and parsed by ``setup.py``.
 """
 

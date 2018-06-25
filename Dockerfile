@@ -40,8 +40,8 @@ RUN chmod g=u /etc/passwd && \
     chown -R invenio:root /code
 
 # uWSGI configuration
-ARG UWSGI_WSGI_MODULE=cern_search_rest_api.wsgi:application
-ENV UWSGI_WSGI_MODULE ${UWSGI_WSGI_MODULE:-cern_search_rest_api.wsgi:application}
+ARG UWSGI_WSGI_MODULE=cern_search_rest.wsgi:application
+ENV UWSGI_WSGI_MODULE ${UWSGI_WSGI_MODULE:-cern_search_rest.wsgi:application}
 ARG UWSGI_PORT=5000
 ENV UWSGI_PORT ${UWSGI_PORT:-5000}
 ARG UWSGI_PROCESSES=2

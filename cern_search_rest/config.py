@@ -10,8 +10,7 @@ from invenio_oauthclient.contrib import cern
 from .modules.cernsearch.permissions import (record_read_permission_factory,
                                              record_create_permission_factory,
                                              record_update_permission_factory,
-                                             record_delete_permission_factory,
-                                             record_read_list_permission_factory)
+                                             record_delete_permission_factory)
 
 
 def _(x):
@@ -32,7 +31,7 @@ CERN_REMOTE_APP["params"].update(dict(request_token_params={
     "scope": "Name Email Bio Groups",
 }))
 
-CERN_REMOTE_APP["authorized_handler"] = 'cern_search_rest_api.modules.cernsearch.handlers:cern_authorized_signup_handler'
+CERN_REMOTE_APP["authorized_handler"] = 'cern_search_rest.modules.cernsearch.handlers:cern_authorized_signup_handler'
 
 OAUTHCLIENT_REMOTE_APPS = dict(
     cern=CERN_REMOTE_APP,
@@ -47,7 +46,7 @@ ACCOUNTS_SESSION_ACTIVITY_ENABLED = False
 # Admin
 # =====
 
-ADMIN_PERMISSION_FACTORY = 'cern_search_rest_api.modules.cernsearch.permissions:admin_permission_factory'
+ADMIN_PERMISSION_FACTORY = 'cern_search_rest.modules.cernsearch.permissions:admin_permission_factory'
 
 # JSON Schemas configuration
 # ==========================
@@ -75,7 +74,7 @@ SEARCH_MAPPINGS = [os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test')]
 
 #: Records REST API configuration
 
-_Record_PID = 'pid(recid, record_class="cern_search_rest_api.modules.cernsearch.api:CernSearchRecord")'  # TODO
+_Record_PID = 'pid(recid, record_class="cern_search_rest.modules.cernsearch.api:CernSearchRecord")'  # TODO
 
 RECORDS_REST_ENDPOINTS = dict(
     docid=dict(
@@ -87,12 +86,12 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/record/<{0}:pid_value>'.format(_Record_PID),
         list_route='/records/',
         links_factory_imp='invenio_records_rest.links:default_links_factory',
-        record_class='cern_search_rest_api.modules.cernsearch.api:CernSearchRecord',
+        record_class='cern_search_rest.modules.cernsearch.api:CernSearchRecord',
         record_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
-        search_class='cern_search_rest_api.modules.cernsearch.search.RecordCERNSearch',
+        search_class='cern_search_rest.modules.cernsearch.search.RecordCERNSearch',
         search_index='cernsearch-test',  # TODO: Parametrize this, along with the rest of the config file
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
@@ -100,7 +99,6 @@ RECORDS_REST_ENDPOINTS = dict(
         },
         max_result_window=10000,
         read_permission_factory_imp=record_read_permission_factory,
-        read_list_permission_factory_imp=record_read_list_permission_factory,
         create_permission_factory_imp=record_create_permission_factory,
         update_permission_factory_imp=record_update_permission_factory,
         delete_permission_factory_imp=record_delete_permission_factory,
