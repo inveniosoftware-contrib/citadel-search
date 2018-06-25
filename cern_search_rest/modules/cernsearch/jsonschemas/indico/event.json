@@ -1,0 +1,98 @@
+{
+  "title": "Indico Event schema v0.0.1",
+  "id": "http://localhost:5000/schemas/indico/event_v0.0.1.json",
+  "$schema": "http://localhost:5000/schemas/indico/event_v0.0.1.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "description": "Event id."
+    },
+    "category_path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Event category path (ordered array)."
+    },
+    "title": {
+      "type": "string",
+      "description": "Event title."
+    },
+    "start_date": {
+      "type": "date-time",
+      "description": "Event start date."
+    },
+    "creation_date": {
+      "type": "date-time",
+      "description": "Event creation date."
+    },
+    "end_date": {
+      "type": "date-time",
+      "description": "Event end date."
+    },
+    "location": {
+      "type": "string",
+      "description": "Event location."
+    },
+    "description": {
+      "type": "string",
+      "description": "Event description."
+    },
+    "speakers_chairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Event speaker/chair name."
+          },
+          "affiliation": {
+            "type": "string",
+            "description": "Event speaker/chair affiliation."
+          }
+        }
+      }
+    },
+    "event_type": {
+      "type": "string",
+      "description": "Event type."
+    },
+    "custom_pid": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}

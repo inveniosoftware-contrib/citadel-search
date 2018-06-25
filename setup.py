@@ -41,22 +41,22 @@ setup_requires = []
 
 install_requires = [
     'flask',
-    'invenio-access>=1.0.0,<1.1.0',
-    'invenio-admin>=1.0.0,<1.1.0',
-    'invenio-accounts>=1.0.0,<1.1.0',
-    'invenio-app>=1.0.0,<1.1.0',
-    'invenio-base>=1.0.0,<1.1.0',
-    'invenio-config>=1.0.0,<1.1.0',
-    'invenio-db[postgresql,versioning]>=1.0.0,<1.1.0',
-    'invenio-indexer[elasticsearch5]>=1.0.0,<1.1.0',
-    'invenio-jsonschemas>=1.0.0,<1.1.0',
-    'invenio-records-rest[elasticsearch5]>=1.0.0,<1.1.0',
-    'invenio-records[postgresql]>=1.0.0,<1.1.0',
-    'invenio-rest[cors]>=1.0.0,<1.1.0',
-    'invenio-oauthclient>=1.0.0,<1.1.0',
-    'invenio_oauth2server>=1.0.0,<1.1.0',
-    'invenio-search[elasticsearch5]>=1.0.0,<1.1.0',
-    'invenio-theme>=1.0.0,<1.1.0',
+    'invenio-access>=1.0.0,<1.2.0',
+    'invenio-admin>=1.0.0,<1.2.0',
+    'invenio-accounts>=1.0.0,<1.2.0',
+    'invenio-app>=1.0.0,<1.2.0',
+    'invenio-base>=1.0.0,<1.2.0',
+    'invenio-config>=1.0.0,<1.2.0',
+    'invenio-db[postgresql,versioning]>=1.0.2,<1.2.0',
+    'invenio-indexer[elasticsearch5]>=1.0.0,<1.2.0',
+    'invenio-jsonschemas>=1.0.0,<1.2.0',
+    'invenio-records-rest[elasticsearch5]>=1.1.1,<1.2.0',
+    'invenio-records[postgresql]>=1.0.0,<1.2.0',
+    'invenio-rest[cors]>=1.0.0,<1.2.0',
+    'invenio-oauthclient>=1.0.0,<1.2.0',
+    'invenio_oauth2server>=1.0.0,<1.2.0',
+    'invenio-search[elasticsearch5]>=1.0.0,<1.2.0',
+    'invenio-theme>=1.0.0,<1.2.0',
     'redis>=2.10.0',
     'npm>=0.1.1',
     'uWSGI>=2.0.16',
@@ -68,7 +68,7 @@ packages = find_packages()
 
 # Get the version string. Cannot be done with import!
 g = {}
-with open(os.path.join("cern_search_rest", "version.py"), "rt") as fp:
+with open(os.path.join("cern_search_rest_api", "version.py"), "rt") as fp:
     exec(fp.read(), g)
     version = g["__version__"]
 
@@ -87,13 +87,13 @@ setup(
     platforms='any',
     entry_points={
         'invenio_config.module': [
-            'cern_search_rest = cern_search_rest.config'
+            'cern_search_rest_api = cern_search_rest_api.config'
         ],
         'invenio_search.mappings': [
-            'cernsearch-test = cern_search_rest.modules.cernsearch.mappings',
+            'cernsearch-test = cern_search_rest_api.modules.cernsearch.mappings',
         ],
         'invenio_jsonschemas.schemas': [
-            'cernsearch-test = cern_search_rest.modules.cernsearch.jsonschemas'
+            'cernsearch-test = cern_search_rest_api.modules.cernsearch.jsonschemas'
         ],
     },
     extras_require=extras_require,
