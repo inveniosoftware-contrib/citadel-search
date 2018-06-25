@@ -1,0 +1,119 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_string": true,
+    "index.mapping.total_fields.limit": 30
+  },
+  "mappings": {
+    "event_v0.0.1": {
+      "numeric_detection": true,
+      "_meta": {
+        "_owner": "indico@cern.ch"
+      },
+      "properties": {
+        "_access": {
+          "type": "nested",
+          "properties": {
+            "owner":{
+              "type": "keyword"
+            },
+            "read": {
+              "type": "keyword"
+            },
+            "update": {
+              "type": "keyword"
+            },
+            "delete": {
+              "type": "keyword"
+            }
+          }
+        },
+        "id": {
+          "type": "keyword",
+          "analyzer": "not_analyzed"
+        },
+        "event_type": {
+          "type": "keyword",
+          "analyzer": "not_analyzed"
+        },
+        "category_path": {
+          "type": "keyword",
+          "analyzer": "not_analyzed"
+        },
+        "title": {
+          "type": "text",
+          "fields": [
+            {
+              "english": {
+                "type": "text",
+                "analyzer": "english"
+              }
+            },
+            {
+              "french": {
+                "type": "text",
+                "analyzer": "french"
+              }
+            }
+          ]
+        },
+        "start_date": {
+          "type": "date",
+          "analyzer": "not_analyzed"
+        },
+        "creation_date": {
+          "type": "date",
+          "analyzer": "not_analyzed"
+        },
+        "end_date": {
+          "type": "date",
+          "analyzer": "not_analyzed"
+        },
+        "location": {
+          "type": "text"
+        },
+        "description": {
+          "type": "text",
+          "fields": [
+            {
+              "english": {
+                "type": "text",
+                "analyzer": "english"
+              }
+            },
+            {
+              "french": {
+                "type": "text",
+                "analyzer": "french"
+              }
+            }
+          ]
+        },
+        "speakers_chairs": {
+          "type": "nested",
+          "properties": {
+            "name": {
+              "type": "text",
+              "fields": {
+                  "keyword": {
+                    "type": "keyword",
+                    "analyzer": "not_analyzed"
+                  }
+                }
+            },
+            "affiliation": {
+              "type": "text"
+            }
+          }
+        },
+        "custom_pid": {
+          "type": "text",
+          "index": "not_analyzed"
+        },
+        "$schema": {
+          "type": "text",
+          "index": "not_analyzed"
+        }
+      }
+    }
+  }
+}
