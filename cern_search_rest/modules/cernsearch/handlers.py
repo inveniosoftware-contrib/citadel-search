@@ -21,7 +21,7 @@ from invenio_oauthclient.handlers import oauth_error_handler, token_session_key,
     token_getter, get_session_next_url
 
 
-from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
+from cern_search_rest.modules.cernsearch.utils import get_user_provides
 
 
 @oauth_error_handler

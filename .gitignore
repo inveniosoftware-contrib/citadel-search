@@ -6,7 +6,7 @@
 # Python compiled files
 
 *pyc
-cern_search_rest_api.egg-info/
+cern_search_rest.egg-info/
 
 # OpenShift Secrets
 
