@@ -6,7 +6,6 @@ metadata:
     descriptino: "CERN Search RESTful API and necessary services OpenShift Template"
 labels:
   template: "cern-search-rest-api"
-
 objects:
 
 ##############################
@@ -18,14 +17,14 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: cern-search-api
-    name: cern-search-api
+      app: cern-search-rest-api
+    name: cern-search-rest-api
   spec:
     replicas: 1
     revisionHistoryLimit: 10
     selector:
-      app: cern-search-api
-      deploymentconfig: cern-search-api
+      app: cern-search-rest-api
+      deploymentconfig: cern-search-rest-api
     strategy:
       activeDeadlineSeconds: 21600
       resources: {}
@@ -39,8 +38,8 @@ objects:
     template:
       metadata:
         labels:
-          app: cern-search-api
-          deploymentconfig: cern-search-api
+          app: cern-search-rest-api
+          deploymentconfig: cern-search-rest-api
       spec:
         containers:
         - command:
@@ -70,9 +69,9 @@ objects:
                 secretKeyRef:
                   name: oauth
                   key: oauth_credentials
-          image: gitlab-registry.cern.ch/webservices/cern_search_rest:latest
+          image: gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api:latest
           imagePullPolicy: Always
-          name: cern-search-api
+          name: cern-search-rest-api
           ports:
           - containerPort: 5000
             protocol: TCP
@@ -90,10 +89,10 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - cern-search-api
+        - cern-search-rest-api
         from:
           kind: ImageStreamTag
-          name: cern-search-api:latest
+          name: cern-search-rest-api:latest
           namespace: test-cern-search
       type: ImageChange
 
@@ -102,14 +101,14 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: redis
+      app: cern-search-rest-api
     name: redis
   spec:
     replicas: 1
     template:
       metadata:
         labels:
-          app: redis
+          app: cern-search-rest-api
       spec:
         containers:
         - name: redis
@@ -131,18 +130,18 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: proxy
-    name: proxy
+      app: cern-search-rest-api
+    name: nginx
   spec:
     replicas: 1
     template:
       metadata:
-        name: proxy
+        name: nginx
         labels:
-          app: proxy
+          app: cern-search-rest-api
       spec:
         containers:
-        - name: proxy
+        - name: nginx
           image: 'nginx:stable-alpine'
           ports:
           - containerPort: 8080
@@ -186,8 +185,8 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: cern-search-api
-    name: cern-search-api
+      app: cern-search-rest-api
+    name: cern-search-rest-api
   spec:
     ports:
     - name: 5000-tcp
@@ -195,8 +194,8 @@ objects:
       protocol: TCP
       targetPort: 5000
     selector:
-      app: cern-search-api
-      deploymentconfig: cern-search-api
+      app: cern-search-rest-api
+      deploymentconfig: cern-search-rest-api
     sessionAffinity: None
     type: ClusterIP
 # Service for the Redis server
@@ -204,7 +203,7 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: redis
+      app: cern-search-rest-api
     name: redis
   spec:
     ports:
@@ -213,7 +212,7 @@ objects:
       protocol: TCP
       targetPort: 6379
     selector:
-      app: redis
+      app: cern-search-rest-api
       deploymentconfig: redis
     sessionAffinity: None
     type: ClusterIP
@@ -221,9 +220,9 @@ objects:
 - kind: Service
   apiVersion: v1
   metadata:
-    name: proxy-https
+    name: nginx
     labels:
-      app: proxy
+      app: cern-search-rest-api
     annotations:
       service.alpha.openshift.io/serving-cert-secret-name: nginx-tls
   spec:
@@ -232,7 +231,8 @@ objects:
       port: 8080
       targetPort: 8080
     selector:
-      app: proxy
+      app: cern-search-rest-api
+      deplymentConfig: nginx
     type: LoadBalancer
 
 ##############################
@@ -242,9 +242,8 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: proxy
-      template: cern-search-rest-api
-    name: nginx-proxy
+      app: cern-search-rest-api
+    name: nginx
   spec:
     port:
       targetPort: https
@@ -254,16 +253,9 @@ objects:
       termination: reencrypt
     to:
       kind: Service
-      name: proxy-https
+      name: proxy
       weight: 100
     wildcardPolicy: None
-  status:
-    ingress:
-      - conditions:
-          - status: 'True'
-            type: Admitted
-        routerName: router
-        wildcardPolicy: None
 
 
 # TODO: Delete when automated in OpenShift/GitLab CI
@@ -274,10 +266,10 @@ objects:
   apiVersion: v1
   metadata:
    labels:
-     app: cern-search-api
-   name: cern-search-api
+     app: cern-search-rest-api
+   name: cern-search-rest-api-image
   spec:
-   dockerImageRepository: gitlab-registry.cern.ch/webservices/cern_search_rest
+   dockerImageRepository: gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api
 
 ##############################
 ######### CONFIG MAP #########
@@ -287,7 +279,7 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: proxy
+      app: cern-search-rest-api
     name: nginx-config
   data:
     nginx.conf: |
@@ -319,7 +311,7 @@ objects:
   apiVersion: v1
   metadata:
     labels:
-      app: cern-search-api
+      app: cern-search-rest-api
     name: env-configmap
   data:
     # Invenio
