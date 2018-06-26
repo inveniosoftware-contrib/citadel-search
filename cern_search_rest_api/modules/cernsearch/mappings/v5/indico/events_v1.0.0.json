@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 30
   },
   "mappings": {
-    "event_v1.0.0": {
+    "events_v1.0.0": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "indico@cern.ch"

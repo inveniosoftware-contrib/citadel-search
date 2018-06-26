@@ -32,8 +32,8 @@ The first version of the _Events_ mapping stores the information about an Indico
 	- __name__: Name of the speaker/chairman. Stored both as keyword and text, for exact match and full-text search.
 	- __affiliation__: Affiliation of the speaker/chairman. Stored as text for full-text search.
 
-- jsonschema path: '/cernsearch/jsonschemas/indico/event_v1.0.0.json'
-- mapping path: '/cernsearch/mappings/v5/indico/event_v1.0.0.json'
+- jsonschema path: '/cernsearch/jsonschemas/indico/events_v1.0.0.json'
+- mapping path: '/cernsearch/mappings/v5/indico/events_v1.0.0.json'
 
 Q: Title with 'keyword' field. Is exact match needed?
 Q: speakers_chairs, both field should they be keyword, text or both? Analyzers will not do much good with 'custom' names.
@@ -60,8 +60,8 @@ The first version of the _Contributions_ mapping stores the information about an
 	- __affiliation__: Affiliation of the person. Stored as text for full-text search.
 	- __role__: Role(s) of the person. Stored as keyword for exact match.
 
-- jsonschema path: '/cernsearch/jsonschemas/indico/contribution_v1.0.0.json'
-- mapping path: '/cernsearch/mappings/v5/indico/contribution_v1.0.0.json'
+- jsonschema path: '/cernsearch/jsonschemas/indico/contributions_v1.0.0.json'
+- mapping path: '/cernsearch/mappings/v5/indico/contributions_v1.0.0.json'
 
 Q: Category path is repeated, should it be?
 Q: Event title will be removed to avoid the denormalization updates mentioned above.
@@ -89,8 +89,8 @@ The first version of the _Subcontributions_ mapping stores the information about
 	- __affiliation__: Affiliation of the person. Stored as text for full-text search.
 	- __role__: Role(s) of the person. Stored as keyword for exact match.
 
-- jsonschema path: '/cernsearch/jsonschemas/indico/subcontribution_v1.0.0.json'
-- mapping path: '/cernsearch/mappings/v5/indico/subcontribution_v1.0.0.json'
+- jsonschema path: '/cernsearch/jsonschemas/indico/subcontributions_v1.0.0.json'
+- mapping path: '/cernsearch/mappings/v5/indico/subcontributions_v1.0.0.json'
 
 Q: Event and contribution title will be removed to avoid the denormalization updates mentioned above.
 
@@ -111,7 +111,28 @@ The first version of the _Attachment_ mapping stores the information about an In
 * __filename__: Filename of the attachment. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analyzis helps improve query relevance.
 * __content__: Content of the attachment. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
 
-- jsonschema path: '/cernsearch/jsonschemas/indico/attachment_v1.0.0.json'
-- mapping path: '/cernsearch/mappings/v5/indico/attachment_v1.0.0.json'
+- jsonschema path: '/cernsearch/jsonschemas/indico/attachments_v1.0.0.json'
+- mapping path: '/cernsearch/mappings/v5/indico/attachments_v1.0.0.json'
+
+Q: Event, contribution and subcontribution title will be removed to avoid the denormalization updates mentioned above. Should the IDs also for higher normalization, or do they not change at all? (if so, same applies to subcontributions).
+
+
+### Notes
+
+--- v1.0.0 ---
+
+The first version of the _Notes_ mapping stores the information about an Indico note to an event/contribution/subcontribution.
+
+* __\_access__: owner, read, update, delete rights base on an egroup list. Stored as a nested object, being each of the permissions of keyword type (exact match).
+* __id__: ID of the note. Stored as keyword for exact match queries.
+* __caterogy path__: Array containing the different path levels to which the note belongs to. Stored as keyword for exact match queries.
+* __event_id__: ID of the event to which the note belongs to. Stored as keyword for exact match queries.
+* __contribution_id__: ID of the contribution to which the note belongs to. Stored as keyword for exact match queries.
+* __subcontribution_id__: ID of the subcontribution to which the note belongs to. Stored as keyword for exact match queries.
+* __creation_date__: Creation date of the note. Stored as date with 'YYYY-MM-DDZHH:MM' format.
+* __content__: Content of the note. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
+
+- jsonschema path: '/cernsearch/jsonschemas/indico/notes_v1.0.0.json'
+- mapping path: '/cernsearch/mappings/v5/indico/notes_v1.0.0.json'
 
 Q: Event, contribution and subcontribution title will be removed to avoid the denormalization updates mentioned above. Should the IDs also for higher normalization, or do they not change at all? (if so, same applies to subcontributions).
