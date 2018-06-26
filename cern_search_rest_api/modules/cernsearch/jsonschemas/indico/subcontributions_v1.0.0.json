@@ -1,0 +1,109 @@
+{
+  "title": "Indico Subontributions schema v1.0.0",
+  "id": "http://localhost:5000/schemas/indico/subcontributions_v1.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/subcontributions_v1.0.0.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "description": "Subontributions id."
+    },
+    "category_path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Subontributions category path (ordered array)."
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Event id."
+    },
+    "contribution_id": {
+      "type": "string",
+      "description": "Event id."
+    },
+    "creation_date": {
+      "type": "string",
+      "description": "Subontributions creation date."
+    },
+    "start_date": {
+      "type": "string",
+      "description": "Subontributions start date."
+    },
+    "end_date": {
+      "type": "string",
+      "description": "Subontributions end date."
+    },
+    "location": {
+      "type": "string",
+      "description": "Subontributions location."
+    },
+    "title": {
+      "type": "string",
+      "description": "Subontributions title."
+    },
+    "description": {
+      "type": "string",
+      "description": "Subontributions description."
+    },
+    "list_of_persons": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Subontributions person's name."
+          },
+          "affiliation": {
+            "type": "string",
+            "description": "Subontributions person's affiliation."
+          },
+          "role": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Subontributions person's role(s)."
+          }
+        }
+      }
+    },
+    "custom_pid": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}
