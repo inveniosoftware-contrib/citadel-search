@@ -50,7 +50,7 @@
     },
     "contribution_id": {
       "type": "string",
-      "description": "Event id."
+      "description": "Contribution id."
     },
     "creation_date": {
       "type": "string",

@@ -1,0 +1,76 @@
+{
+  "title": "Indico Attachments schema v1.0.0",
+  "id": "http://localhost:5000/schemas/indico/attachments_v1.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/attachments_v1.0.0.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "description": "Attachments id."
+    },
+    "category_path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Attachments category path (ordered array)."
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Event id.",
+      "required": false
+    },
+    "contribution_id": {
+      "type": "string",
+      "description": "Contribution id.",
+      "required": false
+    },
+    "creation_date": {
+      "type": "string",
+      "description": "Attachments creation date."
+    },
+    "filename": {
+      "type": "string",
+      "description": "Attachments filename."
+    },
+    "content": {
+      "type": "string",
+      "description": "Attachments content."
+    },
+    "custom_pid": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}
