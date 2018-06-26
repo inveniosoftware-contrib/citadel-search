@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 30
   },
   "mappings": {
-    "event_v0.0.1": {
+    "attachments_v1.0.0": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "indico@cern.ch"
@@ -28,50 +28,25 @@
           }
         },
         "id": {
-          "type": "keyword",
-          "analyzer": "not_analyzed"
-        },
-        "event_type": {
-          "type": "keyword",
-          "analyzer": "not_analyzed"
+          "type": "keyword"
         },
         "category_path": {
-          "type": "keyword",
-          "analyzer": "not_analyzed"
+          "type": "keyword"
         },
-        "title": {
-          "type": "text",
-          "fields": [
-            {
-              "english": {
-                "type": "text",
-                "analyzer": "english"
-              }
-            },
-            {
-              "french": {
-                "type": "text",
-                "analyzer": "french"
-              }
-            }
-          ]
+        "event_id": {
+          "type": "keyword"
         },
-        "start_date": {
-          "type": "date",
-          "analyzer": "not_analyzed"
+        "contribution_id": {
+          "type": "keyword"
+        },
+        "subcontribution_id": {
+          "type": "keyword"
         },
         "creation_date": {
           "type": "date",
-          "analyzer": "not_analyzed"
+          "format": "YYYY-MM-DDZHH:MM"
         },
-        "end_date": {
-          "type": "date",
-          "analyzer": "not_analyzed"
-        },
-        "location": {
-          "type": "text"
-        },
-        "description": {
+        "filename": {
           "type": "text",
           "fields": [
             {
@@ -88,30 +63,28 @@
             }
           ]
         },
-        "speakers_chairs": {
-          "type": "nested",
-          "properties": {
-            "name": {
-              "type": "text",
-              "fields": {
-                  "keyword": {
-                    "type": "keyword",
-                    "analyzer": "not_analyzed"
-                  }
-                }
+        "content": {
+          "type": "text",
+          "fields": [
+            {
+              "english": {
+                "type": "text",
+                "analyzer": "english"
+              }
             },
-            "affiliation": {
-              "type": "text"
+            {
+              "french": {
+                "type": "text",
+                "analyzer": "french"
+              }
             }
-          }
+          ]
         },
         "custom_pid": {
-          "type": "text",
-          "index": "not_analyzed"
+          "type": "keyword"
         },
         "$schema": {
-          "type": "text",
-          "index": "not_analyzed"
+          "type": "keyword"
         }
       }
     }

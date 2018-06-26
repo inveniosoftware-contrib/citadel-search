@@ -1,7 +1,7 @@
 {
-  "title": "Indico Event schema v0.0.1",
-  "id": "http://localhost:5000/schemas/indico/event_v0.0.1.json",
-  "$schema": "http://localhost:5000/schemas/indico/event_v0.0.1.json",
+  "title": "Indico Event schema v1.0.0",
+  "id": "http://localhost:5000/schemas/indico/events_v1.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/events_v1.0.0.json",
   "type": "object",
   "properties": {
     "_access": {
@@ -44,25 +44,29 @@
       },
       "description": "Event category path (ordered array)."
     },
-    "title": {
+    "event_type": {
       "type": "string",
-      "description": "Event title."
-    },
-    "start_date": {
-      "type": "date-time",
-      "description": "Event start date."
+      "description": "Event type."
     },
     "creation_date": {
-      "type": "date-time",
+      "type": "string",
       "description": "Event creation date."
     },
+    "start_date": {
+      "type": "string",
+      "description": "Event start date."
+    },
     "end_date": {
-      "type": "date-time",
+      "type": "string",
       "description": "Event end date."
     },
     "location": {
       "type": "string",
       "description": "Event location."
+    },
+    "title": {
+      "type": "string",
+      "description": "Event title."
     },
     "description": {
       "type": "string",
@@ -83,10 +87,6 @@
           }
         }
       }
-    },
-    "event_type": {
-      "type": "string",
-      "description": "Event type."
     },
     "custom_pid": {
       "type": "string"
