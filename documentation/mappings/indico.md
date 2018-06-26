@@ -37,3 +37,30 @@ Q: Title with 'keyword' field. Is exact match needed?
 Q: speakers_chairs, both field should they be keyword, text or both? Analyzers will not do much good with 'custom' names.
 
 
+### Contributions
+
+--- v1.0.0 ---
+
+The first version of the _Contributions_ mapping stores the information about an Indico contribution to an event.
+
+* __\_access__: owner, read, update, delete rights base on an egroup list. Stored as a nested object, being each of the permissions of keyword type (exact match).
+* __id__: ID of the contribution. Stored as keyword for exact match queries.
+* __caterogy path__: Array containing the different path levels to which the contribution belongs to. Stored as keyword for exact match queries.
+* __event_id__: ID of the event to which the contribution belongs to. Stored as keyword for exact match queries.
+* __creation_date__: Creation date of the contribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
+* __start_date__: Starting date of the contribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
+* __end_date__: Ending date of the contribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
+* __location__: Location/Place of the contribution. Stored as text for full-text search, only using ``standard`` analyzer.
+* __title__: Title of the contribution. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analyzis helps improve query relevance.
+* __description__: Description of the contribution. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
+* __list_of_persons__: List of persons of the contribution. Stored as a nested object (This field cannot be flatten since the searches are done for a specific person of a specific organization or role) with two fields:
+	- __name__: Name of the person. Stored both as keyword and text, for exact match and full-text search.
+	- __affiliation__: Affiliation of the person. Stored as text for full-text search.
+	- __role__: Role(s) of the person. Stored as keyword for exact match.
+
+- jsonschema path: '/cernsearch/jsonschemas/indico/contribution_v1.0.0.json'
+- mapping path: '/cernsearch/mappings/v5/indico/contribution_v1.0.0.json'
+
+Q: Category path is repeated, should it be?
+Q: Event title will be removed to avoid the denormalization updates mentioned above.
+Q: list_of_persons.role is an array or can only take one value?
