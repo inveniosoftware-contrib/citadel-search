@@ -10,6 +10,8 @@ Rollover will be based on event ID. Conditions: Num documents is uniformly distr
 
 ## Mappings
 
+Q: IDs are only numeric?
+
 ### Events
 
 --- v1.0.0 ---
@@ -25,11 +27,11 @@ The first version of the _Events_ mapping stores the information about an Indico
 * __end_date__: Ending date of the event. Stored as date with 'YYYY-MM-DDZHH:MM' format.
 * __location__: Location/Place of the event. Stored as text for full-text search, only using ``standard`` analyzer.
 * __title__: Title of the event. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analyzis helps improve query relevance.
-* __description__: Description of the event. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analyzis helps improve query relevance.
+* __description__: Description of the event. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
 * __speakers_chairs__: Speakers/charimans of the event. Stored as a nested object (This field cannot be flatten since the searches are done for a specific person of a specific organization.) with two fields:
 	- __name__: Name of the speaker/chairman. Stored both as keyword and text, for exact match and full-text search.
 	- __affiliation__: Affiliation of the speaker/chairman. Stored as text for full-text search.
-  
+
 - jsonschema path: '/cernsearch/jsonschemas/indico/event_v1.0.0.json'
 - mapping path: '/cernsearch/mappings/v5/indico/event_v1.0.0.json'
 
