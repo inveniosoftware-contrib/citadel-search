@@ -8,10 +8,11 @@ variables:
   ### Important! In order for this template to work, the name of the gitlab repo must match
   ### also the variable name
   RESOURCE: cern-search-rest-api
-  ###
-  ### You shouldn't change the following variables
+  ### OpenShift namespace and server values
   NAMESPACE_DEV: test-cern-search-master
   OPENSHIFT_SERVER_DEV: https://openshift-dev.cern.ch
+  NAMESPACE_PROD: cern-search-master
+  OPENSHIFT_SERVER_PROD: https://openshift.cern.ch
 
 
 ### By default, there are 6 stages that we may use:
@@ -31,10 +32,20 @@ build_dev_version:
   except:
     - tags
     - master
-  environment: dev
+  environment: staging
   tags:
     - docker-image-build
   script: 'echo "Building Dev/QA Docker image..."'
+
+########## PROD ##########
+build_prod_version:
+  stage: build
+  only:
+    - master
+  environment: master
+  tags:
+    - docker-image-build
+  script: 'echo "Building Prod Docker image..."'
 
 ########## ALL ##########
 ### When building tags, use the git tag as the docker tag of the image
@@ -50,24 +61,64 @@ build_tagged_version:
 
 ########## DEV ##########
 ### If a new tag is pushed it needs to be referenced into the ImageStream
-tag_image_dev: &tag_image
+tag_image_dev: &tag_image_openshift
   stage: tag_image
   only:
   - tags
   environment: staging
   image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
   script:
-    - oc tag --source=docker ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} ${RESOURCE}:${CI_COMMIT_TAG} --token=${TOKEN} --server=${OPENSHIFT_SERVER_DEV} -n ${NAMESPACE_DEV}
+    - oc tag --source=docker ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} ${RESOURCE}:${CI_COMMIT_TAG} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
   variables:
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
+    NAMESAPCE: ${NAMESPACE_DEV}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
+
+########## PROD ##########
+### If a new tag is pushed it needs to be referenced into the ImageStream
+tag_image_prod:
+  <<: *tag_image_openshift
+  variables:
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+    NAMESAPCE: ${NAMESPACE_PROD}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
 
 ########## DEV ##########
 ### Import image into OpenShift. Import $CI_COMMIT_TAG if present or 'latest' if not.
-import_image_dev:
+import_image_dev: &import_image_openshift
   stage: import_image
   environment: staging
+  only:
+  - tags
   image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
   script:
-    - oc import-image ${RESOURCE}:${CI_COMMIT_TAG:-latest} --token=${TOKEN} --server=${OPENSHIFT_SERVER_DEV} -n ${NAMESPACE_DEV}
+    - oc import-image ${RESOURCE}:${CI_COMMIT_TAG:-latest} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
   variables:
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
+    NAMESPACE: ${NAMESPACE_DEV}
+
+########## PROD ##########
+### Import image into OpenShift. Import $CI_COMMIT_TAG if present or 'latest' if not.
+import_image_prod:
+  <<: *import_image_openshift
+  variables:
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+    NAMESAPCE: ${NAMESPACE_PROD}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
+
+########## PROD ##########
+deploy_production:
+  stage: deploy
+  environment: production
+  only:
+  - tags
+  when: manual
+  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
+  script:
+    - oc --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE} tag ${RESOURCE}:${CI_COMMIT_TAG} ${RESOURCE}:stable
+  variables:
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+    NAMESAPCE: ${NAMESPACE_PROD}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
+    GIT_STRATEGY: none
