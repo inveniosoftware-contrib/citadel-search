@@ -90,12 +90,12 @@ setup(
             'cern_search_rest_api = cern_search_rest_api.config'
         ],
         'invenio_search.mappings': [
-            'cernsearch-test = cern_search_rest_api.modules.cernsearch.mappings',
-            'indico = cern_search_rest_api.modules.cernsearch.mappings',
+            'cernsearch-test = cern_search_rest_api.modules.cernsearch.cernsearch_test.mappings',
+            'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.mappings'
         ],
         'invenio_jsonschemas.schemas': [
-            'cernsearch-test = cern_search_rest_api.modules.cernsearch.jsonschemas',
-            'indico = cern_search_rest_api.modules.cernsearch.mappings'
+            'cernsearch-test = cern_search_rest_api.modules.cernsearch.cernsearch_test.jsonschemas',
+            'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.jsonschemas'
         ],
     },
     extras_require=extras_require,
