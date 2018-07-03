@@ -10,7 +10,7 @@ history = open('CHANGES.md').read()
 
 tests_require = []
 
-invenio_db_version = '>=1.0.0b8,<1.1.0'
+invenio_db_version = '>=1.0.2,<1.2.0'
 
 extras_require = {
     # Databases
@@ -61,7 +61,7 @@ install_requires = [
     'npm>=0.1.1',
     'uWSGI>=2.0.16',
     'idna>=2.5,<2.7',
-    'urllib3<1.23', # Needed until invenio-search[elasticsearch] is updated to 6 (depends on central service version)
+    'urllib3<1.23',  # Needed until invenio-search[elasticsearch] is updated to 6 (depends on central service version)
 ]
 
 packages = find_packages()
