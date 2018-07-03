@@ -93,7 +93,7 @@ RECORDS_REST_ENDPOINTS = dict(
                                  ':json_v1_response'),
         },
         search_class='cern_search_rest_api.modules.cernsearch.search.RecordCERNSearch',
-        search_index='cernsearch-test',  # TODO: Parametrize this, along with the rest of the config file
+        search_index=os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test'),
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
