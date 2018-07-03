@@ -73,7 +73,7 @@ with open(os.path.join("cern_search_rest_api", "version.py"), "rt") as fp:
     version = g["__version__"]
 
 setup(
-    name='cern-search-rest',
+    name='cern-search-rest-api',
     version=version,
     description='CERN Search as a Service',
     long_description=readme + '\n\n' + history,
