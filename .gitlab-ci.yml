@@ -1,37 +1,3 @@
-### Based on ``discourse-cern`` CI.
-###
-### This GitLab-CI scipt provides a template to publish an OpenShift resource (a Docker image and/or a template)
-### shared with other users.
-###
-### Requirements:
-###   1. An `externally managed resource` must be created before you can push the image to OpenShift.
-###      This step must be done by OpenShift admins, so contact them before anything else.
-###   2. After step 1, you will receive the credentials of a service account with rights to publish a image and update
-###      a template with name '$RESOURCE'.
-###   3. Adapt this .gitlab-ci.yml definition to match your deployment. In most cases, only the `variables` section needs
-###      to be adapted
-###
-### In this template, we use three different environments to represent the status of the Continuous integration build.
-###   1. `dev` represents development on a custom git branch. Once there is something new pushed to a custom branch
-###       The CI build will create a new Image, store it in the GitLab registry with tag `latest`, import it to openshift-dev
-###       and run some tests on it.
-###       The template can be deployed to the development cluster (i.e. openshift-dev.cern.ch) with a manual trigger
-###       so it can be tested.
-###   2. `staging` represents deployment to the development OpenShift cluster (i.e. openshift-dev.cern.ch).
-###       This environment runs when something is pushed with a tag and tries to replicate a deployment
-###       to production. The image gets built and pushed to the GitLab registry using the git tag as the Docker tag.
-###       Whenever this happens, the template is automatically updated and a manual trigger
-###       is enabled to tag the image as `stable`, all of this in the development cluster (i.e. openshift-dev.cern.ch).
-###       NOTE: tagging the image as `stable` will trigger a re-deploy of all the applications using it in
-###       `openshift-dev.cern.ch`, so do it with care!
-###   3. `production` represents deployed to the production OpenShift cluster (i.e. openshift.cern.ch).
-###       This environment also runs when a change is pushed with a tag to master. The template is automatically
-###       updated on production (e.g `openshift.cern.ch`) but the image requires a manual trigger before
-###       it is tagged as `stable`.
-###       NOTE: tagging the image as `stable` will trigger a re-deploy of all the applications
-###       using it in `openshift.cern.ch`, so do it with care!
-###
-
 
 variables:
 
@@ -42,10 +8,11 @@ variables:
   ### Important! In order for this template to work, the name of the gitlab repo must match
   ### also the variable name
   RESOURCE: cern-search-rest-api
-  ###
-  ### You shouldn't change the following variables
-  NAMESPACE: openshift
-  OPENSHIFT_SERVER: https://openshift-dev.cern.ch
+  ### OpenShift namespace and server values
+  NAMESPACE_DEV: test-cern-search-master
+  OPENSHIFT_SERVER_DEV: https://openshift-dev.cern.ch
+  NAMESPACE_PROD: cern-search-master
+  OPENSHIFT_SERVER_PROD: https://openshift.cern.ch
 
 
 ### By default, there are 6 stages that we may use:
@@ -54,23 +21,33 @@ stages:
   - build
   - tag_image
   - import_image # This stage is only used when the built image is stored in the GitLab Registry
-  - update_template
   - deploy
 
 ### 'Build' stage
 ### Build the image and store it in the registry. It is important that this step
 ### doesn't override the image the applications are running, as we haven't tested the image yet
-### The build will be tagged with latest whenever we push to any branch except in the case
-### where we push a tag
+########## DEV ##########
 build_dev_version:
   stage: build
   except:
     - tags
-  environment: dev
+    - master
+  environment: staging
   tags:
     - docker-image-build
-  script: 'echo "Building Docker image..."'
+  script: 'echo "Building Dev/QA Docker image..."'
 
+########## PROD ##########
+build_prod_version:
+  stage: build
+  only:
+    - master
+  environment: master
+  tags:
+    - docker-image-build
+  script: 'echo "Building Prod Docker image..."'
+
+########## ALL ##########
 ### When building tags, use the git tag as the docker tag of the image
 build_tagged_version:
   stage: build
@@ -82,8 +59,9 @@ build_tagged_version:
   variables:
     TO: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
 
-### If a new tag is pushed it needs to be referenced into the imagestream
-tag_image_dev: &tag_image
+########## DEV ##########
+### If a new tag is pushed it needs to be referenced into the ImageStream
+tag_image_dev: &tag_image_openshift
   stage: tag_image
   only:
   - tags
@@ -93,93 +71,43 @@ tag_image_dev: &tag_image
     - oc tag --source=docker ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} ${RESOURCE}:${CI_COMMIT_TAG} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
   variables:
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
+    NAMESAPCE: ${NAMESPACE_DEV}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
 
+########## PROD ##########
+### If a new tag is pushed it needs to be referenced into the ImageStream
 tag_image_prod:
-  <<: *tag_image
+  <<: *tag_image_openshift
   variables:
-    OPENSHIFT_SERVER: https://openshift.cern.ch
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+    NAMESAPCE: ${NAMESPACE_PROD}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
 
+########## DEV ##########
 ### Import image into OpenShift. Import $CI_COMMIT_TAG if present or 'latest' if not.
-import_image_dev:
+import_image_dev: &import_image_openshift
   stage: import_image
   environment: staging
+  only:
+  - tags
   image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
   script:
     - oc import-image ${RESOURCE}:${CI_COMMIT_TAG:-latest} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
   variables:
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
+    NAMESPACE: ${NAMESPACE_DEV}
 
+########## PROD ##########
+### Import image into OpenShift. Import $CI_COMMIT_TAG if present or 'latest' if not.
 import_image_prod:
-  stage: import_image
-  environment: production
-  only:
-  - tags
-  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
-  script:
-    - oc import-image ${RESOURCE}:${CI_COMMIT_TAG:-latest} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
+  <<: *import_image_openshift
   variables:
-    OPENSHIFT_SERVER: https://openshift.cern.ch
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+    NAMESAPCE: ${NAMESPACE_PROD}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
 
-### 'update_template' stage
-### Uploads a new version of the template to OpenShift.
-### For development purposes, there is a manual trigger than allows to publish a new
-### template to the development cluster (i.e openshift-dev.cern.ch) even if building
-### the image fails
-update_template_dev:
-  stage: update_template
-  environment: dev
-  when: manual
-  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
-  script:
-    - oc replace template --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE} -f templates/${RESOURCE}.yaml
-  variables:
-    TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
-
-update_template_staging:
-  stage: update_template
-  environment: staging
-  only:
-  - tags
-  when: always # This will allow us to deploy the template even if building the image fails
-  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
-  script:
-    - oc replace template --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE} -f templates/${RESOURCE}.yaml
-  variables:
-    TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
-
-update_template_production:
-  stage: update_template
-  environment: production
-  only:
-  - tags
-  when: always # This will allow us to deploy the template even if building the image fails
-  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
-  script:
-    - oc replace template --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE} -f templates/${RESOURCE}.yaml
-  variables:
-    OPENSHIFT_SERVER: https://openshift.cern.ch
-    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
-
-### 'Deploy' stage
-### Publish the image with tag `stable`. NOTE: this will re-deploy all the applications using
-### the `stable` tag (by default, all of them) so do it with care. In the `production` environment,
-### taggig with `stable` requires launching a manual trigger
-deploy_staging:
-  stage: deploy
-  environment: staging
-  only:
-  - tags
-  when: manual
-  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
-  script:
-    - oc --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE} tag ${RESOURCE}:${CI_COMMIT_TAG} ${RESOURCE}:stable
-  variables:
-    OPENSHIFT_SERVER: https://openshift-dev.cern.ch
-    TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
-    GIT_STRATEGY: none
-
+########## PROD ##########
 deploy_production:
   stage: deploy
   environment: production
@@ -190,6 +118,7 @@ deploy_production:
   script:
     - oc --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE} tag ${RESOURCE}:${CI_COMMIT_TAG} ${RESOURCE}:stable
   variables:
-    OPENSHIFT_SERVER: https://openshift.cern.ch
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+    NAMESAPCE: ${NAMESPACE_PROD}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
     GIT_STRATEGY: none

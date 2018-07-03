@@ -11,7 +11,7 @@ from .modules.cernsearch.permissions import (record_read_permission_factory,
                                              record_create_permission_factory,
                                              record_update_permission_factory,
                                              record_delete_permission_factory,
-                                             record_read_list_permission_factory)
+                                             record_list_permission_factory)
 
 
 def _(x):
@@ -93,14 +93,14 @@ RECORDS_REST_ENDPOINTS = dict(
                                  ':json_v1_response'),
         },
         search_class='cern_search_rest_api.modules.cernsearch.search.RecordCERNSearch',
-        search_index='cernsearch-test',  # TODO: Parametrize this, along with the rest of the config file
+        search_index=os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test'),
         search_serializers={
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
         },
         max_result_window=10000,
         read_permission_factory_imp=record_read_permission_factory,
-        read_list_permission_factory_imp=record_read_list_permission_factory,
+        list_permission_factory_imp=record_list_permission_factory,
         create_permission_factory_imp=record_create_permission_factory,
         update_permission_factory_imp=record_update_permission_factory,
         delete_permission_factory_imp=record_delete_permission_factory,

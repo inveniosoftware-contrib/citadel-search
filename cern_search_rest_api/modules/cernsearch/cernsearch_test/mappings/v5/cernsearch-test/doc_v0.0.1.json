@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 3000
   },
   "mappings": {
-    "test-doc_v0.0.1": {
+    "doc_v0.0.1": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch"
