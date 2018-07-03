@@ -1,10 +1,10 @@
 {
   "settings": {
     "index.percolator.map_unmapped_fields_as_string": true,
-    "index.mapping.total_fields.limit": 30
+    "index.mapping.total_fields.limit": 50
   },
   "mappings": {
-    "subcontributions_v1.0.0": {
+    "events_v1.0.0": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "indico@cern.ch"
@@ -33,10 +33,7 @@
         "category_path": {
           "type": "keyword"
         },
-        "event_id": {
-          "type": "keyword"
-        },
-        "contribution_id": {
+        "event_type": {
           "type": "keyword"
         },
         "creation_date": {
@@ -56,57 +53,47 @@
         },
         "title": {
           "type": "text",
-          "fields": [
-            {
-              "english": {
-                "type": "text",
-                "analyzer": "english"
-              }
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english"
             },
-            {
-              "french": {
-                "type": "text",
-                "analyzer": "french"
-              }
+            "french": {
+              "type": "text",
+              "analyzer": "french"
             }
-          ]
+          }
         },
         "description": {
           "type": "text",
-          "fields": [
-            {
-              "english": {
-                "type": "text",
-                "analyzer": "english"
-              }
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english"
             },
-            {
-              "french": {
-                "type": "text",
-                "analyzer": "french"
-              }
+            "french": {
+              "type": "text",
+              "analyzer": "french"
             }
-          ]
+          }
         },
-        "list_of_persons": {
+        "speakers_chairs": {
           "type": "nested",
           "properties": {
             "name": {
               "type": "text",
               "fields": {
-                "keyword": {
-                  "type": "keyword"
+                  "keyword": {
+                    "type": "keyword"
+                  }
                 }
-              }
             },
             "affiliation": {
               "type": "text"
-            },
-            "role": {
-              "type": "keyword"
             }
           }
         },
+
         "custom_pid": {
           "type": "keyword"
         },
