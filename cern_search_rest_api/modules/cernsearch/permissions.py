@@ -111,7 +111,6 @@ def has_list_permission(user, record=None):
     return user.is_authenticated
 
 
-
 def has_update_permission(user, record):
     """Check if user is authenticated and has update access"""
     if user.is_authenticated:

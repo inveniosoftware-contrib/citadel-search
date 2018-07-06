@@ -83,8 +83,8 @@ Lets assume the following JSON schema and Elasticsearch mapping for our demo doc
 ```json
 {
   "title": "Custom record schema v0.0.1",
-  "id": "http://<host:port>/schemas/cernsearch-test/test-doc_v0.0.1.json",
-  "$schema": "http://<host:port>/schemas/cernsearch-test/test-doc_v0.0.1.json",
+  "id": "http://<host:port>/schemas/cernsearch-test/doc_v0.0.1.json",
+  "$schema": "http://<host:port>/schemas/cernsearch-test/doc_v0.0.1.json",
   "type": "object",
   "properties": {
     "_access": {
@@ -187,14 +187,14 @@ curl -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' \
     -i 'http://<host:port>/api/records/' --data '
        {
            "_access": {
-             "delete": ["test-egroup@cern.ch"], 
+             "delete": ["test-egroup@cern.ch"],
              "owner": ["test-egroup@cern.ch"], 
-             "read": ["test-egroup@cern.ch", "test-egroup-two@cern.ch"], 
+             "read": ["test-egroup@cern.ch", "test-egroup-two@cern.ch"],
              "update": ["test-egroup@cern.ch"]
            }, 
         "description": "This is an awesome description for our first uploaded document",
         "title": "Demo document"
-        "$schema": "http://0.0.0.0/schemas/test-doc_v0.0.1.json"
+        "$schema": "http://0.0.0.0/schemas/cernsearch-test/doc_v0.0.1.json"
        }
        '
 ```
