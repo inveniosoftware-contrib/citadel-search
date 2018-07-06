@@ -62,8 +62,8 @@ JSONSCHEMAS_REGISTER_ENDPOINTS_UI = False
 
 # TODO use ES central service. Change INDEXER_RECORD_TO_INDEX = 'invenio_indexer.utils.default_record_to_index'
 
-INDEXER_DEFAULT_DOC_TYPE = os.getenv('CERN_SEARCH_DEFAULT_DOC_TYPE', 'test-doc_v0.0.1')
-INDEXER_DEFAULT_INDEX = os.getenv('CERN_SEARCH_DEFAULT_INDEX', 'cernsearch-test-test-doc_v0.0.1')
+INDEXER_DEFAULT_DOC_TYPE = os.getenv('CERN_SEARCH_DEFAULT_DOC_TYPE', 'doc_v0.0.1')
+INDEXER_DEFAULT_INDEX = os.getenv('CERN_SEARCH_DEFAULT_INDEX', 'cernsearch-test-doc_v0.0.1')
 
 # Search configuration
 # =====================
