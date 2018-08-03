@@ -15,6 +15,7 @@ documents and search among them when needed!
   * [Debugging using a superuser](#debugging-using-a-superuser)  
 3. [ACLs and permissions](#acls-and-permissions)  
 4. [Setup](#setup)  
+  * [Master project - Image Stream](#Master+project+-+Image+Stream)
 5. [Configuration](#configuration)  
 
 
@@ -415,7 +416,30 @@ This means the groups will be taken upon the first login of the user and never u
 
 ## Setup
 
-An instance can be deployed using the OpenShift template (can be found in _template/cern-search-api.yml_)
+An instance can be deployed using the OpenShift template (can be found in _template/cern-search-api.yml_). However, the CERN setup (and therefore the template) does not include the ``ImageStream``. In this case, a master project has been setup (e.g. test-cern-search-master) where the image will be push by the ``gitlab-ci`` pipeline. Afterwards, the child projects (instances) will pull this image due to the image change trigger.
+
+### Master project - Image Stream
+
+To push the new images to the master project first you need to login in the corresponding OpenShift instance (``oc login openshift-url.cern.ch``) and then work on the appropriate project (``oc project <project name>``). Finally you need to create the ImageStream before running the pipeline:
+
+```bash
+oc create -n openshift -f - <<EOF
+apiVersion: v1
+kind: ImageStream
+metadata:
+  annotations:
+    description: <DESCRIPTION>
+  labels:
+    app: <APP_NAME>
+  name: <NAME>
+spec:
+  dockerImageRepository: {gitlab-registry-url}
+EOF
+```
+
+Another option would be to add ``--confirm`` to the ``import-image`` command in the CI file.
+
+Finally you need to [gran permissions](https://docs.openshift.org/latest/dev_guide/managing_images.html#allowing-pods-to-reference-images-across-projects) to reference the image across projects, and set up the [image change trigger](https://docs.openshift.org/latest/architecture/core_concepts/builds_and_image_streams.html#image-stream-triggers) in the deployment config of the app.
 
 Take into account:
 
