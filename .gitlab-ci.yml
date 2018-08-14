@@ -71,7 +71,7 @@ tag_image_dev: &tag_image_openshift
     - oc tag --source=docker ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} ${RESOURCE}:${CI_COMMIT_TAG} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
   variables:
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
-    NAMESAPCE: ${NAMESPACE_DEV}
+    NAMESPACE: ${NAMESPACE_DEV}
     OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
 
 ########## PROD ##########
@@ -80,16 +80,14 @@ tag_image_prod:
   <<: *tag_image_openshift
   variables:
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
-    NAMESAPCE: ${NAMESPACE_PROD}
+    NAMESPACE: ${NAMESPACE_PROD}
     OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
 
 ########## DEV ##########
 ### Import image into OpenShift. Import $CI_COMMIT_TAG if present or 'latest' if not.
-import_image_dev: &import_image_openshift
+import_image_dev:
   stage: import_image
   environment: staging
-  only:
-  - tags
   image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
   script:
     - oc import-image ${RESOURCE}:${CI_COMMIT_TAG:-latest} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
@@ -101,11 +99,17 @@ import_image_dev: &import_image_openshift
 ########## PROD ##########
 ### Import image into OpenShift. Import $CI_COMMIT_TAG if present or 'latest' if not.
 import_image_prod:
-  <<: *import_image_openshift
+  stage: import_image
+  environment: master
+  only:
+  - tags
+  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
+  script:
+    - oc import-image ${RESOURCE}:${CI_COMMIT_TAG:-latest} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
   variables:
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
-    NAMESAPCE: ${NAMESPACE_PROD}
     OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
+    NAMESPACE: ${NAMESPACE_PROD}
 
 ########## PROD ##########
 deploy_production:
@@ -119,6 +123,6 @@ deploy_production:
     - oc --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE} tag ${RESOURCE}:${CI_COMMIT_TAG} ${RESOURCE}:stable
   variables:
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
-    NAMESAPCE: ${NAMESPACE_PROD}
     OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
+    NAMESPACE: ${NAMESPACE_PROD}
     GIT_STRATEGY: none

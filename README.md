@@ -15,6 +15,7 @@ documents and search among them when needed!
   * [Debugging using a superuser](#debugging-using-a-superuser)  
 3. [ACLs and permissions](#acls-and-permissions)  
 4. [Setup](#setup)  
+  * [Master project - Image Stream](#Master+project+-+Image+Stream)
 5. [Configuration](#configuration)  
 
 
@@ -83,8 +84,8 @@ Lets assume the following JSON schema and Elasticsearch mapping for our demo doc
 ```json
 {
   "title": "Custom record schema v0.0.1",
-  "id": "http://<host:port>/schemas/cernsearch-test/test-doc_v0.0.1.json",
-  "$schema": "http://<host:port>/schemas/cernsearch-test/test-doc_v0.0.1.json",
+  "id": "http://<host:port>/schemas/cernsearch-test/doc_v0.0.1.json",
+  "$schema": "http://<host:port>/schemas/cernsearch-test/doc_v0.0.1.json",
   "type": "object",
   "properties": {
     "_access": {
@@ -187,14 +188,14 @@ curl -X POST -H 'Content-Type: application/json' -H 'Accept: application/json' \
     -i 'http://<host:port>/api/records/' --data '
        {
            "_access": {
-             "delete": ["test-egroup@cern.ch"], 
+             "delete": ["test-egroup@cern.ch"],
              "owner": ["test-egroup@cern.ch"], 
-             "read": ["test-egroup@cern.ch", "test-egroup-two@cern.ch"], 
+             "read": ["test-egroup@cern.ch", "test-egroup-two@cern.ch"],
              "update": ["test-egroup@cern.ch"]
            }, 
         "description": "This is an awesome description for our first uploaded document",
         "title": "Demo document"
-        "$schema": "http://0.0.0.0/schemas/test-doc_v0.0.1.json"
+        "$schema": "http://0.0.0.0/schemas/cernsearch-test/doc_v0.0.1.json"
        }
        '
 ```
@@ -415,7 +416,30 @@ This means the groups will be taken upon the first login of the user and never u
 
 ## Setup
 
-An instance can be deployed using the OpenShift template (can be found in _template/cern-search-api.yml_)
+An instance can be deployed using the OpenShift template (can be found in _template/cern-search-api.yml_). However, the CERN setup (and therefore the template) does not include the ``ImageStream``. In this case, a master project has been setup (e.g. test-cern-search-master) where the image will be push by the ``gitlab-ci`` pipeline. Afterwards, the child projects (instances) will pull this image due to the image change trigger.
+
+### Master project - Image Stream
+
+To push the new images to the master project first you need to login in the corresponding OpenShift instance (``oc login openshift-url.cern.ch``) and then work on the appropriate project (``oc project <project name>``). Finally you need to create the ImageStream before running the pipeline:
+
+```bash
+oc create -n openshift -f - <<EOF
+apiVersion: v1
+kind: ImageStream
+metadata:
+  annotations:
+    description: <DESCRIPTION>
+  labels:
+    app: <APP_NAME>
+  name: <NAME>
+spec:
+  dockerImageRepository: {gitlab-registry-url}
+EOF
+```
+
+Another option would be to add ``--confirm`` to the ``import-image`` command in the CI file.
+
+Finally you need to [gran permissions](https://docs.openshift.org/latest/dev_guide/managing_images.html#allowing-pods-to-reference-images-across-projects) to reference the image across projects, and set up the [image change trigger](https://docs.openshift.org/latest/architecture/core_concepts/builds_and_image_streams.html#image-stream-triggers) in the deployment config of the app.
 
 Take into account:
 

@@ -1,0 +1,88 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_string": true,
+    "index.mapping.total_fields.limit": 50
+  },
+  "mappings": {
+    "generic_website_v1.0.0": {
+      "numeric_detection": true,
+      "_meta": {
+        "_owner": "CernSearch-Administrators@cern.ch"
+      },
+      "properties": {
+        "_access": {
+          "type": "nested",
+          "properties": {
+            "owner":{
+              "type": "keyword"
+            },
+            "read": {
+              "type": "keyword"
+            },
+            "update": {
+              "type": "keyword"
+            },
+            "delete": {
+              "type": "keyword"
+            }
+          }
+        },
+        "name": {
+          "type": "text",
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english"
+            },
+            "french": {
+              "type": "text",
+              "analyzer": "french"
+            }
+          }
+        },
+        "url": {
+          "type": "keyword"
+        },
+        "origin": {
+          "type": "keyword"
+        },
+        "content": {
+          "type": "text",
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english"
+            },
+            "french": {
+              "type": "text",
+              "analyzer": "french"
+            }
+          }
+        },
+        "extras": {
+          "type": "text",
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english"
+            },
+            "french": {
+              "type": "text",
+              "analyzer": "french"
+            }
+          }
+        },
+        "last_updated": {
+          "type": "date",
+          "format": "YYYY-MM-DDZHH:MM"
+        },
+        "custom_pid": {
+          "type": "keyword"
+        },
+        "$schema": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}

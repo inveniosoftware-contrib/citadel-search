@@ -70,7 +70,7 @@ class RecordPermission(object):
         """Create a record permission."""
         # Allow everything for testing
         if action in cls.list_actions:
-            return cls(record, has_owner_permission, user)
+            return cls(record, has_list_permission, user)
         elif action in cls.create_actions:
             return cls(record, has_owner_permission, user)
         elif action in cls.read_actions:
@@ -104,6 +104,11 @@ def get_index_from_request(record=None):
         return default_record_to_index(record)
     return (current_app.config['INDEXER_DEFAULT_INDEX'],
             current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
+
+
+def has_list_permission(user, record=None):
+    """Check if user is authenticated and has create access"""
+    return user.is_authenticated
 
 
 def has_update_permission(user, record):
