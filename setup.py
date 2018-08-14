@@ -91,11 +91,13 @@ setup(
         ],
         'invenio_search.mappings': [
             'cernsearch-test = cern_search_rest_api.modules.cernsearch.cernsearch_test.mappings',
-            'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.mappings'
+            'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.mappings',
+            'cernsearch-webservices = cern_search_rest_api.modules.cernsearch.webservices.mappings'
         ],
         'invenio_jsonschemas.schemas': [
             'cernsearch-test = cern_search_rest_api.modules.cernsearch.cernsearch_test.jsonschemas',
-            'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.jsonschemas'
+            'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.jsonschemas',
+            'cernsearch-webservices = cern_search_rest_api.modules.cernsearch.webservices.jsonschemas'
         ],
     },
     extras_require=extras_require,
