@@ -55,7 +55,7 @@ ADMIN_PERMISSION_FACTORY = 'cern_search_rest_api.modules.cernsearch.permissions:
 JSONSCHEMAS_ENDPOINT = '/schemas'
 JSONSCHEMAS_HOST = '0.0.0.0'
 # Do not register the endpoints on the UI app."""
-JSONSCHEMAS_REGISTER_ENDPOINTS_UI = False
+JSONSCHEMAS_REGISTER_ENDPOINTS_UI = True
 
 # Indexer
 # =======
