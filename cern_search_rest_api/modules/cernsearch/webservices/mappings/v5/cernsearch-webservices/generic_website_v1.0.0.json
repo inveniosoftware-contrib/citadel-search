@@ -74,7 +74,7 @@
         },
         "last_updated": {
           "type": "date",
-          "format": "YYYY-MM-DDZHH:MM"
+          "format": "yyyy-MM-ddZHH:mm"
         },
         "custom_pid": {
           "type": "keyword"
