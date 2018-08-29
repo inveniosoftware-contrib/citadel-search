@@ -60,15 +60,13 @@
           }
         },
         "extras": {
-          "type": "text",
-          "fields": {
-            "english": {
-              "type": "text",
-              "analyzer": "english"
+          "type": "nested",
+          "properties": {
+            "title": {
+              "type": "keyword"
             },
-            "french": {
-              "type": "text",
-              "analyzer": "french"
+            "content": {
+                 "type": "text"
             }
           }
         },
