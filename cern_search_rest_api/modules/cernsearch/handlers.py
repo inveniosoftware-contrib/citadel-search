@@ -117,6 +117,4 @@ def egroup_admin():
     user_provides = get_user_provides()
     # set.isdisjoint() is faster than set.intersection()
     admin_access_groups = admin_access_groups.split(',')
-    if user_provides and not set(user_provides).isdisjoint(set(admin_access_groups)):
-        return True
-    return False
+    return user_provides and not set(user_provides).isdisjoint(set(admin_access_groups))
