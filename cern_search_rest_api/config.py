@@ -107,6 +107,11 @@ RECORDS_REST_ENDPOINTS = dict(
     )
 )
 
+# App
+# ===
+
+RATELIMIT_DEFAULT = os.getenv('CERN_SEARCH_INSTANCE_RATELIMIT', '5000/hour')
+
 # Flask Security
 # ==============
 # Avoid error upon registration with email sending
