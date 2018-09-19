@@ -16,3 +16,7 @@ npm install
 invenio collect -v
 invenio assets build
 mv /code/static/${LOGO_PATH} ${INVENIO_INSTANCE_PATH}/static/${LOGO_PATH}
+
+# PID File for uWSGI
+touch /code/uwsgi.pid
+chmod 666 /code/uwsgi.pid
