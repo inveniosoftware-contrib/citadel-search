@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 from flask_security import current_user
-from flask import request, g, current_app
+from flask import request, current_app
 from invenio_indexer.utils import default_record_to_index
 from invenio_search import current_search_client
 
@@ -85,76 +85,93 @@ class RecordPermission(object):
 
 def has_owner_permission(user, record=None):
     """Check if user is authenticated and has create access"""
+    log_action(user, 'CREATE/OWNER')
     if user.is_authenticated:
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         es_index, doc = get_index_from_request(record)
+        current_app.logger.debug('Using index {idx}'.format(idx=es_index))
         if current_search_client.indices.exists([es_index]):
             mapping = current_search_client.indices.get_mapping([es_index])
             if mapping is not None:
+                current_app.logger.debug('Using mapping for {idx}'.format(idx=es_index))
                 # set.isdisjoint() is faster than set.intersection()
                 create_access_groups = mapping[es_index]['mappings'][doc]['_meta']['_owner'].split(',')
                 if user_provides and not set(user_provides).isdisjoint(set(create_access_groups)):
+                    current_app.logger.debug('User authenticated correctly')
                     return True
+                current_app.logger.debug('Could not authenticate user, group sets are disjoint')
+    current_app.logger.debug('User {user} is not authenticated'.format(user=user.email))
     return False
 
 
 def get_index_from_request(record=None):
     if record is not None and record.get('$schema', '') is not None:
         return default_record_to_index(record)
+    current_app.logger.debug('get_index_from_schema() No record or no $schema in it, using defaults')
     return (current_app.config['INDEXER_DEFAULT_INDEX'],
             current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
 
 
 def has_list_permission(user, record=None):
     """Check if user is authenticated and has create access"""
-    return user.is_authenticated
+    if user:
+        log_action(user, 'LIST')
+        return user.is_authenticated
+    else:
+        return False
 
 
 def has_update_permission(user, record):
     """Check if user is authenticated and has update access"""
+    log_action(user, 'UPDATE')
     if user.is_authenticated:
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         update_access_groups = record['_access']['update']
         if check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
-            (
-                not set(user_provides).isdisjoint(set(update_access_groups))
-                or is_admin(user)
-            ):
+                (
+                        not set(user_provides).isdisjoint(set(update_access_groups))
+                        or is_admin(user)
+                ):
+            current_app.logger.debug('Group sets not disjoint, user allowed')
             return True
     return False
 
 
 def has_read_record_permission(user, record):
     """Check if user is authenticated and has read access. This implies reading one document"""
+    log_action(user, 'READ')
     if user.is_authenticated:
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         read_access_groups = record['_access']['read']
         if check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
-            (
-                not set(user_provides).isdisjoint(set(read_access_groups))
-                or is_admin(user)
-            ):
+                (
+                        not set(user_provides).isdisjoint(set(read_access_groups))
+                        or is_admin(user)
+                ):
+            current_app.logger.debug('Group sets not disjoint, user allowed')
             return True
     return False
 
 
 def has_delete_permission(user, record):
     """Check if user is authenticated and has delete access"""
+    log_action(user, 'DELETE')
     if user.is_authenticated:
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
         delete_access_groups = record['_access']['delete']
         if check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
-            (
-                not set(user_provides).isdisjoint(set(delete_access_groups))
-                or is_admin(user)
-            ):
+                (
+                        not set(user_provides).isdisjoint(set(delete_access_groups))
+                        or is_admin(user)
+                ):
+            current_app.logger.debug('Group sets not disjoint, user allowed')
             return True
     return False
 
@@ -194,6 +211,7 @@ def has_admin_view_permission(user):
         # set.isdisjoint() is faster than set.intersection()
         admin_access_groups = admin_access_groups.split(',')
         if user_provides and not set(user_provides).isdisjoint(set(admin_access_groups)):
+            current_app.logger.debug('User has admin view access')
             return True
     return False
 
@@ -215,6 +233,7 @@ def is_admin(user):
     """Check if the user is administrator"""
     admin_user = current_app.config['ADMIN_USER']
     if user.email == admin_user or user.email.replace('@cern.ch', '') == admin_user:
+        current_app.logger.debug('User {user} is admin'.format(user=user.email))
         return True
     return False
 
@@ -234,3 +253,15 @@ def check_elasticsearch(record=None):
         search = search.get_record(str(record.id))
         return search.count() == 1
     return False
+
+
+def log_action(user, action):
+    try:
+        email = user.email
+    except AttributeError:
+        email = 'Anonymous'
+    current_app.logger.debug('Action {action} -  user {usr} authenticated: {status}'.format(
+        action=action,
+        usr=email,
+        status=user.is_authenticated
+    ))
