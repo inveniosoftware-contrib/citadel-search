@@ -36,8 +36,14 @@ def cern_search_record_to_index(record):
     index, doc_type = schema_to_index(schema, index_names=index_names)
 
     if index and doc_type:
+        current_app.logger.debug('Index {0}{1} - Doc {2}'.format(INDEX_PREFIX, index, doc_type))
         return '{0}{1}'.format(INDEX_PREFIX, index), doc_type
     else:
+        current_app.logger.debug('Index {0}{1} - Doc {2}'.format(
+            current_app.config['CERN_SEARCH_DEFAULT_INDEX_PREFIX'],
+            current_app.config['INDEXER_DEFAULT_INDEX'],
+            current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
+        )
         return ('{0}{1}'.format(current_app.config['CERN_SEARCH_DEFAULT_INDEX_PREFIX'],
                                 current_app.config['INDEXER_DEFAULT_INDEX']),
                 current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
