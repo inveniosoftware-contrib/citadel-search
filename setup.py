@@ -58,6 +58,7 @@ install_requires = [
     'invenio_oauth2server>=1.0.0,<1.2.0',
     'invenio-search[elasticsearch5]>=1.0.0,<1.2.0',
     'invenio-theme>=1.0.0,<1.2.0',
+    'python-ldap>=3.1.0,<3.2.0',
     'raven>=6.9.0,<6.10.0'
     'redis>=2.10.0',
     'npm>=0.1.1',

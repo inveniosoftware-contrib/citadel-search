@@ -11,7 +11,8 @@ RUN yum update -y && \
         python-pip \
         gcc \
         openssl \
-        npm && \
+        npm \
+        openldap-devel && \
     pip install --upgrade pip setuptools wheel
 
 ADD requirements.txt /tmp
