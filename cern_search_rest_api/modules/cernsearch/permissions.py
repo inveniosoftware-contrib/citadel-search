@@ -101,7 +101,6 @@ def has_owner_permission(user, record=None):
                     current_app.logger.debug('User authenticated correctly')
                     return True
                 current_app.logger.debug('Could not authenticate user, group sets are disjoint')
-    current_app.logger.debug('User {user} is not authenticated'.format(user=user.email))
     return False
 
 
@@ -147,13 +146,16 @@ def has_read_record_permission(user, record):
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         # set.isdisjoint() is faster than set.intersection()
-        read_access_groups = record['_access']['read']
-        if check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
-                (
-                        not set(user_provides).isdisjoint(set(read_access_groups))
-                        or is_admin(user)
-                ):
-            current_app.logger.debug('Group sets not disjoint, user allowed')
+        try:
+            read_access_groups = record['_access']['read']
+            if check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
+                    (
+                            not set(user_provides).isdisjoint(set(read_access_groups))
+                            or is_admin(user)
+                    ):
+                current_app.logger.debug('Group sets not disjoint, user allowed')
+                return True
+        except KeyError:
             return True
     return False
 
