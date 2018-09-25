@@ -90,11 +90,12 @@ def has_owner_permission(user, record=None):
         # Allow based in the '_access' key
         user_provides = get_user_provides()
         es_index, doc = get_index_from_request(record)
-        current_app.logger.debug('Using index {idx}'.format(idx=es_index))
+        current_app.logger.debug('Using index {idx} and doc {doc}'.format(idx=es_index, doc=doc))
         if current_search_client.indices.exists([es_index]):
             mapping = current_search_client.indices.get_mapping([es_index])
             if mapping is not None:
                 current_app.logger.debug('Using mapping for {idx}'.format(idx=es_index))
+                current_app.logger.debug('Mapping {mapping}'.format(mapping=mapping))
                 # set.isdisjoint() is faster than set.intersection()
                 create_access_groups = mapping[es_index]['mappings'][doc]['_meta']['_owner'].split(',')
                 if user_provides and not set(user_provides).isdisjoint(set(create_access_groups)):
