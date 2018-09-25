@@ -6,7 +6,7 @@
 from flask import g
 from flask import current_app
 from invenio_search import current_search
-from invenio_search.utils import schema_to_index
+from invenio_search.utils import schema_to_index, build_index_name
 
 
 def get_user_provides():
@@ -23,27 +23,28 @@ def cern_search_record_to_index(record):
     :param record: The record object.
     :returns: Tuple (index, doc_type).
     """
-    INDEX_PREFIX = current_app.config['CERN_SEARCH_DEFAULT_INDEX_PREFIX']
 
+    prefix = current_app.config['INDEX_PREFIX']
     index_names = current_search.mappings.keys()
+
     schema = record.get('$schema', '')
     if isinstance(schema, dict):
         schema = schema.get('$ref', '')
-    aux = current_app.config['CERN_SEARCH_INDEX_PREFIX']
-    if aux:
-        INDEX_PREFIX = aux
 
-    index, doc_type = schema_to_index(schema, index_names=index_names)
+    parts = schema.split('/')
 
-    if index and doc_type:
-        current_app.logger.debug('Index {0}{1} - Doc {2}'.format(INDEX_PREFIX, index, doc_type))
-        return '{0}{1}'.format(INDEX_PREFIX, index), doc_type
-    else:
-        current_app.logger.debug('Index {0}{1} - Doc {2}'.format(
-            current_app.config['CERN_SEARCH_DEFAULT_INDEX_PREFIX'],
-            current_app.config['INDEXER_DEFAULT_INDEX'],
+    if index_names:
+        for start in range(len(parts)):
+            index_name = build_index_name(*parts[start:])
+            if index_name in index_names:
+                if index_name.startswith(prefix) and len(index_name) > len(prefix) + 2:
+                    return index_name, index_name[len(prefix) + 1:]
+
+    current_app.logger.debug('Index {0}{1} - Doc {2}'.format(
+        current_app.config['CERN_SEARCH_INDEX_PREFIX'],
+        current_app.config['INDEXER_DEFAULT_INDEX'],
+        current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
+    )
+    return ('{0}{1}'.format(current_app.config['CERN_SEARCH_INDEX_PREFIX'],
+                            current_app.config['INDEXER_DEFAULT_INDEX']),
             current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
-        )
-        return ('{0}{1}'.format(current_app.config['CERN_SEARCH_DEFAULT_INDEX_PREFIX'],
-                                current_app.config['INDEXER_DEFAULT_INDEX']),
-                current_app.config['INDEXER_DEFAULT_DOC_TYPE'])

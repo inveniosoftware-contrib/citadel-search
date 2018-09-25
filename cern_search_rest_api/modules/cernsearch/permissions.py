@@ -3,10 +3,9 @@
 
 from flask_security import current_user
 from flask import request, current_app
-from invenio_indexer.utils import default_record_to_index
 from invenio_search import current_search_client
 
-from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
+from cern_search_rest_api.modules.cernsearch.utils import get_user_provides, cern_search_record_to_index
 
 """Access control for CERN Search."""
 
@@ -107,7 +106,7 @@ def has_owner_permission(user, record=None):
 
 def get_index_from_request(record=None):
     if record is not None and record.get('$schema', '') is not None:
-        return default_record_to_index(record)
+        return cern_search_record_to_index(record)
     current_app.logger.debug('get_index_from_schema() No record or no $schema in it, using defaults')
     return (current_app.config['INDEXER_DEFAULT_INDEX'],
             current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
