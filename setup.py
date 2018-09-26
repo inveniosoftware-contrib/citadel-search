@@ -50,6 +50,7 @@ install_requires = [
     'invenio-db[postgresql,versioning]>=1.0.2,<1.2.0',
     'invenio-indexer[elasticsearch5]>=1.0.0,<1.2.0',
     'invenio-jsonschemas>=1.0.0,<1.2.0',
+    'invenio-logging>=1.0.0,<1.1.0',
     'invenio-records-rest[elasticsearch5]>=1.1.1,<1.2.0',
     'invenio-records[postgresql]>=1.0.0,<1.2.0',
     'invenio-rest[cors]>=1.0.0,<1.2.0',
@@ -57,9 +58,12 @@ install_requires = [
     'invenio_oauth2server>=1.0.0,<1.2.0',
     'invenio-search[elasticsearch5]>=1.0.0,<1.2.0',
     'invenio-theme>=1.0.0,<1.2.0',
+    'python-ldap>=3.1.0,<3.2.0',
+    'raven>=6.9.0,<6.10.0'
     'redis>=2.10.0',
     'npm>=0.1.1',
     'uWSGI>=2.0.16',
+    'uwsgi-tools>=1.1.1,<1.2.0',
     'idna>=2.5,<2.7',
     'urllib3<1.23',  # Needed until invenio-search[elasticsearch] is updated to 6 (depends on central service version)
 ]

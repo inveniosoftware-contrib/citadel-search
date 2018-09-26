@@ -54,10 +54,7 @@
       "description": "Website content."
     },
     "extras": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
+      "type": "object",
       "description": "Attachments and followed links present in the website"
     },
     "custom_pid": {

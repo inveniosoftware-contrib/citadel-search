@@ -62,6 +62,7 @@ JSONSCHEMAS_REGISTER_ENDPOINTS_UI = True
 
 # TODO use ES central service. Change INDEXER_RECORD_TO_INDEX = 'invenio_indexer.utils.default_record_to_index'
 
+INDEX_PREFIX = os.getenv('CERN_SEARCH_INDEX_PREFIX', 'cernsearch')
 INDEXER_DEFAULT_DOC_TYPE = os.getenv('CERN_SEARCH_DEFAULT_DOC_TYPE', 'doc_v0.0.1')
 INDEXER_DEFAULT_INDEX = os.getenv('CERN_SEARCH_DEFAULT_INDEX', 'cernsearch-test-doc_v0.0.1')
 
@@ -106,6 +107,11 @@ RECORDS_REST_ENDPOINTS = dict(
         delete_permission_factory_imp=record_delete_permission_factory,
     )
 )
+
+# App
+# ===
+
+RATELIMIT_DEFAULT = os.getenv('CERN_SEARCH_INSTANCE_RATELIMIT', '5000/hour')
 
 # Flask Security
 # ==============

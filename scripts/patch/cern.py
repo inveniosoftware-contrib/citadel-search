@@ -6,8 +6,6 @@
 # Invenio is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-# NOTE: This is a patch to fix the Oauth refresh token (More can be found in the README.md file)
-
 """Pre-configured remote application for enabling sign in/up with CERN.
 
 1. Edit your configuration and add:
@@ -195,25 +193,35 @@ def fetch_groups(groups):
     return groups
 
 
-def account_groups(account, resource, refresh_timedelta=None):
-    """Fetch account groups from resource if necessary."""
+def should_refresh_groups(extra_data_updated=None, refresh_timedelta=None):
+    """Check if updating the groups is needed."""
     updated = datetime.utcnow()
     modified_since = updated
     if refresh_timedelta is not None:
         modified_since += refresh_timedelta
     modified_since = modified_since.isoformat()
-    last_update = account.extra_data.get('updated', modified_since)
+    if updated is None:
+        updated = modified_since
+    last_update = extra_data_updated
 
-    #if last_update > modified_since:
-    groups_db = account.extra_data.get('groups', [])
-    if groups_db is not None and groups_db:
-        return account.extra_data.get('groups', [])
+    if last_update > modified_since:
+        return False
+
+    return True
+
+
+def account_groups(account, resource, refresh_timedelta=None):
+    """Fetch account groups from resource if necessary."""
+    updated = datetime.utcnow()
 
     groups = fetch_groups(resource['Group'])
     account.extra_data.update(
         groups=groups,
         updated=updated.isoformat(),
     )
+
+    db.session.commit()
+
     return groups
 
 
@@ -246,6 +254,45 @@ def get_dict_from_response(response):
     return result
 
 
+def get_user_resources_ldap(user):
+    import ldap
+    from flask import jsonify
+    # assert not isinstance(user, AnonymousUser)
+
+    query=user.email
+
+    if not query:
+        return jsonify([])
+
+    lc = ldap.initialize('ldap://xldap.cern.ch')
+    lc.search_ext(
+        'OU=Users,OU=Organic Units,DC=cern,DC=ch',
+        ldap.SCOPE_ONELEVEL,
+        'mail=*{}*'.format(query),
+        # rf,
+        ['memberOf', 'mail', 'uidNumber', 'displayName'],
+        serverctrls=[ldap.controls.SimplePagedResultsControl(
+            True, size=20, cookie='')]
+    )
+
+    res = lc.result()[1]
+    res = res[0][1]
+
+    groups = []
+    if res['mail'][0] == user.email:
+        for group in res['memberOf']:
+            group = group.split(',')[0]
+            group = group.split('=')[1]
+            groups.append(group)
+
+    return {
+        'groups': groups,
+        'email': user.email,
+        'cern_uid': res['uidNumber'][0],
+        'name': res['displayName'][0]
+    }
+
+
 def get_resource(remote):
     """Query CERN Resources to get user info and groups."""
     cached_resource = session.pop('cern_resource', None)
@@ -253,9 +300,21 @@ def get_resource(remote):
         return cached_resource
 
     response = remote.get(REMOTE_APP_RESOURCE_API_URL)
-    dict_response = get_dict_from_response(response)
-    session['cern_resource'] = dict_response
-    return dict_response
+
+    if response.status == 200:
+        dict_response = get_dict_from_response(response)
+        session['cern_resource'] = dict_response
+        return dict_response
+    else:
+        response = get_user_resources_ldap(current_user)
+        r = {}
+        r['EmailAddress'] = [response['email']]
+        r['uidNumber'] = [response['cern_uid']]
+        r['CommonName'] = [response['name']]
+        r['DisplayName'] = [response['name']]
+        r['Group'] = response['groups']
+
+        return r
 
 
 def account_info(remote, resp):
@@ -301,21 +360,20 @@ def account_setup(remote, token, resp):
     """Perform additional setup after user have been logged in."""
     resource = get_resource(remote)
 
-    with db.session.begin_nested():
-        external_id = resource['uidNumber'][0]
+    external_id = resource['uidNumber'][0]
 
-        # Set CERN person ID in extra_data.
-        token.remote_account.extra_data = {
-            'external_id': external_id,
-        }
-        groups = account_groups(token.remote_account, resource)
-        assert not isinstance(g.identity, AnonymousIdentity)
-        extend_identity(g.identity, groups)
+    # Set CERN person ID in extra_data.
+    token.remote_account.extra_data = {
+        'external_id': external_id,
+    }
+    groups = account_groups(token.remote_account, resource)
+    assert not isinstance(g.identity, AnonymousIdentity)
+    extend_identity(g.identity, groups)
 
-        user = token.remote_account.user
+    user = token.remote_account.user
 
-        # Create user <-> external id link.
-        oauth_link_external_id(user, dict(id=external_id, method='cern'))
+    # Create user <-> external id link.
+    oauth_link_external_id(user, dict(id=external_id, method='cern'))
 
 
 @identity_changed.connect
@@ -332,19 +390,25 @@ def on_identity_changed(sender, identity):
         user_id=current_user.get_id(),
         client_id=client_id,
     )
-    groups = []
+
     if account:
-        remote = find_remote_by_client_id(client_id)
-        resource = get_resource(remote)
-        refresh = current_app.config.get(
+        groups = account.extra_data.get('groups', [])
+
+        resources_last_updated = account.extra_data.get('updated', None)
+        refresh_timedelta = current_app.config.get(
             'OAUTHCLIENT_CERN_REFRESH_TIMEDELTA',
             OAUTHCLIENT_CERN_REFRESH_TIMEDELTA
         )
-        groups.extend(
-            account_groups(account, resource, refresh_timedelta=refresh)
-        )
 
-    extend_identity(identity, groups)
+        if should_refresh_groups(resources_last_updated, refresh_timedelta):
+            remote = find_remote_by_client_id(client_id)
+            resource = get_resource(remote)
+
+            groups.extend(
+                account_groups(account, resource, refresh_timedelta=refresh_timedelta)
+            )
+
+        extend_identity(identity, groups)
 
 
 @identity_loaded.connect

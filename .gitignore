@@ -24,7 +24,9 @@ secrets/
 # Local env source
 
 env-*.sh
+*.ini
 
 # Debug and other logs
 
 *.log
+*.pid
