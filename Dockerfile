@@ -18,9 +18,6 @@ RUN yum update -y && \
 ADD requirements.txt /tmp
 RUN pip install -r /tmp/requirements.txt
 
-# For PoC purposes
-ENV FLASK_DEBUG=1
-
 # CERN Search installation
 WORKDIR /code
 ADD . /code
