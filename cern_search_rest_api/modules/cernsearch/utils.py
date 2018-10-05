@@ -40,11 +40,9 @@ def cern_search_record_to_index(record):
                 if index_name.startswith(prefix) and len(index_name) > len(prefix) + 2:
                     return index_name, index_name[len(prefix) + 1:]
 
-    current_app.logger.debug('Index {0}{1} - Doc {2}'.format(
-        current_app.config['INDEX_PREFIX'],
+    current_app.logger.debug('Index {0} - Doc {1}'.format(
         current_app.config['INDEXER_DEFAULT_INDEX'],
         current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
     )
-    return ('{0}{1}'.format(current_app.config['INDEX_PREFIX'],
-                            current_app.config['INDEXER_DEFAULT_INDEX']),
+    return (current_app.config['INDEXER_DEFAULT_INDEX'],
             current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
