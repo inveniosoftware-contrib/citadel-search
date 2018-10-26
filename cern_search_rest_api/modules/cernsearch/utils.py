@@ -17,7 +17,10 @@ def get_user_provides():
 def get_index_from_request(record=None):
     if record is not None and record.get('$schema', '') is not None:
         return cern_search_record_to_index(record)
-    current_app.logger.debug('get_index_from_schema() No record or no $schema in it, using defaults')
+    current_app.logger.debug('get_index_from_schema(): Record {record} - $schema {schema}. Using defaults'.format(
+        record=record,
+        schema='No record' if record is None else record.get('$schema')
+    ))
     return (current_app.config['INDEXER_DEFAULT_INDEX'],
             current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
 
