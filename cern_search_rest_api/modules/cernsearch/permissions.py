@@ -86,6 +86,11 @@ class RecordPermission(object):
 def has_owner_permission(user, record=None):
     """Check if user is authenticated and has create access"""
     log_action(user, 'CREATE/OWNER')
+
+    # First authentication phase, decorator level
+    if not record:
+        return user.is_authenticated
+    # Second authentication phase, record level
     if user.is_authenticated:
         # Allow based in the '_access' key
         user_provides = get_user_provides()
