@@ -5,6 +5,8 @@ from invenio_search import RecordsSearch
 from invenio_search.api import DefaultFilter
 from flask import request
 
+from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
+
 """
 The Filter emulates the following query:
 curl -X GET "localhost:9200/_search" -H 'Content-Type: application/json' -d'
@@ -61,11 +63,12 @@ def cern_search_filter():
 
 def get_egroups():
     egroups = request.args.get('access', None)
-    try:
-        return ['{0}@cern.ch'.format(egroup) for egroup in egroups.split(',')]
-
-    except AttributeError:
-        return None
+    if egroups or (request.path == '/records/' and request.method == 'GET'):
+        try:
+            return ['{0}@cern.ch'.format(egroup) for egroup in egroups.split(',')]
+        except AttributeError:
+            return None
+    return get_user_provides()
 
 
 class RecordCERNSearch(RecordsSearch):
