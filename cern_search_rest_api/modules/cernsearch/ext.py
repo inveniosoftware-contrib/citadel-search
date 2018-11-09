@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from cern_search_rest_api.modules.cernsearch.views import build_blueprint
+from cern_search_rest_api.modules.cernsearch.views import build_blueprint, build_health_blueprint
 
 
 class CERNSearch(object):
@@ -14,6 +14,7 @@ class CERNSearch(object):
         """Flask application initialization."""
         self.init_config(app)
         blueprint = build_blueprint(app)
+        app.register_blueprint(build_health_blueprint())
         app.register_blueprint(blueprint)
         app.extensions["cern-search"] = self
 
