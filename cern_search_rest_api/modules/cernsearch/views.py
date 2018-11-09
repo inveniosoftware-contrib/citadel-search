@@ -8,6 +8,7 @@ Limitation: The query fails when the _version value (version_id in invenio-recor
 
 from __future__ import absolute_import, print_function
 
+import logging
 from copy import deepcopy
 from functools import partial
 
@@ -260,3 +261,48 @@ class UBQRecordListResource(ContentNegotiatedMethodView):
             json.dumps({'status': 200}),
             mimetype='application/json',
         )
+
+
+def build_health_blueprint():
+
+    blueprint = Blueprint('health_check', __name__)
+
+    @blueprint.route('/health/uwsgi')
+    def uwsgi():
+        """Load balancer ping view."""
+        return 'OK'
+
+    @blueprint.route('/health/elasticsearch')
+    def elasticsearch():
+        """Load balancer ping view."""
+        if current_search_client.ping():
+            return 'OK'
+        else:
+            logging.error('Health Check: Elasticsearch connection is not available')
+            return make_response((
+                json.dumps({
+                    'Elasticsearch is unavailable'
+                }),
+                503)
+            )
+
+    @blueprint.route('/health/database')
+    def database():
+        """Load balancer ping view."""
+        if db.engine.execute('SELECT 1;').scalar() == 1:
+            return 'OK'
+        else:
+            logging.error('Health Check: Database connection is not available')
+            return make_response((
+                json.dumps({
+                    'Database connection is unavailable'
+                }),
+                503)
+            )
+
+    # Allow HTTP connections
+    uwsgi.talisman_view_options = {'force_https': False}
+    elasticsearch.talisman_view_options = {'force_https': False}
+    database.talisman_view_options = {'force_https': False}
+
+    return blueprint

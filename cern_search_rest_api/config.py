@@ -114,6 +114,8 @@ RECORDS_REST_ENDPOINTS = dict(
 # ===
 
 RATELIMIT_DEFAULT = os.getenv('CERN_SEARCH_INSTANCE_RATELIMIT', '5000/hour')
+APP_HEALTH_BLUEPRINT_ENABLED = True
+APP_HEALTH_BLUEPRINT = 'cern_search_rest_api.modules.cernsearch.views:build_health_blueprint'
 
 # Flask Security
 # ==============
