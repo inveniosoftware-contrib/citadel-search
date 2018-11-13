@@ -3,7 +3,9 @@
 from elasticsearch_dsl import Q
 from invenio_search import RecordsSearch
 from invenio_search.api import DefaultFilter
-from flask import request
+from flask import request, current_app
+
+from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
 
 """
 The Filter emulates the following query:
@@ -61,11 +63,17 @@ def cern_search_filter():
 
 def get_egroups():
     egroups = request.args.get('access', None)
-    try:
-        return ['{0}@cern.ch'.format(egroup) for egroup in egroups.split(',')]
-
-    except AttributeError:
-        return None
+    # If access rights are sent or is a search query
+    if egroups or (request.path == '/records/' and request.method == 'GET'):
+        try:
+            if current_app.config['SEARCH_USE_EGROUPS']:
+                return ['{0}@cern.ch'.format(egroup) for egroup in egroups.split(',')]
+            else:
+                return egroups.split(',')
+        except AttributeError:
+            return None
+    # Else use user's token ACLs
+    return get_user_provides()
 
 
 class RecordCERNSearch(RecordsSearch):

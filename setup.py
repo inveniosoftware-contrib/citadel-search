@@ -103,6 +103,12 @@ setup(
             'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.jsonschemas',
             'cernsearch-webservices = cern_search_rest_api.modules.cernsearch.webservices.jsonschemas'
         ],
+        'invenio_base.apps': [
+            'cern-search = cern_search_rest_api.modules.cernsearch.ext:CERNSearch'
+        ],
+        'invenio_base.api_apps': [
+            'cern-search = cern_search_rest_api.modules.cernsearch.ext:CERNSearch'
+        ]
     },
     extras_require=extras_require,
 

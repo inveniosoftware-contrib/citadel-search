@@ -14,6 +14,17 @@ def get_user_provides():
     return [need.value for need in g.identity.provides]
 
 
+def get_index_from_request(record=None):
+    if record is not None and record.get('$schema', '') is not None:
+        return cern_search_record_to_index(record)
+    current_app.logger.debug('get_index_from_schema(): Record {record} - $schema {schema}. Using defaults'.format(
+        record=record,
+        schema='No record' if record is None else record.get('$schema')
+    ))
+    return (current_app.config['INDEXER_DEFAULT_INDEX'],
+            current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
+
+
 def cern_search_record_to_index(record):
     """Get index/doc_type given a record.
     It tries to extract from `record['$schema']` the index and doc_type,

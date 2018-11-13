@@ -3,6 +3,7 @@
 
 from __future__ import absolute_import, print_function
 
+import ast
 import copy
 import os
 from invenio_oauthclient.contrib import cern
@@ -70,6 +71,7 @@ INDEXER_DEFAULT_INDEX = os.getenv('CERN_SEARCH_DEFAULT_INDEX', 'cernsearch-test-
 # =====================
 
 SEARCH_MAPPINGS = [os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test')]
+SEARCH_USE_EGROUPS = ast.literal_eval(os.getenv('CERN_SEARCH_USE_EGROUPS', 'True'))
 
 # Records REST configuration
 # ===========================
@@ -112,6 +114,8 @@ RECORDS_REST_ENDPOINTS = dict(
 # ===
 
 RATELIMIT_DEFAULT = os.getenv('CERN_SEARCH_INSTANCE_RATELIMIT', '5000/hour')
+APP_HEALTH_BLUEPRINT_ENABLED = True
+APP_HEALTH_BLUEPRINT = 'cern_search_rest_api.modules.cernsearch.views:build_health_blueprint'
 
 # Flask Security
 # ==============
