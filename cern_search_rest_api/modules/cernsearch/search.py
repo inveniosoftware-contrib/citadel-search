@@ -16,22 +16,13 @@ curl -X GET "localhost:9200/_search" -H 'Content-Type: application/json' -d'
       "filter": {
         "bool": {
           "should": [
-            {"nested": {
-              "path": "_access", 
-              "query": {
-                "bool": {
-                  "should": [
-                    {"terms": {"_access.read": ["egroup-read-one","egroup-read-two"]}},
-                    {"terms": {"_access.update": "egroup-write-one"}},
-                    {"bool": { # Public document
-                      "must_not": {
-                        "exists": {"field": "_access.read"}
-                      } # End must_not
-                    }} # End bool
-                  ] # End should
-                } # End bool
-              } # End query
-            }} # End nested
+            {"terms": {"_access.read": ["egroup-read-one","egroup-read-two"]}},
+            {"terms": {"_access.update": "egroup-write-one"}},
+            {"bool": { # Public document
+              "must_not": {
+                "exists": {"field": "_access.read"}
+              } # End must_not
+            }} # End bool
           ] # End should
         } # End bool
       } # End filter
@@ -47,18 +38,19 @@ def cern_search_filter():
     provides = get_egroups()
     # Filter for public records
     public = ~Q('exists', field='_access.read')
-    nested_query = public
+    cern_filter = public
 
     if provides is not None:
         # Filter for restricted records, that the user has access to
         read_restricted = Q('terms', **{'_access.read': provides})
         write_restricted = Q('terms', **{'_access.update': provides})
+        delete_restricted = Q('terms', **{'_access.delete': provides})
         # Filter records where the user is owner
         owner = Q('terms', **{'_access.owner': provides})
         # OR all the filters
-        nested_query = public | read_restricted | write_restricted | owner
+        cern_filter = public | read_restricted | write_restricted | delete_restricted | owner
 
-    return Q('bool', should=[Q('nested', path='_access', query=nested_query)])
+    return Q('bool', filter=cern_filter)
 
 
 def get_egroups():
