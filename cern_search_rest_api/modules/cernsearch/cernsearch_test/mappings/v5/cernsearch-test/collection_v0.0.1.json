@@ -14,7 +14,7 @@
       },
       "properties": {
         "_access": {
-          "type": "nested",
+          "type": "object",
           "properties": {
             "owner":{
               "type": "keyword"
