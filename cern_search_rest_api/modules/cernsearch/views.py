@@ -278,7 +278,7 @@ def build_health_blueprint():
         if current_search_client.ping():
             return 'OK'
         else:
-            logging.error('Health Check: Elasticsearch connection is not available')
+            current_app.logger.error('Health Check: Elasticsearch connection is not available')
             return make_response((
                 json.dumps({
                     'Elasticsearch is unavailable'
@@ -292,7 +292,7 @@ def build_health_blueprint():
         if db.engine.execute('SELECT 1;').scalar() == 1:
             return 'OK'
         else:
-            logging.error('Health Check: Database connection is not available')
+            current_app.logger.error('Health Check: Database connection is not available')
             return make_response((
                 json.dumps({
                     'Database connection is unavailable'
