@@ -108,6 +108,9 @@ setup(
         ],
         'invenio_base.api_apps': [
             'cern-search = cern_search_rest_api.modules.cernsearch.ext:CERNSearch'
+        ],
+        'invenio_base.blueprints': [
+            'health_check = cern_search_rest_api.modules.cernsearch.views:build_health_blueprint'
         ]
     },
     extras_require=extras_require,

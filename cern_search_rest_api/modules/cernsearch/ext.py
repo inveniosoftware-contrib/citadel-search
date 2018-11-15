@@ -14,7 +14,6 @@ class CERNSearch(object):
         """Flask application initialization."""
         self.init_config(app)
         blueprint = build_blueprint(app)
-        app.register_blueprint(build_health_blueprint())
         app.register_blueprint(blueprint)
         app.extensions["cern-search"] = self
 

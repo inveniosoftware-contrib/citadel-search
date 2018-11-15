@@ -263,7 +263,7 @@ class UBQRecordListResource(ContentNegotiatedMethodView):
         )
 
 
-def build_health_blueprint():
+def build_health_blueprint(app):
 
     blueprint = Blueprint('health_check', __name__)
 
