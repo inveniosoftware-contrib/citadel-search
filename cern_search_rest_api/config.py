@@ -101,6 +101,10 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
+        record_loaders={
+            'application/json': ('cern_search_rest_api.modules.cernsearch.loaders:'
+                                 'csas_loader')
+        },
         search_class='cern_search_rest_api.modules.cernsearch.search.RecordCERNSearch',
         search_index=os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test'),
         search_serializers={
