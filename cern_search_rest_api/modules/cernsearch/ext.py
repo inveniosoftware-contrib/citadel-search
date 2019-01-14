@@ -1,4 +1,12 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright (C) 2018, CERN
+# This software is distributed under the terms of the GNU General Public
+# Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
 from cern_search_rest_api.modules.cernsearch.views import build_blueprint, build_health_blueprint
 
 
@@ -14,7 +22,6 @@ class CERNSearch(object):
         """Flask application initialization."""
         self.init_config(app)
         blueprint = build_blueprint(app)
-        app.register_blueprint(build_health_blueprint())
         app.register_blueprint(blueprint)
         app.extensions["cern-search"] = self
 

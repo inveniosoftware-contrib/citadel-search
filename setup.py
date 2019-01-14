@@ -1,5 +1,12 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright (C) 2018, CERN
+# This software is distributed under the terms of the GNU General Public
+# Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as Intergovernmental Organization
+# or submit itself to any jurisdiction.
+
 
 import os
 
@@ -41,23 +48,24 @@ setup_requires = []
 
 install_requires = [
     'flask',
-    'invenio-access>=1.0.0,<1.2.0',
-    'invenio-admin>=1.0.0,<1.2.0',
-    'invenio-accounts>=1.0.0,<1.2.0',
+    'invenio-access>=1.0.0,<1.1.0',
+    'invenio-admin>=1.0.0,<1.1.0',
+    'invenio-accounts>=1.0.0,<1.1.0',
     'invenio-app>=1.0.0,<1.0.1',
-    'invenio-base>=1.0.0,<1.2.0',
-    'invenio-config>=1.0.0,<1.2.0',
-    'invenio-db[postgresql,versioning]>=1.0.2,<1.2.0',
-    'invenio-indexer[elasticsearch5]>=1.0.0,<1.2.0',
-    'invenio-jsonschemas>=1.0.0,<1.2.0',
+    'invenio-base>=1.0.0,<1.1.0',
+    'invenio-config>=1.0.0,<1.1.0',
+    'invenio-db[postgresql,versioning]>=1.0.2,<1.1.0',
+    'invenio-indexer[elasticsearch5]>=1.0.0,<1.1.0',
+    'invenio-jsonschemas>=1.0.0,<1.1.0',
     'invenio-logging>=1.0.0,<1.1.0',
-    'invenio-records-rest[elasticsearch5]>=1.1.1,<1.2.0',
-    'invenio-records[postgresql]>=1.0.0,<1.2.0',
-    'invenio-rest[cors]>=1.0.0,<1.2.0',
-    'invenio-oauthclient>=1.0.0,<1.2.0',
-    'invenio_oauth2server>=1.0.0,<1.2.0',
-    'invenio-search[elasticsearch5]>=1.0.0,<1.2.0',
-    'invenio-theme>=1.0.0,<1.2.0',
+    'invenio-records-rest[elasticsearch5]>=1.3.0,<1.4.0',
+    'invenio-records[postgresql]>=1.0.0,<1.1.0',
+    'invenio-rest[cors]>=1.0.0,<1.1.0',
+    'invenio-oauthclient>=1.0.0,<1.1.0',
+    'invenio_oauth2server>=1.0.0,<1.1.0',
+    'invenio-search[elasticsearch5]>=1.0.0,<1.1.0',
+    'invenio-theme>=1.0.0,<1.1.0',
+    'oauthlib<3.0.0',
     'python-ldap>=3.1.0,<3.2.0',
     'raven>=6.9.0,<6.10.0'
     'redis>=2.10.0',
@@ -108,6 +116,9 @@ setup(
         ],
         'invenio_base.api_apps': [
             'cern-search = cern_search_rest_api.modules.cernsearch.ext:CERNSearch'
+        ],
+        'invenio_base.blueprints': [
+            'health_check = cern_search_rest_api.modules.cernsearch.views:build_health_blueprint'
         ]
     },
     extras_require=extras_require,

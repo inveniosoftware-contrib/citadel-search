@@ -7,16 +7,14 @@
 # granted to it by virtue of its status as Intergovernmental Organization
 # or submit itself to any jurisdiction.
 
-"""Persistent identifier fetcher."""
 
-from invenio_pidstore.fetchers import FetchedPID
-from .providers import CERNSearchRecordIdProvider
+from invenio_records_rest.loaders.marshmallow import \
+    marshmallow_loader
+from cern_search_rest_api.modules.cernsearch.marshmallow import \
+    CSASRecordSchemaV1
 
+csas_loader = marshmallow_loader(CSASRecordSchemaV1)
 
-def recid_fetcher(record_uuid, data):
-    """Fetch PID from record."""
-    return FetchedPID(
-        provider=CERNSearchRecordIdProvider,
-        pid_type='recid',
-        pid_value=str(data['recid'])
-    )
+__all__ = (
+    'csas_loader',
+)

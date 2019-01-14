@@ -1,5 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright (C) 2018, CERN
+# This software is distributed under the terms of the GNU General Public
+# Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 """
 Custom UPDATE REST API for CERN Search to support _update_by_query.
@@ -263,7 +269,7 @@ class UBQRecordListResource(ContentNegotiatedMethodView):
         )
 
 
-def build_health_blueprint():
+def build_health_blueprint(app):
 
     blueprint = Blueprint('health_check', __name__)
 
@@ -278,7 +284,7 @@ def build_health_blueprint():
         if current_search_client.ping():
             return 'OK'
         else:
-            logging.error('Health Check: Elasticsearch connection is not available')
+            current_app.logger.error('Health Check: Elasticsearch connection is not available')
             return make_response((
                 json.dumps({
                     'Elasticsearch is unavailable'
@@ -292,7 +298,7 @@ def build_health_blueprint():
         if db.engine.execute('SELECT 1;').scalar() == 1:
             return 'OK'
         else:
-            logging.error('Health Check: Database connection is not available')
+            current_app.logger.error('Health Check: Database connection is not available')
             return make_response((
                 json.dumps({
                     'Database connection is unavailable'

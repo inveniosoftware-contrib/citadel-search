@@ -1,5 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
+# Copyright (C) 2018, CERN
+# This software is distributed under the terms of the GNU General Public
+# Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
+# In applying this license, CERN does not waive the privileges and immunities
+# granted to it by virtue of its status as Intergovernmental Organization
+# or submit itself to any jurisdiction.
 
 from __future__ import absolute_import, print_function
 
@@ -95,6 +101,10 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_response'),
         },
+        record_loaders={
+            'application/json': ('cern_search_rest_api.modules.cernsearch.loaders:'
+                                 'csas_loader')
+        },
         search_class='cern_search_rest_api.modules.cernsearch.search.RecordCERNSearch',
         search_index=os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test'),
         search_serializers={
@@ -114,8 +124,7 @@ RECORDS_REST_ENDPOINTS = dict(
 # ===
 
 RATELIMIT_DEFAULT = os.getenv('CERN_SEARCH_INSTANCE_RATELIMIT', '5000/hour')
-APP_HEALTH_BLUEPRINT_ENABLED = True
-APP_HEALTH_BLUEPRINT = 'cern_search_rest_api.modules.cernsearch.views:build_health_blueprint'
+APP_HEALTH_BLUEPRINT_ENABLED = False
 
 # Flask Security
 # ==============

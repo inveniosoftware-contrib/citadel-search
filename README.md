@@ -19,6 +19,10 @@ documents and search among them when needed!
 5. [Configuration](#configuration)  
 
 
+## Powered by Invenio
+
+CERN Search as a Service is built on top of Invenio <http://invenio-software.org>, a ​free software suite enabling you to run your own ​digital library or document repository on the web.
+
 ## Document creation
 
 ### Designing a mapping
