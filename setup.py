@@ -35,7 +35,9 @@ extras_require = {
     'docs': [
         'Sphinx>=1.5.1',
     ],
-    'tests': tests_require,
+    'tests': [
+        'pytest>=4.1.1,<4.2.0'
+    ],
 }
 
 extras_require['all'] = []
