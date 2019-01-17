@@ -1,6 +1,22 @@
 Changes
 =======
 
+Version 0.6.0 (released 2018-01-17)
+
+Features:
+
+- Refactor access patter to allow cascade.
+- Add health check endpoint to web app.
+- Add licensing.
+- Add schema validation.
+
+Fixes:
+
+- Change ``_access`` mappings field from type nested to object for performance reasons.
+- Setup.py versions.
+
+----
+
 Version 0.5.3 (released 2018-11-13)
 
 Features:
@@ -13,4 +29,4 @@ Features:
 
 Fixes:
 
-- Document creation should just check if the user is authenticated in the first iteration. Permissions over the schema are checked on the second iteration.
+- Document creation should just check if the user is authenticated in the first iteration. Permissions over the schema are checked on the second iteration. 
