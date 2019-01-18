@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 3000
   },
   "mappings": {
-    "api_ubq_v0.0.1": {
+    "doc_v0.0.1": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch"
@@ -30,16 +30,19 @@
             }
           }
         },
-        "links":{
-          "type":"nested"
+        "title": {
+          "type": "text",
+          "analyzer": "english"
+        },
+        "description": {
+          "type": "text",
+          "analyzer": "english"
         },
         "custom_pid": {
-          "type": "string",
-          "index": "not_analyzed"
+          "type": "keyword"
         },
         "$schema": {
-          "type": "string",
-          "index": "not_analyzed"
+          "type": "keyword"
         }
       }
     }
