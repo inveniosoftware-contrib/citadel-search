@@ -32,6 +32,10 @@ extras_require = {
         'elasticsearch>=5.0.0,<6.0.0',
         'elasticsearch-dsl>=5.0.0,<6.0.0',
     ],
+    'elasticsearch6': [
+        'elasticsearch>=6.0.0,<6.2.0',
+        'elasticsearch-dsl>=6.0.0,<6.2.0',
+    ],
     'docs': [
         'Sphinx>=1.5.1',
     ],
@@ -42,7 +46,7 @@ extras_require = {
 
 extras_require['all'] = []
 for name, reqs in extras_require.items():
-    if name in ('mysql', 'postgresql', 'elasticsearch5'):
+    if name in ('mysql', 'postgresql', 'elasticsearch6'):
         continue
     extras_require['all'].extend(reqs)
 
@@ -57,15 +61,15 @@ install_requires = [
     'invenio-base>=1.0.0,<1.1.0',
     'invenio-config>=1.0.0,<1.1.0',
     'invenio-db[postgresql,versioning]>=1.0.2,<1.1.0',
-    'invenio-indexer[elasticsearch5]>=1.0.0,<1.1.0',
+    'invenio-indexer[elasticsearch6]>=1.0.0,<1.1.0',
     'invenio-jsonschemas>=1.0.0,<1.1.0',
     'invenio-logging>=1.0.0,<1.1.0',
-    'invenio-records-rest[elasticsearch5]>=1.3.0,<1.4.0',
+    'invenio-records-rest[elasticsearch6]>=1.3.0,<1.4.0',
     'invenio-records[postgresql]>=1.0.0,<1.1.0',
     'invenio-rest[cors]>=1.0.0,<1.1.0',
     'invenio-oauthclient>=1.0.0,<1.1.0',
     'invenio_oauth2server>=1.0.0,<1.1.0',
-    'invenio-search[elasticsearch5]>=1.0.0,<1.1.0',
+    'invenio-search[elasticsearch6]>=1.0.0,<1.1.0',
     'invenio-theme>=1.0.0,<1.1.0',
     'python-ldap>=3.1.0,<3.2.0',
     'raven>=6.9.0,<6.10.0'
