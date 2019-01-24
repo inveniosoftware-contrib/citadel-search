@@ -1,0 +1,55 @@
+{
+  "title": "Custom record schema v0.0.1",
+  "id": "http://localhost:5000/schemas/cernsearch-test/test-doc_v0.0.1.json",
+  "$schema": "http://localhost:5000/schemas/cernsearch-test/test-doc_v0.0.1.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "parents": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "nparents": {
+      "type": "array",
+      "items": {
+        "type": "object"
+      }
+    },
+    "custom_pid": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}

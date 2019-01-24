@@ -1,0 +1,74 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_string": true,
+    "index.mapping.total_fields.limit": 3000
+  },
+  "mappings": {
+    "nested_v0.0.1": {
+      "numeric_detection": true,
+      "_meta": {
+        "_owner": "CernSearch-Administrators@cern.ch"
+      },
+      "_all": {
+        "analyzer": "english"
+      },
+      "properties": {
+        "_access": {
+          "type": "object",
+          "properties": {
+            "owner":{
+              "type": "keyword"
+            },
+            "read": {
+              "type": "keyword"
+            },
+            "update": {
+              "type": "keyword"
+            },
+            "delete": {
+              "type": "keyword"
+            }
+          }
+        },
+        "parents": {
+          "type": "object",
+          "properties": {
+            "type": {
+              "type": "keyword"
+            },
+            "id": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "nparents": {
+          "type": "nested",
+          "properties": {
+            "type": {
+              "type": "keyword"
+            },
+            "id": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword"
+                }
+              }
+            }
+          }
+        },
+        "custom_pid": {
+          "type": "keyword"
+        },
+        "$schema": {
+          "type": "keyword"
+        }
+      }
+    }
+  }
+}
