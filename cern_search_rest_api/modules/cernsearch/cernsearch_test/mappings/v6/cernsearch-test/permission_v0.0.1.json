@@ -30,14 +30,28 @@
             }
           }
         },
+        "_search_all": {
+          "type": "text",
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english"
+            },
+            "french": {
+              "type": "text",
+              "analyzer": "french"
+            }
+          }
+        },
         "type": {
-          "type": "text"
+          "type": "text",
+          "copy_to": "_search_all"
         },
         "custom_pid": {
           "type": "keyword"
         },
         "$schema": {
-          "type": "keyword"
+          "enabled": false
         }
       }
     }

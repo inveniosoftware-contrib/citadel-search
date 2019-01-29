@@ -30,23 +30,36 @@
             }
           }
         },
+        "_search_all": {
+          "type": "text",
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english"
+            },
+            "french": {
+              "type": "text",
+              "analyzer": "french"
+            }
+          }
+        },
         "minutes": {
           "type": "text",
-          "analyzer": "english"
+          "copy_to": "_search_all"
         },
         "content": {
           "type": "text",
-          "analyzer": "english"
+          "copy_to": "_search_all"
         },
         "authors": {
           "type": "text",
-          "analyzer": "english"
+          "copy_to": "_search_all"
         },
         "custom_pid": {
           "type": "keyword"
         },
         "$schema": {
-          "type": "keyword"
+          "enabled": false
         }
       }
     }

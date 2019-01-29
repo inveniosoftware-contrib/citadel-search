@@ -9,9 +9,6 @@
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch"
       },
-      "_all": {
-        "analyzer": "english"
-      },
       "properties": {
         "_access": {
           "type": "object",
@@ -30,19 +27,32 @@
             }
           }
         },
-        "title": {
+        "_search_all": {
           "type": "text",
-          "analyzer": "english"
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english"
+            },
+            "french": {
+              "type": "text",
+              "analyzer": "french"
+            }
+          }
+        },
+        "title": {
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "description": {
           "type": "text",
-          "analyzer": "english"
+          "copy_to": "_search_all"
         },
         "custom_pid": {
           "type": "keyword"
         },
         "$schema": {
-          "type": "keyword"
+          "enabled": false
         }
       }
     }
