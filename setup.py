@@ -20,18 +20,9 @@ tests_require = []
 invenio_db_version = '>=1.0.2,<1.2.0'
 
 extras_require = {
-    # Databases
-    'mysql': [
-        'invenio-db[mysql]' + invenio_db_version,
-        ],
     'postgresql': [
         'invenio-db[postgresql]' + invenio_db_version,
         ],
-    # Elasticsearch
-    'elasticsearch5': [
-        'elasticsearch>=5.0.0,<6.0.0',
-        'elasticsearch-dsl>=5.0.0,<6.0.0',
-    ],
     'elasticsearch6': [
         'elasticsearch>=6.0.0,<6.2.0',
         'elasticsearch-dsl>=6.0.0,<6.2.0',
@@ -46,7 +37,7 @@ extras_require = {
 
 extras_require['all'] = []
 for name, reqs in extras_require.items():
-    if name in ('mysql', 'postgresql', 'elasticsearch6'):
+    if name in ('mysql', 'elasticsearch6'):
         continue
     extras_require['all'].extend(reqs)
 
