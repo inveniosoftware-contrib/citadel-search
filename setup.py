@@ -45,7 +45,6 @@ setup_requires = []
 
 install_requires = [
     'flask',
-    'flask-talisman>=0.5.1,<0.6.0',
     'invenio-access>=1.0.0,<1.1.0',
     'invenio-admin>=1.0.0,<1.1.0',
     'invenio-accounts>=1.0.0,<1.1.0',
@@ -64,8 +63,8 @@ install_requires = [
     'invenio-search[elasticsearch6]>=1.0.0,<1.1.0',
     'invenio-theme>=1.0.0,<1.1.0',
     'python-ldap>=3.1.0,<3.2.0',
-    'raven>=6.9.0,<6.10.0'
-    'redis>=2.10.0',
+    'raven>=6.9.0,<6.10.0',
+    'redis>=2.10.0,<3.0.0',
     'npm>=0.1.1',
     'uWSGI>=2.0.16',
     'uwsgi-tools>=1.1.1,<1.2.0',
