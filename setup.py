@@ -99,15 +99,15 @@ setup(
         ],
         'invenio_search.mappings': [
             'cernsearch-test = cern_search_rest_api.modules.cernsearch.cernsearch_test.mappings',
-            'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.mappings',
-            'cernsearch-webservices = cern_search_rest_api.modules.cernsearch.webservices.mappings',
-            'cernsearch-edms = cern_search_rest_api.modules.cernsearch.edms.mappings'
+            #'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.mappings',
+            #'cernsearch-webservices = cern_search_rest_api.modules.cernsearch.webservices.mappings',
+            #'cernsearch-edms = cern_search_rest_api.modules.cernsearch.edms.mappings'
         ],
         'invenio_jsonschemas.schemas': [
             'cernsearch-test = cern_search_rest_api.modules.cernsearch.cernsearch_test.jsonschemas',
-            'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.jsonschemas',
-            'cernsearch-webservices = cern_search_rest_api.modules.cernsearch.webservices.jsonschemas',
-            'cernsearch-edms = cern_search_rest_api.modules.cernsearch.edms.jsonschemas'
+            #'cernsearch-indico = cern_search_rest_api.modules.cernsearch.indico.jsonschemas',
+            #'cernsearch-webservices = cern_search_rest_api.modules.cernsearch.webservices.jsonschemas',
+            #'cernsearch-edms = cern_search_rest_api.modules.cernsearch.edms.jsonschemas'
         ],
         'invenio_base.apps': [
             'cern-search = cern_search_rest_api.modules.cernsearch.ext:CERNSearch'
