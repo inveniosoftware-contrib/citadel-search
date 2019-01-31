@@ -5,7 +5,13 @@ set -o nounset
 
 mkdir -p ${INVENIO_INSTANCE_PATH}
 npm update && npm install --silent -g node-sass@3.8.0 clean-css@3.4.19 uglify-js@2.7.3 requirejs@2.2.0
-pip install -r requirements.txt
+# If set install devel, else install prod
+if [ -n "${DEVEL-}" ]; then
+    yum install -y git
+    pip install -r requirements-devel.txt
+else
+    pip install -r requirements.txt
+fi
 pip install -e .[all,postgresql,elasticsearch6]
 
 # Needed for invenio-admin UI

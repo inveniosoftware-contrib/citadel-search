@@ -2,6 +2,8 @@
 
 # Use CentOS7:
 FROM cern/cc7-base
+ARG build_devel
+ENV DEVEL=$build_devel
 
 # Install pre-requisites
 RUN yum update -y && \
@@ -14,9 +16,6 @@ RUN yum update -y && \
         npm \
         openldap-devel && \
     pip install --upgrade pip setuptools wheel
-
-ADD requirements.txt /tmp
-RUN pip install -r /tmp/requirements.txt
 
 # CERN Search installation
 WORKDIR /code

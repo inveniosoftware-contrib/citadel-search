@@ -36,6 +36,8 @@ build_dev_version:
   tags:
     - docker-image-build
   script: 'echo "Building Dev/QA Docker image..."'
+  variables:
+    BUILD_ARG: build_devel=1
 
 ########## PROD ##########
 build_prod_version:
