@@ -65,6 +65,4 @@ def test_binary_es_ocr(endpoint, api_key):
     content = resp_hits['hits'][0]['metadata'].get('content')
     assert content is not None
     assert content.get('content') == "Lorem ipsum dolor sit amet"
-    assert content.get('content_length') == 28
     assert content.get('content_type') == 'application/rtf'
-    assert content.get('language') == 'ro'
