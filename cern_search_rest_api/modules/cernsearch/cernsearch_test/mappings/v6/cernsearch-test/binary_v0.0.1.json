@@ -60,9 +60,25 @@
         },
         "content": {
           "type": "object",
-          "copy_to": "_search_all"
+          "properties": {
+            "content":{
+              "type": "text"
+            },
+            "title": {
+              "type": "keyword"
+            },
+            "keywords": {
+              "type": "keyword"
+            },
+            "author": {
+              "type": "keyword"
+            },
+            "content_type": {
+              "type": "keyword"
+            }
+          }
         },
-        "custom_pid": {
+        "control_number": {
           "type": "keyword"
         },
         "$schema": {

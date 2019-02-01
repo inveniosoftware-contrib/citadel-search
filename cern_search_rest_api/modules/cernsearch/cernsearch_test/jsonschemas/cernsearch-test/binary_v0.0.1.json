@@ -51,9 +51,29 @@
     },
     "content": {
       "type": "object",
-      "description": "Extracted content of the binary file"
+      "description": "Extracted content of the binary file",
+      "properties": {
+        "content": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "author":{
+          "type": "string"
+        },
+        "content_type": {
+          "type": "string"
+        }
+      }
     },
-    "custom_pid": {
+    "control_number": {
       "type": "string"
     },
     "$schema": {
