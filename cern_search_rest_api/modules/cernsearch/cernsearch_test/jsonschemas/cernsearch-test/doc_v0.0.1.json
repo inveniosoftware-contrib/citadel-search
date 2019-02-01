@@ -41,7 +41,7 @@
       "type": "string",
       "description": "Description for record."
     },
-    "custom_pid": {
+    "control_number": {
       "type": "string"
     },
     "$schema": {

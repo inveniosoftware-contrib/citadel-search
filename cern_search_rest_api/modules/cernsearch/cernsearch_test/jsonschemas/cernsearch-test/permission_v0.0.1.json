@@ -36,7 +36,7 @@
     "content": {
       "type": "string"
     },
-    "custom_pid": {
+    "control_number": {
       "type": "string"
     },
     "$schema": {

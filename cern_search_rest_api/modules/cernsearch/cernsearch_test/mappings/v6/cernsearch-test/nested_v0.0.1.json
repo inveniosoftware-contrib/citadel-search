@@ -62,7 +62,7 @@
             }
           }
         },
-        "custom_pid": {
+        "control_number": {
           "type": "keyword"
         },
         "$schema": {

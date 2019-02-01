@@ -33,7 +33,7 @@
         "links":{
           "type":"nested"
         },
-        "custom_pid": {
+        "control_number": {
           "type": "keyword"
         },
         "$schema": {

@@ -48,7 +48,7 @@
           "type": "text",
           "copy_to": "_search_all"
         },
-        "custom_pid": {
+        "control_number": {
           "type": "keyword"
         },
         "$schema": {

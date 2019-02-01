@@ -39,6 +39,9 @@
         "type": "object"
       }
     },
+    "control_number": {
+      "type": "string"
+    },
     "$schema": {
       "type": "string"
     }
