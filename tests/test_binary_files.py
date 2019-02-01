@@ -66,3 +66,26 @@ def test_binary_es_ocr(endpoint, api_key):
     assert content is not None
     assert content.get('content') == "Lorem ipsum dolor sit amet"
     assert content.get('content_type') == 'application/rtf'
+
+    # Test search over extracted fields
+    resp = requests.get('{endpoint}/api/records/?q=lorem'
+                        .format(endpoint=endpoint),
+                        headers=HEADERS, data=json.dumps(body))
+
+    assert resp.status_code == 200
+
+    resp_hits = resp.json()['hits']
+    assert resp_hits.get('total') == 1
+
+    print(resp_hits['hits'][0])
+    content = resp_hits['hits'][0]['metadata'].get('content')
+    assert content is not None
+    assert content.get('content') == "Lorem ipsum dolor sit amet"
+    assert content.get('content_type') == 'application/rtf'
+
+    # Clean the instance. Delete record
+    resp = requests.delete('{endpoint}/api/record/{control_number}'
+                           .format(endpoint=endpoint, control_number=control_number),
+                           headers=HEADERS, data=json.dumps(body))
+
+    assert resp.status_code == 204
