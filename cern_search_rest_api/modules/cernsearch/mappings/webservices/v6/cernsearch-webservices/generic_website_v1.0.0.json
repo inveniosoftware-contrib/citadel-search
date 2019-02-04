@@ -27,7 +27,7 @@
             }
           }
         },
-        "name": {
+        "_search_all": {
           "type": "text",
           "fields": {
             "english": {
@@ -40,33 +40,31 @@
             }
           }
         },
+        "name": {
+          "type": "text",
+          "copy_to": "_search_all"
+        },
         "url": {
-          "type": "keyword"
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "origin": {
           "type": "keyword"
         },
         "content": {
           "type": "text",
-          "fields": {
-            "english": {
-              "type": "text",
-              "analyzer": "english"
-            },
-            "french": {
-              "type": "text",
-              "analyzer": "french"
-            }
-          }
+          "copy_to": "_search_all"
         },
         "extras": {
           "type": "nested",
           "properties": {
             "title": {
-              "type": "keyword"
+              "type": "keyword",
+              "copy_to": "_search_all"
             },
             "content": {
-                 "type": "text"
+                 "type": "text",
+              "copy_to": "_search_all"
             }
           }
         },
@@ -78,7 +76,7 @@
           "type": "keyword"
         },
         "$schema": {
-          "type": "keyword"
+          "enabled": false
         }
       }
     }

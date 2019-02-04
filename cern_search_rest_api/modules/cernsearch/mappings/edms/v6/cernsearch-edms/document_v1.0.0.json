@@ -27,17 +27,34 @@
             }
           }
         },
+        "_search_all": {
+          "type": "text",
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english"
+            },
+            "french": {
+              "type": "text",
+              "analyzer": "french"
+            }
+          }
+        },
         "object_type": {
-          "type": "keyword"
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "cid": {
-          "type": "keyword"
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "id": {
-          "type": "keyword"
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "cern_id": {
-          "type": "keyword"
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "version": {
           "type": "keyword"
@@ -47,29 +64,11 @@
         },
         "title": {
           "type": "text",
-          "fields": {
-            "english": {
-              "type": "text",
-              "analyzer": "english"
-            },
-            "french": {
-              "type": "text",
-              "analyzer": "french"
-            }
-          }
+          "copy_to": "_search_all"
         },
         "description": {
           "type": "text",
-          "fields": {
-            "english": {
-              "type": "text",
-              "analyzer": "english"
-            },
-            "french": {
-              "type": "text",
-              "analyzer": "french"
-            }
-          }
+          "copy_to": "_search_all"
         },
         "creation_date": {
           "type": "date",
@@ -80,54 +79,49 @@
           "format": "yyyy-MM-dd'T'HH:mm:ss"
         },
         "context": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword"
-            }
-          }
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "document_type": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword"
-            }
-          }
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "release_procedure": {
-          "type": "text",
-          "fields": {
-            "keyword": {
-              "type": "keyword"
-            }
-          }
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "status": {
-          "type": "keyword"
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "obsolete": {
           "type": "keyword"
         },
         "author": {
-          "type": "text"
+          "type": "text",
+          "copy_to": "_search_all"
         },
         "keywords": {
-          "type": "text"
+          "type": "text",
+          "copy_to": "_search_all"
         },
         "equipment_code": {
-          "type": "text"
+          "type": "text",
+          "copy_to": "_search_all"
         },
         "attributes": {
-          "type": "keyword"
+          "type": "keyword",
+          "copy_to": "_search_all"
         },
         "properties": {
           "properties": {
             "name": {
-              "type": "keyword"
+              "type": "keyword",
+              "copy_to": "_search_all"
             },
             "value": {
-              "type": "text"
+              "type": "text",
+              "copy_to": "_search_all"
             }
           }
         },
@@ -135,15 +129,12 @@
           "type": "nested",
           "properties": {
             "type": {
-              "type": "keyword"
+              "type": "keyword",
+              "copy_to": "_search_all"
             },
             "id": {
-              "type": "text",
-              "fields": {
-                "keyword": {
-                  "type": "keyword"
-                }
-              }
+              "type": "keyword",
+              "copy_to": "_search_all"
             }
           }
         },
@@ -151,7 +142,7 @@
           "type": "keyword"
         },
         "$schema": {
-          "type": "keyword"
+          "enabled": false
         }
       }
     }
