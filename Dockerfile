@@ -52,4 +52,4 @@ ENV UWSGI_THREADS ${UWSGI_THREADS:-2}
 
 EXPOSE 5000
 
-CMD ["/bin/sh", "-c", "/${WORKING_DIR}/src/scripts/manage-user.sh && uwsgi --module ${UWSGI_WSGI_MODULE} --socket 0.0.0.0:${UWSGI_PORT} --master --processes ${UWSGI_PROCESSES} --threads ${UWSGI_THREADS} --stats /tmp/stats.socket"]
+CMD ["/bin/sh", "-c", "uwsgi --module ${UWSGI_WSGI_MODULE} --socket 0.0.0.0:${UWSGI_PORT} --master --processes ${UWSGI_PROCESSES} --threads ${UWSGI_THREADS} --stats /tmp/stats.socket"]
