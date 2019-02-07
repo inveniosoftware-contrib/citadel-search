@@ -18,6 +18,8 @@ USER invenio
 # CERN Search installation
 WORKDIR /${WORKING_DIR}/src
 ADD . /${WORKING_DIR}/src
+ENV PIPENV_VENV_IN_PROJECT="/opt/invenio/src/"
+ENV PIPENV_CACHE_DIR="/opt/invenio/src/"
 
 RUN if [ -n "${DEVEL-}" ]; then pipenv install -r requirements-devel.txt; else pipenv install -r requirements.txt; fi
 
