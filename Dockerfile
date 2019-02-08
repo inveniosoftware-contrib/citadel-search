@@ -10,7 +10,9 @@ RUN yum update -y && \
     yum install -y \
         gcc \
         openssl \
-        openldap-devel
+        openldap-devel \
+        https://linuxsoft.cern.ch/cern/centos/7/cern/x86_64/Packages/CERN-CA-certs-20180516-1.el7.cern.noarch.rpm
+
 
 # Change to user invenio to install the instance
 USER invenio
