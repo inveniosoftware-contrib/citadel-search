@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Use CentOS7:
-FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/invenio:py36
+FROM inveniosoftware/centos7-python:3.6
 ARG build_devel
 ENV DEVEL=$build_devel
 
