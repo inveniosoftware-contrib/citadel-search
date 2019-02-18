@@ -7,7 +7,6 @@
 
 *pyc
 cern_search_rest_api.egg-info/
-Pipfile*
 
 # OpenShift Secrets
 
