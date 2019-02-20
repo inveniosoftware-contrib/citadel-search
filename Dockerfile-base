@@ -1,0 +1,20 @@
+# -*- coding: utf-8 -*-
+
+# Use CentOS7:
+FROM inveniosoftware/centos7-python:3.6
+
+# Install pre-requisites
+RUN yum update -y && \
+    yum install -y \
+        gcc \
+        openssl \
+        openldap-devel \
+        https://linuxsoft.cern.ch/cern/centos/7/cern/x86_64/Packages/CERN-CA-certs-20180516-1.el7.cern.noarch.rpm
+
+# CERN Search installation
+WORKDIR /${WORKING_DIR}/src
+ADD ./Pipfile /${WORKING_DIR}/src/Pipfile
+ADD ./Pipfile.lock /${WORKING_DIR}/src/Pipfile.lock
+
+# Install dependencies globally
+RUN pipenv install --system --deploy
