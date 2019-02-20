@@ -4,11 +4,11 @@
     "index.mapping.total_fields.limit": 500
   },
   "mappings": {
-    "document_v1.0.0": {
+    "file_v1.0.0": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch,en-dep-ace-edm@cern.ch",
-        "_comment": "Fields to ignore for global search obsolete, latest_version, (version, obsolete, release_procedure, status)"
+        "_comment": "Fields to ignore for global search obsolete, latest_version, (version, obsolete, release_procedure, status )"
       },
       "properties": {
         "_access": {
@@ -48,6 +48,9 @@
           "type": "keyword",
           "copy_to": "_search_all"
         },
+        "file_id": {
+          "enabled": false
+        },
         "version": {
           "type": "keyword"
         },
@@ -55,11 +58,15 @@
           "type": "keyword"
         },
         "title": {
-          "type": "text",
+          "type": "keyword",
+          "copy_to": "_search_all"
+        },
+        "file_name": {
+          "type": "keyword",
           "copy_to": "_search_all"
         },
         "description": {
-          "type": "text",
+          "type": "keyword",
           "copy_to": "_search_all"
         },
         "creation_date": {
@@ -106,13 +113,14 @@
           "copy_to": "_search_all"
         },
         "object_properties": {
+          "type": "object",
           "properties": {
             "name": {
               "type": "keyword",
               "copy_to": "_search_all"
             },
             "value": {
-              "type": "text",
+              "type": "keyword",
               "copy_to": "_search_all"
             }
           }
@@ -125,6 +133,34 @@
               "copy_to": "_search_all"
             },
             "parent_id": {
+              "type": "keyword",
+              "copy_to": "_search_all"
+            }
+          }
+        },
+        "b64": {
+          "enabled": false
+        },
+        "content": {
+          "type": "object",
+          "properties": {
+            "content":{
+              "type": "keyword",
+              "copy_to": "_search_all"
+            },
+            "title": {
+              "type": "keyword",
+              "copy_to": "_search_all"
+            },
+            "keywords": {
+              "type": "keyword",
+              "copy_to": "_search_all"
+            },
+            "author": {
+              "type": "keyword",
+              "copy_to": "_search_all"
+            },
+            "content_type": {
               "type": "keyword",
               "copy_to": "_search_all"
             }
