@@ -26,7 +26,7 @@ def test_binary_es_ocr(endpoint, api_key):
         "description": "Test binary with ingest pipeline",
         "link": "localhost/test",
         "b64": "{binary_content}".format(binary_content=BINARY_CONTENT),
-        "$schema": "{endpoint}/schemas/cernsearch-test/binary_v0.0.1.json".format(
+        "$schema": "{endpoint}/schemas/test/binary_v0.0.1.json".format(
             endpoint=endpoint
         )
     }
