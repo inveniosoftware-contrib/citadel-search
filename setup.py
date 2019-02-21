@@ -39,13 +39,13 @@ setup(
             'cern_search_rest_api = cern_search_rest_api.config'
         ],
         'invenio_search.mappings': [
-            'cernsearch-test = cern_search_rest_api.modules.cernsearch.mappings.test',
+            'test = cern_search_rest_api.modules.cernsearch.mappings.test',
             'cernsearch-indico = cern_search_rest_api.modules.cernsearch.mappings.indico',
             'cernsearch-webservices = cern_search_rest_api.modules.cernsearch.mappings.webservices',
             'cernsearch-edms = cern_search_rest_api.modules.cernsearch.mappings.edms'
         ],
         'invenio_jsonschemas.schemas': [
-            'cernsearch-test = cern_search_rest_api.modules.cernsearch.jsonschemas.test',
+            'test = cern_search_rest_api.modules.cernsearch.jsonschemas.test',
             'cernsearch-indico = cern_search_rest_api.modules.cernsearch.jsonschemas.indico',
             'cernsearch-webservices = cern_search_rest_api.modules.cernsearch.jsonschemas.webservices',
             'cernsearch-edms = cern_search_rest_api.modules.cernsearch.jsonschemas.edms'
