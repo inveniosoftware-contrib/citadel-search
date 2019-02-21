@@ -64,12 +64,6 @@ JSONSCHEMAS_HOST = '0.0.0.0'
 # Do not register the endpoints on the UI app."""
 JSONSCHEMAS_REGISTER_ENDPOINTS_UI = True
 
-# Indexer
-# =======
-
-INDEXER_DEFAULT_DOC_TYPE = os.getenv('CERN_SEARCH_DEFAULT_DOC_TYPE', 'doc_v0.0.1')
-INDEXER_DEFAULT_INDEX = os.getenv('CERN_SEARCH_DEFAULT_INDEX', 'cernsearch-test-doc_v0.0.1')
-
 # Search configuration
 # =====================
 
