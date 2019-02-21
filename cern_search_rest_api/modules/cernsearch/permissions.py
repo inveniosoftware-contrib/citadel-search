@@ -10,9 +10,9 @@
 from flask_security import current_user
 from flask import request, current_app
 from invenio_search import current_search_client
+from invenio_indexer.utils import default_record_to_index
 
-from cern_search_rest_api.modules.cernsearch.utils import get_user_provides, cern_search_record_to_index, \
-    get_index_from_request
+from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
 
 """Access control for CERN Search."""
 
@@ -100,7 +100,7 @@ def has_owner_permission(user, record=None):
     if user.is_authenticated:
         # Allow based in the '_access' key
         user_provides = get_user_provides()
-        es_index, doc = get_index_from_request(record)
+        es_index, doc = default_record_to_index(record)
         current_app.logger.debug('Using index {idx} and doc {doc}'.format(idx=es_index, doc=doc))
         if current_search_client.indices.exists([es_index]):
             mapping = current_search_client.indices.get_mapping([es_index])
