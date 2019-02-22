@@ -8,6 +8,7 @@
 # or submit itself to any jurisdiction.
 
 from elasticsearch_dsl import Q
+from invenio_records_rest.query import default_search_factory
 from invenio_search import RecordsSearch
 from invenio_search.api import DefaultFilter
 from flask import request, current_app
@@ -73,6 +74,20 @@ def get_egroups():
             return None
     # Else use user's token ACLs
     return get_user_provides()
+
+
+def search_factory(self, search, query_parser=None):
+
+    def _csas_query_parser(qstr=None):
+        """Default parser that uses the Q() from elasticsearch_dsl."""
+        if qstr:
+            return Q('query_string', query=qstr, default_field='_search_all')
+        return Q()
+
+    return default_search_factory(self, search, _csas_query_parser)
+
+
+csas_search_factory = search_factory
 
 
 class RecordCERNSearch(RecordsSearch):

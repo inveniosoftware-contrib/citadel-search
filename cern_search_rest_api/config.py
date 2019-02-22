@@ -103,6 +103,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json': ('invenio_records_rest.serializers'
                                  ':json_v1_search'),
         },
+        search_factory_imp='cern_search_rest_api.modules.cernsearch.search.csas_search_factory',
         max_result_window=10000,
         read_permission_factory_imp=record_read_permission_factory,
         list_permission_factory_imp=record_list_permission_factory,
