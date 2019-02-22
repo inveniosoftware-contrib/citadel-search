@@ -51,7 +51,6 @@ def test_binary_es_ocr(endpoint, api_key):
     # Needed to allow ES to process the file
     import time
     time.sleep(2)
-    print(control_number)
     resp = requests.get('{endpoint}/api/records/?q=control_number:{control_number}'
                         .format(endpoint=endpoint, control_number=control_number),
                         headers=HEADERS, data=json.dumps(body))
@@ -61,7 +60,6 @@ def test_binary_es_ocr(endpoint, api_key):
     resp_hits = resp.json()['hits']
     assert resp_hits.get('total') == 1
 
-    print(resp_hits['hits'][0])
     content = resp_hits['hits'][0]['metadata'].get('content')
     assert content is not None
     assert content.get('content') == "Lorem ipsum dolor sit amet"
@@ -77,7 +75,6 @@ def test_binary_es_ocr(endpoint, api_key):
     resp_hits = resp.json()['hits']
     assert resp_hits.get('total') == 1
 
-    print(resp_hits['hits'][0])
     content = resp_hits['hits'][0]['metadata'].get('content')
     assert content is not None
     assert content.get('content') == "Lorem ipsum dolor sit amet"
