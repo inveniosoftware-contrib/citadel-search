@@ -62,19 +62,24 @@
           "type": "object",
           "properties": {
             "content":{
-              "type": "text"
+              "type": "text",
+              "copy_to": "_search_all"
             },
             "title": {
-              "type": "keyword"
+              "type": "keyword",
+              "copy_to": "_search_all"
             },
             "keywords": {
-              "type": "keyword"
+              "type": "keyword",
+              "copy_to": "_search_all"
             },
             "author": {
-              "type": "keyword"
+              "type": "keyword",
+              "copy_to": "_search_all"
             },
             "content_type": {
-              "type": "keyword"
+              "type": "keyword",
+              "copy_to": "_search_all"
             }
           }
         },
