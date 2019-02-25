@@ -23,11 +23,12 @@ RUN chmod 666 /${WORKING_DIR}/src/uwsgi.pid
 RUN sh /${WORKING_DIR}/src/scripts/patch/oauth_patch.sh
 
 # Install UI
+USER invenio
 
 RUN invenio collect -v
 RUN invenio webpack buildall
 # Move static files to instance folder
-RUN mv /${WORKING_DIR}/src/static/images/cernsearchicon.png ${INVENIO_INSTANCE_PATH}/static/images/cernsearchicon.png
+RUN cp /${WORKING_DIR}/src/static/images/cernsearchicon.png ${INVENIO_INSTANCE_PATH}/static/images/cernsearchicon.png
 
 EXPOSE 5000
 
@@ -41,6 +42,4 @@ ENV UWSGI_PROCESSES ${UWSGI_PROCESSES:-2}
 ARG UWSGI_THREADS=2
 ENV UWSGI_THREADS ${UWSGI_THREADS:-2}
 
-USER invenio
-
-CMD ["/bin/sh", "-c", "uwsgi --module ${UWSGI_WSGI_MODULE} --socket 0.0.0.0:${UWSGI_PORT} --master --processes ${UWSGI_PROCESSES} --threads ${UWSGI_THREADS} --stats /tmp/stats.socket"]
+CMD ["/bin/bash", "-c", "uwsgi --module ${UWSGI_WSGI_MODULE} --socket 0.0.0.0:${UWSGI_PORT} --master --processes ${UWSGI_PROCESSES} --threads ${UWSGI_THREADS} --stats /tmp/stats.socket"]
