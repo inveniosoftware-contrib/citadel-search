@@ -21,7 +21,7 @@ invenio-records = {version = ">=1.0.0,<1.1.0",extras = ["postgresql"]}
 invenio-rest = {version = ">=1.0.0,<1.1.0",extras = ["cors"]}
 invenio-oauthclient = ">=1.0.0,<1.1.0"
 invenio-oauth2server = ">=1.0.0,<1.1.0"
-invenio-search = {version = ">=1.0.0,<1.1.0",extras = ["elasticsearch6"]}
+invenio-search = {version = "==1.1.0",extras = ["elasticsearch6"]}
 invenio-theme = ">=1.1.0,<1.2.0"
 ldap = "<1.1.0,>=1.0.2"
 npm = ">=0.1.1"
