@@ -10,4 +10,3 @@
 
 
 -e git://github.com/ppanero/invenio-indexer.git@020008440e90128b6f0f9b2532a7a217c7e314b0#egg=invenio-indexer
--e git://github.com/inveniosoftware/invenio-search.git@e97dafba693330cefa9503f7a3d0839dd4cfcafd#egg=invenio-search
