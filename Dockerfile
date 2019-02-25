@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # Use CentOS7:
-FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:1276f5e4eec8b282d1d1ce9b0290f1d117847288
+FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:d1f96a1c3600a9a00e76433b593d0edc0a49e532
 ARG build_devel
 ENV DEVEL=$build_devel
 
