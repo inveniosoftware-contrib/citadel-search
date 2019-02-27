@@ -31,14 +31,14 @@
     "cid": {
       "type": "integer"
     },
-    "object_id": {
+    "document_id": {
       "type": "integer"
     },
     "cern_id": {
       "type": "string"
     },
     "file_id": {
-      "type": "string"
+      "type": "integer"
     },
     "version": {
       "type": "string"
