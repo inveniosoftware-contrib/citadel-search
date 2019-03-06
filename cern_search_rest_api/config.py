@@ -25,7 +25,6 @@ def _(x):
     """Identity function used to trigger string extraction."""
     return x
 
-
 # Theme
 # =====
 THEME_SEARCHBAR = False
@@ -50,6 +49,7 @@ OAUTHCLIENT_REMOTE_APPS = dict(
 # FIXME: Needs to be disable for role base auth in SSO. If not invenio_account/sessions:login_listener will crash
 
 ACCOUNTS_SESSION_ACTIVITY_ENABLED = False
+SERVER_NAME = os.getenv("CERN_SEARCH_SERVER_NAME")
 
 # Admin
 # =====
