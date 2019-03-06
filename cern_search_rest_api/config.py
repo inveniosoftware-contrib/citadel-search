@@ -119,6 +119,13 @@ RECORDS_REST_ENDPOINTS = dict(
 RATELIMIT_DEFAULT = os.getenv('CERN_SEARCH_INSTANCE_RATELIMIT', '5000/hour')
 APP_HEALTH_BLUEPRINT_ENABLED = False
 
+# CORS
+# ====
+
+REST_ENABLE_CORS = True
+CORS_SEND_WILDCARD = ast.literal_eval(os.getenv('CERN_SEARCH_CORS_SEND_WILDCARD', 'False'))
+CORS_SUPPORTS_CREDENTIALS = ast.literal_eval(os.getenv('CERN_SEARCH_CORS_SUPPORTS_CREDENTIALS', 'True'))
+
 # Flask Security
 # ==============
 # Avoid error upon registration with email sending
