@@ -31,9 +31,18 @@ from invenio_records_rest.views import need_record_permission, pass_record
 from invenio_rest import ContentNegotiatedMethodView
 from invenio_search import current_search_client
 from invenio_indexer.utils import default_record_to_index
+from cern_search_rest_api.modules.cernsearch.errors import InvalidRecordFormatError
 
 from cern_search_rest_api.modules.cernsearch.search import RecordCERNSearch
 
+def elasticsearch_mapper_parsing_exception_handler(error):
+    """Handle mapper parsing exceptions from ElasticSearch."""
+    description = 'The format of the record is invalid. {reason}.' \
+                  '{caused_by}'.format(
+        reason=error.info['error']['root_cause'],
+        caused_by=error.info['error']['caused_by']['reason']
+    )
+    return InvalidRecordFormatError(description=description).get_response()
 
 def create_error_handlers(blueprint):
     """Create error handlers on blueprint."""

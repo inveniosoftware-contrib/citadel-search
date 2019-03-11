@@ -13,6 +13,7 @@ import ast
 import copy
 import os
 from invenio_oauthclient.contrib import cern
+from invenio_records_rest import config as irr_config
 
 from .modules.cernsearch.permissions import (record_read_permission_factory,
                                              record_create_permission_factory,
@@ -112,6 +113,11 @@ RECORDS_REST_ENDPOINTS = dict(
         delete_permission_factory_imp=record_delete_permission_factory,
     )
 )
+
+RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS = copy.deepcopy(
+    irr_config.RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS)
+RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS['mapper_parsing_exception'] = \
+    'cern_search_rest_api.modules.cernsearch.views:elasticsearch_mapper_parsing_exception_handler'
 
 # App
 # ===
