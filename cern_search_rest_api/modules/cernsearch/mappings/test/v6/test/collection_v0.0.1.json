@@ -9,9 +9,6 @@
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch"
       },
-      "_all": {
-        "analyzer": "english"
-      },
       "properties": {
         "_access": {
           "type": "object",
