@@ -1,7 +1,7 @@
 {
   "title": "EDMS Object Type File schema v1.0.0",
-  "id": "http://0.0.0.0:5000/schemas/cernsearch-edms/file_v1.0.0.json",
-  "$schema": "http://0.0.0.0:5000/schemas/cernsearch-edms/file_v1.0.0.json",
+  "id": "http://0.0.0.0:5000/schemas/edms/file_v1.0.0.json",
+  "$schema": "http://0.0.0.0:5000/schemas/edms/file_v1.0.0.json",
   "type": "object",
   "properties": {
     "_access": {
