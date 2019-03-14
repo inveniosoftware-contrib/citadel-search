@@ -141,3 +141,4 @@ SECURITY_CONFIRM_REGISTRATION = False
 SECURITY_CONFIRMABLE = False
 SECURITY_REGISTERABLE = False  # Avoid user registration outside of CERN SSO
 SECURITY_RECOVERABLE = False  # Avoid user password recovery
+SESSION_COOKIE_SECURE = True
