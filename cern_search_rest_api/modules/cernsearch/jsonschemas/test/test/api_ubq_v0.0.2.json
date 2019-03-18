@@ -1,7 +1,7 @@
 {
-  "title": "Custom record schema for collection v0.0.1",
-  "id": "http://localhost:5000/schemas/cernsearch-test/api_ubq_v0.0.1.json",
-  "$schema": "http://localhost:5000/schemas/cernsearch-test/api_ubq_v0.0.1.json",
+  "title": "Custom record schema to test Update By Query operations v0.0.2",
+  "id": "http://localhost:5000/schemas/test/api_ubq_v0.0.2.json",
+  "$schema": "http://localhost:5000/schemas/test/api_ubq_v0.0.2.json",
   "type": "object",
   "properties": {
     "_access": {
@@ -33,10 +33,13 @@
         }
       }
     },
-    "links":{
-      "type": "array",
-      "items": {
-        "type": "object"
+    "_data": {
+      "type": "object",
+      "links": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
       }
     },
     "control_number": {

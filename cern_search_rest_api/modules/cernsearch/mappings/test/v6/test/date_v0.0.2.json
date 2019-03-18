@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 3000
   },
   "mappings": {
-    "nested_v0.0.1": {
+    "date_v0.0.2": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch"
@@ -27,35 +27,25 @@
             }
           }
         },
-        "parents": {
+        "data": {
           "type": "object",
           "properties": {
-            "type": {
-              "type": "keyword"
-            },
-            "id": {
-              "type": "text",
+            "title": {
+              "type": "keyword",
               "fields": {
-                "keyword": {
-                  "type": "keyword"
+                "english": {
+                  "type": "text",
+                  "analyzer": "english"
+                },
+                "french": {
+                  "type": "text",
+                  "analyzer": "french"
                 }
               }
-            }
-          }
-        },
-        "nested_parents": {
-          "type": "nested",
-          "properties": {
-            "type": {
-              "type": "keyword"
             },
-            "id": {
-              "type": "text",
-              "fields": {
-                "keyword": {
-                  "type": "keyword"
-                }
-              }
+            "record_date": {
+              "type": "date",
+              "format": "yyyy-MM-dd'T'HH:mm:ss"
             }
           }
         },

@@ -1,7 +1,7 @@
 {
-  "title": "Custom record schema for collection v0.0.1",
-  "id": "http://localhost:5000/schemas/cernsearch-test/collection_v0.0.1.json",
-  "$schema": "http://localhost:5000/schemas/cernsearch-test/collection_v0.0.1.json",
+  "title": "Custom record schema for permissions v0.0.2",
+  "id": "http://localhost:5000/schemas/test/permission_v0.0.2.json",
+  "$schema": "http://localhost:5000/schemas/test/permission_v0.0.2.json",
   "type": "object",
   "properties": {
     "_access": {
@@ -33,20 +33,14 @@
         }
       }
     },
-    "minutes": {
-      "type": "string",
-      "description": "Record title."
-    },
-    "content": {
-      "type": "string",
-      "description": "Description for record."
-    },
-    "authors": {
-      "type": "string",
-      "description": "Description for record."
-    },
-    "control_number": {
-      "type": "string"
+    "_data": {
+      "type": "object",
+      "content": {
+        "type": "string"
+      },
+      "control_number": {
+        "type": "string"
+      }
     },
     "$schema": {
       "type": "string"

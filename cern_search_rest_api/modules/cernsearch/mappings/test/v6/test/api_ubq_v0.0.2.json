@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 3000
   },
   "mappings": {
-    "date_v0.0.1": {
+    "api_ubq_v0.0.2": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch"
@@ -27,26 +27,13 @@
             }
           }
         },
-        "_search_all": {
-          "type": "text",
-          "fields": {
-            "english": {
-              "type": "text",
-              "analyzer": "english"
-            },
-            "french": {
-              "type": "text",
-              "analyzer": "french"
+        "_data": {
+          "type": "object",
+          "properties": {
+            "links": {
+              "type": "nested"
             }
           }
-        },
-        "title": {
-          "type": "keyword",
-          "copy_to": "_search_all"
-        },
-        "record_date": {
-          "type": "date",
-          "format": "yyyy-MM-dd'T'HH:mm:ss"
         },
         "control_number": {
           "type": "keyword"

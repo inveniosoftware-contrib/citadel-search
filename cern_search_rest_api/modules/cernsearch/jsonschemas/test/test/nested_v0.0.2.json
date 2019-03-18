@@ -1,7 +1,7 @@
 {
-  "title": "Custom record schema v0.0.1",
-  "id": "http://localhost:5000/schemas/cernsearch-test/test-doc_v0.0.1.json",
-  "$schema": "http://localhost:5000/schemas/cernsearch-test/test-doc_v0.0.1.json",
+  "title": "Custom record schema for nested objects v0.0.2",
+  "id": "http://localhost:5000/schemas/test/nested_v0.0.2.json",
+  "$schema": "http://localhost:5000/schemas/test/nested_v0.0.2.json",
   "type": "object",
   "properties": {
     "_access": {
@@ -33,8 +33,20 @@
         }
       }
     },
-    "content": {
-      "type": "string"
+    "data": {
+      "type": "object",
+      "parents": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "nparents": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
     },
     "control_number": {
       "type": "string"

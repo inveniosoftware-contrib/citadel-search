@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 3000
   },
   "mappings": {
-    "api_ubq_v0.0.1": {
+    "permission_v0.0.2": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch"
@@ -27,8 +27,13 @@
             }
           }
         },
-        "links":{
-          "type":"nested"
+        "_data": {
+          "type": "object",
+          "properties": {
+            "permission_type": {
+              "type": "text"
+            }
+          }
         },
         "control_number": {
           "type": "keyword"
