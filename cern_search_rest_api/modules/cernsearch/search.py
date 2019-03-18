@@ -81,7 +81,7 @@ def search_factory(self, search, query_parser=None):
     def _csas_query_parser(qstr=None):
         """Default parser that uses the Q() from elasticsearch_dsl."""
         if qstr:
-            return Q('query_string', query=qstr, default_field='_search_all.*')
+            return Q('query_string', query=qstr, default_field='_data.*')
         return Q()
 
     return default_search_factory(self, search, _csas_query_parser)
