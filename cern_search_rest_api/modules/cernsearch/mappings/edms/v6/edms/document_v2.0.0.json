@@ -1,0 +1,182 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_string": true,
+    "index.mapping.total_fields.limit": 500
+  },
+  "mappings": {
+    "document_v2.0.0": {
+      "numeric_detection": true,
+      "_meta": {
+        "_owner": "CernSearch-Administrators@cern.ch,en-dep-ace-edm@cern.ch",
+        "_comment": "Fields to ignore for global search obsolete, latest_version, (version, obsolete, release_procedure, status)"
+      },
+      "properties": {
+        "_access": {
+          "type": "object",
+          "properties": {
+            "owner":{"type": "keyword"},
+            "read": {"type": "keyword"},
+            "update": {"type": "keyword"},
+            "delete": {"type": "keyword"}
+          }
+        },
+        "_data": {
+          "type": "object",
+          "properties": {
+            "object_type": {
+              "type": "keyword"
+            },
+            "cid": {
+              "enabled": false
+            },
+            "document_id": {
+              "type": "keyword"
+            },
+            "cern_id": {
+              "type": "keyword",
+              "fields": {
+                "full_text": {
+                  "type": "text"
+                }
+              }
+            },
+            "version": {
+              "type": "keyword"
+            },
+            "latest_version": {
+              "type": "keyword"
+            },
+            "title": {
+              "type": "keyword",
+              "fields": {
+                "english": {
+                  "type": "text",
+                  "analyzer": "english"
+                },
+                "french": {
+                  "type": "text",
+                  "analyzer": "french"
+                }
+              }
+            },
+            "description": {
+              "type": "text",
+              "fields": {
+                "english": {
+                  "type": "text",
+                  "analyzer": "english"
+                },
+                "french": {
+                  "type": "text",
+                  "analyzer": "french"
+                }
+              }
+            },
+            "creation_date": {
+              "type": "date",
+              "format": "yyyy-MM-dd'T'HH:mm:ss"
+            },
+            "modification_date": {
+              "type": "date",
+              "format": "yyyy-MM-dd'T'HH:mm:ss"
+            },
+            "context": {
+              "type": "keyword",
+              "fields": {
+                "full_text": {
+                  "type": "text"
+                }
+              }
+            },
+            "document_type": {
+              "type": "keyword",
+              "fields": {
+                "full_text": {
+                  "type": "text"
+                }
+              }
+            },
+            "release_procedure": {
+              "type": "keyword",
+              "fields": {
+                "full_text": {
+                  "type": "text"
+                }
+              }
+            },
+            "status": {
+              "type": "keyword"
+            },
+            "obsolete": {
+              "type": "keyword"
+            },
+            "author": {
+              "type": "text"
+            },
+            "keywords": {
+              "type": "keyword",
+              "fields": {
+                "english": {
+                  "type": "text",
+                  "analyzer": "english"
+                },
+                "french": {
+                  "type": "text",
+                  "analyzer": "french"
+                }
+              }
+            },
+            "equipment_code": {
+              "type": "keyword"
+            },
+            "attributes": {
+              "type": "keyword"
+            },
+            "object_properties": {
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "value": {
+                  "type": "keyword",
+                  "fields": {
+                    "english": {
+                      "type": "text",
+                      "analyzer": "english"
+                    },
+                    "french": {
+                      "type": "text",
+                      "analyzer": "french"
+                    }
+                  }
+                }
+              }
+            },
+            "parents": {
+              "type": "object",
+              "properties": {
+                "parent_type": {
+                  "type": "keyword"
+                },
+                "parent_id": {
+                  "type": "keyword",
+                  "fields": {
+                    "full_text": {
+                      "type": "text"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "custom_pid": {
+          "type": "keyword"
+        },
+        "$schema": {
+          "enabled": false
+        }
+      }
+    }
+  }
+}
