@@ -11,7 +11,11 @@ HEADERS = {
 
 
 @pytest.mark.unit
-def test_default_search_field(endpoint, api_key):
+def test_search(endpoint, api_key):
+    """
+    Test search over public documents. Test that the ``_access.*`` field is
+    not searched over.
+    """
     HEADERS['Authorization'] = 'Bearer {credentials}'.format(credentials=api_key)
 
     body = {
@@ -20,9 +24,11 @@ def test_default_search_field(endpoint, api_key):
             "update": ["CernSearch-Administrators@cern.ch"],
             "delete": ["CernSearch-Administrators@cern.ch"]
         },
-        "title": "Test default search field",
-        "description": "This contains CernSearch and should appear",
-        "$schema": "{endpoint}/schemas/test/doc_v0.0.1.json".format(
+        "_data": {
+            "title": "Test default search field",
+            "description": "This contains CernSearch and should appear"
+        },
+        "$schema": "{endpoint}/schemas/test/doc_v0.0.2.json".format(
             endpoint=endpoint
         )
     }
@@ -36,13 +42,14 @@ def test_default_search_field(endpoint, api_key):
     # Check non presence of OCR content in DB record
     resp_body = resp.json()['metadata']
     assert resp_body.get('control_number') is not None
-    assert resp_body.get('title') == 'Test default search field'
-    assert resp_body.get('description') == 'This contains CernSearch and should appear'
+    resp_data = resp_body.get("_data")
+    assert resp_data.get('title') == 'Test default search field'
+    assert resp_data.get('description') == 'This contains CernSearch and should appear'
 
     control_number_one = resp_body.get("control_number")
 
     # Create second test record
-    body['description'] = 'This does not contains the magic word and should not appear'
+    body["_data"]['description'] = 'This does not contains the magic word and should not appear'
 
     # Create test record
     resp = requests.post('{endpoint}/api/records/'.format(endpoint=endpoint),
@@ -53,8 +60,9 @@ def test_default_search_field(endpoint, api_key):
     # Check non presence of OCR content in DB record
     resp_body = resp.json()['metadata']
     assert resp_body.get('control_number') is not None
-    assert resp_body.get('title') == 'Test default search field'
-    assert resp_body.get('description') == 'This does not contains the magic word and should not appear'
+    resp_data = resp_body.get("_data")
+    assert resp_data.get('title') == 'Test default search field'
+    assert resp_data.get('description') == 'This does not contains the magic word and should not appear'
 
     control_number_two = resp_body.get("control_number")
 
@@ -80,7 +88,7 @@ def test_default_search_field(endpoint, api_key):
     resp_hits = resp.json()['hits']
     assert resp_hits.get('total') == 1
 
-    description = resp_hits['hits'][0]['metadata'].get('description')
+    description = resp_hits['hits'][0]['metadata'].get("_data").get('description')
     assert description is not None
     assert description == 'This contains CernSearch and should appear'
 

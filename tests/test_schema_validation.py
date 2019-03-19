@@ -21,8 +21,10 @@ def test_control_number_update(endpoint, api_key):
             "update": ["CernSearch-Administrators@cern.ch"],
             "delete": ["CernSearch-Administrators@cern.ch"]
         },
-        "title": "test_control_number_update",
-        "description": "Not updated document"
+        "_data": {
+            "title": "test_control_number_update",
+            "description": "Not updated document"
+        }
     }
 
     # Create test record
@@ -34,7 +36,7 @@ def test_control_number_update(endpoint, api_key):
     orig_record = resp.json()['metadata']
 
     # Update without control_number
-    body['description'] = 'Update with no control number'
+    body["_data"]['description'] = 'Update with no control number'
     resp = requests.put('{endpoint}/api/record/{control_number}'.format(
                         endpoint=endpoint,
                         control_number=orig_record['control_number']),
@@ -44,10 +46,10 @@ def test_control_number_update(endpoint, api_key):
     assert resp.status_code == 200
     assert put_record.get('control_number') is not None
     assert put_record.get('control_number') == orig_record['control_number']
-    assert put_record['description'] == body['description']
+    assert put_record["_data"]['description'] == body["_data"]['description']
 
     # Update with a wrong control_number
-    body['description'] = 'Update with wrong control number'
+    body["_data"]['description'] = 'Update with wrong control number'
     resp = requests.put('{endpoint}/api/record/{control_number}'.format(
         endpoint=endpoint,
         control_number=orig_record['control_number']),
@@ -57,7 +59,7 @@ def test_control_number_update(endpoint, api_key):
     assert resp.status_code == 200
     assert put_record.get('control_number') is not None
     assert put_record.get('control_number') == orig_record['control_number']
-    assert put_record['description'] == body['description']
+    assert put_record["_data"]['description'] == body["_data"]['description']
 
     # Delete test record
     resp = requests.delete('{endpoint}/api/record/{control_number}'.format(
@@ -75,14 +77,16 @@ def test_access_fields_existence(endpoint, api_key):
     # POST and PUT should follow the same workflow. Only checking POST.
     # Without _access field
     body = {
-        "title": "test_access_fields_existence",
-        "description": "No _access field"
+        "_data": {
+            "title": "test_access_fields_existence",
+            "description": "No _access field"
+        }
     }
     resp = requests.post('{endpoint}/api/records/'.format(endpoint=endpoint),
                          headers=HEADERS, data=json.dumps(body))
 
     assert resp.status_code == 400
-    assert {"field": "_schema", "message": "Missing field _access."} in resp.json()['errors']
+    assert {"field": "_schema", "message": "Missing field _access"} in resp.json()['errors']
 
     # Without _access.delete field
     body = {
@@ -90,8 +94,10 @@ def test_access_fields_existence(endpoint, api_key):
             "owner": ["CernSearch-Administrators@cern.ch"],
             "update": ["CernSearch-Administrators@cern.ch"]
         },
-        "title": "test_access_fields_existence",
-        "description": "No _access.delete field"
+        "_data": {
+            "title": "test_access_fields_existence",
+            "description": "No _access.delete field"
+        }
     }
     resp = requests.post('{endpoint}/api/records/'.format(endpoint=endpoint),
                          headers=HEADERS, data=json.dumps(body))
@@ -105,8 +111,10 @@ def test_access_fields_existence(endpoint, api_key):
             "owner": ["CernSearch-Administrators@cern.ch"],
             "delete": ["CernSearch-Administrators@cern.ch"]
         },
-        "title": "test_access_fields_existence",
-        "description": "No _access.update field"
+        "_data": {
+            "title": "test_access_fields_existence",
+            "description": "No _access.update field"
+        }
     }
     resp = requests.post('{endpoint}/api/records/'.format(endpoint=endpoint),
                          headers=HEADERS, data=json.dumps(body))
