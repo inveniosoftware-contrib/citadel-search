@@ -128,11 +128,35 @@ def test_access_fields_existence(endpoint, api_key):
             "update": ["CernSearch-Administrators@cern.ch"],
             "delete": ["CernSearch-Administrators@cern.ch"]
         },
-        "title": "test_access_fields_existence",
-        "description": "No _access.owner field"
+        "_data": {
+            "title": "test_access_fields_existence",
+            "description": "No _access.owner field"
+        }
     }
     resp = requests.post('{endpoint}/api/records/'.format(endpoint=endpoint),
                          headers=HEADERS, data=json.dumps(body))
 
     assert resp.status_code == 400
     assert {"field": "_schema", "message": "Missing or wrong type (not an array) in field _access.owner"} in resp.json()['errors']
+
+
+@pytest.mark.unit
+def test_data_field_existence(endpoint, api_key):
+    HEADERS['Authorization'] = 'Bearer {credentials}'.format(credentials=api_key)
+
+    # Create test record without _data field
+    body = {
+        "_access": {
+            "owner": ["CernSearch-Administrators@cern.ch"],
+            "update": ["CernSearch-Administrators@cern.ch"],
+            "delete": ["CernSearch-Administrators@cern.ch"]
+        },
+        "title": "test_access_fields_existence",
+        "description": "No _access field"
+    }
+
+    resp = requests.post('{endpoint}/api/records/'.format(endpoint=endpoint),
+                         headers=HEADERS, data=json.dumps(body))
+
+    assert resp.status_code == 400
+    assert {"field": "_schema", "message": "Missing field _data"} in resp.json()['errors']
