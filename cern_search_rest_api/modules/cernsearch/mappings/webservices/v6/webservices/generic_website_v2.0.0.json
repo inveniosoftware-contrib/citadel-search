@@ -1,0 +1,146 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_string": true,
+    "index.mapping.total_fields.limit": 50,
+    "analysis": {
+      "analyzer": {
+        "url_analyzer": {
+          "type": "standard",
+          "stopwords": ["http", "https", "ftp", "www", "web", "cern", "ch"]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "generic_website_v2.0.0": {
+      "numeric_detection": true,
+      "_meta": {
+        "_owner": "CernSearch-Administrators@cern.ch"
+      },
+      "properties": {
+        "_access": {
+          "type": "object",
+          "properties": {
+            "owner":{
+              "type": "keyword"
+            },
+            "read": {
+              "type": "keyword"
+            },
+            "update": {
+              "type": "keyword"
+            },
+            "delete": {
+              "type": "keyword"
+            }
+          }
+        },
+        "_data": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "keyword",
+              "fields": {
+                "french": {
+                  "type": "text",
+                  "analyzer": "french"
+                },
+                "english": {
+                  "type": "text",
+                  "analyzer": "english"
+                }
+              }
+            },
+            "url": {
+              "type": "keyword",
+              "fields": {
+                "full_text": {
+                  "type": "text",
+                  "analyzer": "url_analyzer"
+                }
+              }
+            },
+            "website": {
+              "type": "keyword",
+              "fields": {
+                "full_text": {
+                  "type": "text",
+                  "analyzer": "url_analyzer"
+                }
+              }
+            },
+            "analytics_relevance" : {
+              "type": "double"
+            },
+            "origin": {
+              "type": "keyword",
+              "fields": {
+                "full_text": {
+                  "type": "text",
+                  "analyzer": "url_analyzer"
+                }
+              }
+            },
+            "content": {
+              "type": "text",
+              "analyzer": "english",
+              "fields": {
+                "french": {
+                  "type": "text",
+                  "analyzer": "french"
+                }
+              }
+            },
+            "extras": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "keyword",
+                  "fields": {
+                    "french": {
+                      "type": "text",
+                      "analyzer": "french"
+                    },
+                    "english": {
+                      "type": "text",
+                      "analyzer": "english"
+                    }
+                  }
+                },
+                "url": {
+                  "type": "keyword",
+                  "fields": {
+                    "full_text": {
+                      "type": "text",
+                      "analyzer": "url_analyzer"
+                    }
+                  }
+                },
+                "content": {
+                  "type": "text",
+                  "analyzer": "english",
+                  "fields": {
+                    "french": {
+                      "type": "text",
+                      "analyzer": "french"
+                    }
+                  }
+                }
+              }
+            },
+            "last_updated": {
+              "type": "date",
+              "format": "yyyy-MM-ddZHH:mm"
+            }
+          }
+        },
+        "control_number": {
+          "type": "keyword"
+        },
+        "$schema": {
+          "enabled": false
+        }
+      }
+    }
+  }
+}
