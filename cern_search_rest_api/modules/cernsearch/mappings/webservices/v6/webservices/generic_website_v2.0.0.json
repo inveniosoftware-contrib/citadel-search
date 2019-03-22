@@ -3,9 +3,16 @@
     "index.percolator.map_unmapped_fields_as_string": true,
     "index.mapping.total_fields.limit": 50,
     "analysis": {
+      "tokenizer": {
+        "url_tokenizer": {
+          "type": "pattern",
+          "pattern": "\\.|(\\:\\/\\/)|\\/"
+        }
+      },
       "analyzer": {
         "url_analyzer": {
           "type": "standard",
+          "tokenizer": "url_tokenizer",
           "stopwords": ["http", "https", "ftp", "www", "web", "cern", "ch"]
         }
       }
@@ -13,6 +20,7 @@
   },
   "mappings": {
     "generic_website_v2.0.0": {
+      "dynamic": "strict",
       "numeric_detection": true,
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch"
