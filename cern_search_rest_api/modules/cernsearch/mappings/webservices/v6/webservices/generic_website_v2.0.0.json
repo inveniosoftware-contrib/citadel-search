@@ -69,9 +69,6 @@
                 }
               }
             },
-            "analytics_relevance" : {
-              "type": "double"
-            },
             "origin": {
               "type": "keyword",
               "fields": {
@@ -127,12 +124,21 @@
                   }
                 }
               }
-            },
-            "last_updated": {
-              "type": "date",
-              "format": "yyyy-MM-ddZHH:mm"
             }
           }
+        },
+        "analytics_relevance" : {
+          "type": "double"
+        },
+        "last_updated": {
+          "type": "date",
+          "format": "yyyy-MM-ddZHH:mm"
+        },
+        "_updated": {
+          "type": "date"
+        },
+        "_created": {
+          "type": "date"
         },
         "control_number": {
           "type": "keyword"
