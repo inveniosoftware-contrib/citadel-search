@@ -5,6 +5,7 @@
   },
   "mappings": {
     "file_v2.0.0": {
+      "dynamic": "strict",
       "numeric_detection": true,
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch,en-dep-ace-edm@cern.ch",
@@ -87,14 +88,6 @@
                   "analyzer": "french"
                 }
               }
-            },
-            "creation_date": {
-              "type": "date",
-              "format": "yyyy-MM-dd'T'HH:mm:ss"
-            },
-            "modification_date": {
-              "type": "date",
-              "format": "yyyy-MM-dd'T'HH:mm:ss"
             },
             "context": {
               "type": "keyword",
@@ -243,6 +236,14 @@
               }
             }
           }
+        },
+        "creation_date": {
+          "type": "date",
+          "format": "yyyy-MM-dd'T'HH:mm:ss"
+        },
+        "modification_date": {
+          "type": "date",
+          "format": "yyyy-MM-dd'T'HH:mm:ss"
         },
         "control_number": {
           "type": "keyword"

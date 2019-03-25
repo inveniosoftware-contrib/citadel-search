@@ -60,12 +60,6 @@
         "description": {
           "type": "string"
         },
-        "creation_date": {
-          "type": "string"
-        },
-        "modification_date": {
-          "type": "string"
-        },
         "context": {
           "type": "string"
         },
@@ -109,6 +103,12 @@
           }
         }
       }
+    },
+    "creation_date": {
+      "type": "string"
+    },
+    "modification_date": {
+      "type": "string"
     },
     "control_number": {
       "type": "string"
