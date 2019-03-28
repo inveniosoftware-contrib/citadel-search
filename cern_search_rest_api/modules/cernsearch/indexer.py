@@ -11,7 +11,7 @@ from flask import current_app
 
 
 def csas_indexer_receiver(sender, json=None, record=None, index=None,
-                     doc_type=None, arguments=None, **kwargs):
+                          doc_type=None, arguments=None, **kwargs):
 
     pipeline_mapping = current_app.config['SEARCH_DOC_PIPELINES']
 
