@@ -12,6 +12,7 @@ from __future__ import absolute_import, print_function
 import ast
 import copy
 import os
+from flask import request
 from invenio_oauthclient.contrib import cern
 from invenio_records_rest import config as irr_config
 
@@ -96,7 +97,8 @@ RECORDS_REST_ENDPOINTS = dict(
         },
         record_loaders={
             'application/json': ('cern_search_rest_api.modules.cernsearch.loaders:'
-                                 'csas_loader')
+                                 'csas_loader'),
+            'application/json-patch+json': lambda: request.get_json(force=True)
         },
         search_class='cern_search_rest_api.modules.cernsearch.search.RecordCERNSearch',
         search_index=os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test'),
