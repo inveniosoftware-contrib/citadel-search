@@ -135,6 +135,19 @@
             }
           }
         },
+        "promoted": {
+          "type": "boolean"
+        },
+        "promoted_keywords": {
+          "type": "keyword"
+        },
+        "collection": {
+          "type": "keyword",
+          "eager_global_ordinals": true
+        },
+        "image_source": {
+          "enabled": false
+        },
         "analytics_relevance" : {
           "type": "double"
         },

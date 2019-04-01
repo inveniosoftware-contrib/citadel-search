@@ -76,24 +76,39 @@
               }
             }
           }
-        },
-        "analytics_relevance": {
-          "type": "number",
-          "description": "Matomo analytics based relevance of the site"
-        },
-        "last_updated": {
-          "type": "string",
-          "description": "Datetime of when the web page content was last updated"
-        },
-        "_updated": {
-          "type": "string",
-          "description": "Internal last updated datetime of the record"
-        },
-        "_created": {
-          "type": "string",
-          "description": "Internal creation datetime of the record"
         }
       }
+    },
+    "promoted": {
+      "type": "boolean"
+    },
+    "promoted_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "collection": {
+      "type": "string"
+    },
+    "image_source": {
+      "type": "string"
+    },
+    "analytics_relevance": {
+      "type": "number",
+      "description": "Matomo analytics based relevance of the site"
+    },
+    "last_updated": {
+      "type": "string",
+      "description": "Datetime of when the web page content was last updated"
+    },
+    "_updated": {
+      "type": "string",
+      "description": "Internal last updated datetime of the record"
+    },
+    "_created": {
+      "type": "string",
+      "description": "Internal creation datetime of the record"
     },
     "control_number": {
       "type": "string"
