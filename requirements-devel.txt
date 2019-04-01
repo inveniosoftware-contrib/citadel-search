@@ -9,4 +9,4 @@
 # or submit itself to any jurisdiction.
 
 
--e git://github.com/ppanero/invenio-indexer.git@020008440e90128b6f0f9b2532a7a217c7e314b0#egg=invenio-indexer
+-e git://github.com/ppanero/invenio-indexer.git@24d1b1520063faa0fc3cfe462e2198006dfd29d6#egg=invenio-indexer
