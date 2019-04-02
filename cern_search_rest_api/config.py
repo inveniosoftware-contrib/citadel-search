@@ -15,6 +15,7 @@ import os
 from flask import request
 from invenio_oauthclient.contrib import cern
 from invenio_records_rest import config as irr_config
+from invenio_records_rest.facets import terms_filter
 
 from .modules.cernsearch.permissions import (record_read_permission_factory,
                                              record_create_permission_factory,
@@ -115,6 +116,20 @@ RECORDS_REST_ENDPOINTS = dict(
         delete_permission_factory_imp=record_delete_permission_factory,
     )
 )
+
+RECORDS_REST_FACETS = {
+    'cernsearchqa-webservices': {
+        'aggs': {
+            'collection': {
+                'terms': {'field': 'collection'}
+            }
+        },
+        'post_filters': {
+            'collection': terms_filter("collection")
+        }
+    }
+}
+
 
 RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS = copy.deepcopy(
     irr_config.RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS)
