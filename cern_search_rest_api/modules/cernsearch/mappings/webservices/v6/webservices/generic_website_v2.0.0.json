@@ -15,6 +15,13 @@
           "tokenizer": "url_tokenizer",
           "stopwords": ["http", "https", "ftp", "www", "web", "cern", "ch"]
         }
+      },
+      "normalizer": {
+        "case_insensitive_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["lowercase", "asciifolding"]
+        }
       }
     }
   },
@@ -139,7 +146,8 @@
           "type": "boolean"
         },
         "promoted_keywords": {
-          "type": "keyword"
+          "type": "keyword",
+          "normalizer": "case_insensitive_normalizer"
         },
         "collection": {
           "type": "keyword",
