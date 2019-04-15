@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2018, CERN
-# This software is distributed under the terms of the GNU General Public
-# Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as Intergovernmental Organization
-# or submit itself to any jurisdiction.
+#
+# This file is part of CERN Search.
+# Copyright (C) 2018-2019 CERN.
+#
+# CERN Search is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
 
 
 from flask import current_app
