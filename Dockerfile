@@ -1,41 +1,42 @@
 # -*- coding: utf-8 -*-
+#
+# This file is part of CERN Search.
+# Copyright (C) 2018-2019 CERN.
+#
+# CERN Search is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
 
 # Use CentOS7:
-FROM cern/cc7-base
-
-# Install pre-requisites
-RUN yum update -y && \
-    yum install -y epel-release && \
-    yum install -y \
-        python-devel \
-        python-pip \
-        gcc \
-        openssl \
-        npm \
-        openldap-devel && \
-    pip install --upgrade pip setuptools wheel
-
-ADD requirements.txt /tmp
-RUN pip install -r /tmp/requirements.txt
+FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:d1f96a1c3600a9a00e76433b593d0edc0a49e532
+ARG build_devel
+ENV DEVEL=$build_devel
 
 # CERN Search installation
-WORKDIR /code
-ADD . /code
+WORKDIR /${WORKING_DIR}/src
+ADD . /${WORKING_DIR}/src
 
-ENV INVENIO_INSTANCE_PATH=/usr/local/var/cernsearch/var/cernsearch-instance
-ENV LOGO_PATH=/images/cernsearchicon.png
+# If env is development, install development dependencies
+RUN if [ -n "${DEVEL-}" ]; then pip install -r requirements-devel.txt; fi
 
-RUN chmod g=u /etc/passwd && \
-    chmod +x /code/scripts/*.sh && \
-    sh /code/scripts/create-instance.sh && \
-    sh /code/scripts/gen-cert.sh && \
-    chmod +x /code/scripts/patch/oauth_patch.sh && \
-    sh /code/scripts/patch/oauth_patch.sh && \
-    mv nginx.crt nginx.key ${INVENIO_INSTANCE_PATH} && \
-    chgrp -R 0 ${INVENIO_INSTANCE_PATH} && \
-    chmod -R g=u ${INVENIO_INSTANCE_PATH} &&\
-    adduser --uid 1000 invenio --gid 0 && \
-    chown -R invenio:root /code
+# Install CSaS
+RUN pip install -e .
+
+# PID File for uWSGI
+RUN touch /${WORKING_DIR}/src/uwsgi.pid
+RUN chmod 666 /${WORKING_DIR}/src/uwsgi.pid
+
+# Patch auth
+RUN sh /${WORKING_DIR}/src/scripts/patch/oauth_patch.sh
+
+# Install UI
+USER invenio
+
+RUN invenio collect -v
+RUN invenio webpack buildall
+# Move static files to instance folder
+RUN cp /${WORKING_DIR}/src/static/images/cernsearchicon.png ${INVENIO_INSTANCE_PATH}/static/images/cernsearchicon.png
+
+EXPOSE 5000
 
 # uWSGI configuration
 ARG UWSGI_WSGI_MODULE=cern_search_rest_api.wsgi:application
@@ -47,8 +48,4 @@ ENV UWSGI_PROCESSES ${UWSGI_PROCESSES:-2}
 ARG UWSGI_THREADS=2
 ENV UWSGI_THREADS ${UWSGI_THREADS:-2}
 
-USER 1000
-
-EXPOSE 5000
-
-CMD ["/bin/sh", "-c", "/code/scripts/manage-user.sh && uwsgi --module ${UWSGI_WSGI_MODULE} --socket 0.0.0.0:${UWSGI_PORT} --master --processes ${UWSGI_PROCESSES} --threads ${UWSGI_THREADS} --stats /tmp/stats.socket"]
+CMD ["/bin/bash", "-c", "uwsgi --module ${UWSGI_WSGI_MODULE} --socket 0.0.0.0:${UWSGI_PORT} --master --processes ${UWSGI_PROCESSES} --threads ${UWSGI_THREADS} --stats /tmp/stats.socket"]

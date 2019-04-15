@@ -1,0 +1,58 @@
+{
+  "title": "Custom record schema for nested objects v0.0.2",
+  "id": "http://localhost:5000/schemas/test/nested_v0.0.2.json",
+  "$schema": "http://localhost:5000/schemas/test/nested_v0.0.2.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "data": {
+      "type": "object",
+      "parents": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      },
+      "nparents": {
+        "type": "array",
+        "items": {
+          "type": "object"
+        }
+      }
+    },
+    "control_number": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}

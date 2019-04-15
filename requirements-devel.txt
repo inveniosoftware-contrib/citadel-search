@@ -1,0 +1,10 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of CERN Search.
+# Copyright (C) 2018-2019 CERN.
+#
+# CERN Search is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+
+
+-e git://github.com/ppanero/invenio-indexer.git@24d1b1520063faa0fc3cfe462e2198006dfd29d6#egg=invenio-indexer

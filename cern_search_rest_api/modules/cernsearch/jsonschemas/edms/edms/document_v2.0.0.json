@@ -1,0 +1,120 @@
+{
+  "title": "EDMS Object Type Document schema v2.0.0",
+  "id": "http://0.0.0.0:5000/schemas/edms/document_v2.0.0.json",
+  "$schema": "http://0.0.0.0:5000/schemas/edms/document_v2.0.0.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "_data": {
+      "type": "object",
+      "properties": {
+        "object_type": {
+          "type": "string"
+        },
+        "cid": {
+          "type": "integer"
+        },
+        "document_id": {
+          "type": "integer"
+        },
+        "cern_id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "latest_version": {
+          "type": "boolean"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "context": {
+          "type": "string"
+        },
+        "document_type": {
+          "type": "string"
+        },
+        "release_procedure": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "obsolete": {
+          "type": "boolean"
+        },
+        "author": {
+          "type": "string"
+        },
+        "keywords": {
+          "type": "string"
+        },
+        "equipment_code": {
+          "type": "string"
+        },
+        "attributes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "object_properties": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "parents": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        }
+      }
+    },
+    "creation_date": {
+      "type": "string"
+    },
+    "modification_date": {
+      "type": "string"
+    },
+    "control_number": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}

@@ -279,8 +279,9 @@ def get_user_resources_ldap(user):
     res = res[0][1]
 
     groups = []
-    if res['mail'][0] == user.email:
+    if res['mail'][0].decode("utf-8") == user.email:
         for group in res['memberOf']:
+            group = group.decode("utf-8")
             group = group.split(',')[0]
             group = group.split('=')[1]
             groups.append(group)

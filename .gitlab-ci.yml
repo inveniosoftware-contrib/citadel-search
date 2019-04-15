@@ -18,10 +18,27 @@ variables:
 ### By default, there are 6 stages that we may use:
 ### Feel free to adapt this to your specific case.
 stages:
+  - build_base
   - build
   - tag_image
   - import_image # This stage is only used when the built image is stored in the GitLab Registry
   - deploy
+
+### 'Build Base' stage
+### Builds the base docker image and tags it according to the commit message.
+build_base_image:
+  stage: build_base
+  only:
+    changes:
+      - Dockerfile-base
+      - Pipfile
+      - Pipfile.lock
+  tags:
+    - docker-image-build
+  script: 'echo "Building base Docker image..."'
+  variables:
+    DOCKER_FILE: Dockerfile-base
+    TO: gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:${CI_COMMIT_SHA}
 
 ### 'Build' stage
 ### Build the image and store it in the registry. It is important that this step
@@ -30,12 +47,19 @@ stages:
 build_dev_version:
   stage: build
   except:
-    - tags
-    - master
+    refs:
+      - tags
+      - master
+    changes:
+      - Dockerfile-base
+      - Pipfile
+      - Pipfile.lock
   environment: staging
   tags:
     - docker-image-build
   script: 'echo "Building Dev/QA Docker image..."'
+  variables:
+    BUILD_ARG: build_devel=1
 
 ########## PROD ##########
 build_prod_version:
@@ -87,6 +111,11 @@ tag_image_prod:
 ### Import image into OpenShift. Import $CI_COMMIT_TAG if present or 'latest' if not.
 import_image_dev:
   stage: import_image
+  except:
+    changes:
+      - Dockerfile\-base
+      - Pipfile
+      - Pipfile.lock
   environment: staging
   image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
   script:

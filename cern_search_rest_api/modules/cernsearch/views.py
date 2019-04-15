@@ -1,11 +1,11 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2018, CERN
-# This software is distributed under the terms of the GNU General Public
-# Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as Intergovernmental Organization
-# or submit itself to any jurisdiction.
+#
+# This file is part of CERN Search.
+# Copyright (C) 2018-2019 CERN.
+#
+# CERN Search is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
 
 """
 Custom UPDATE REST API for CERN Search to support _update_by_query.
@@ -30,10 +30,19 @@ from flask import Blueprint, Response, json, url_for, request, make_response, cu
 from invenio_records_rest.views import need_record_permission, pass_record
 from invenio_rest import ContentNegotiatedMethodView
 from invenio_search import current_search_client
+from invenio_indexer.utils import default_record_to_index
+from cern_search_rest_api.modules.cernsearch.errors import InvalidRecordFormatError
 
 from cern_search_rest_api.modules.cernsearch.search import RecordCERNSearch
-from cern_search_rest_api.modules.cernsearch.utils import get_index_from_request
 
+def elasticsearch_mapper_parsing_exception_handler(error):
+    """Handle mapper parsing exceptions from ElasticSearch."""
+    description = 'The format of the record is invalid. {reason}.' \
+                  '{caused_by}'.format(
+        reason=error.info['error']['root_cause'],
+        caused_by=error.info['error']['caused_by']['reason']
+    )
+    return InvalidRecordFormatError(description=description).get_response()
 
 def create_error_handlers(blueprint):
     """Create error handlers on blueprint."""
@@ -170,7 +179,7 @@ class UBQRecordResource(ContentNegotiatedMethodView):
         # Perform ES API _updated_by_query
         control_num_query = 'control_number:"{recid}"'.format(recid=record['control_number'])
         script = data["ubq"]
-        index, doc = get_index_from_request(data)
+        index, doc = default_record_to_index(data)
 
         es_response = current_search_client.update_by_query(
             index=index,

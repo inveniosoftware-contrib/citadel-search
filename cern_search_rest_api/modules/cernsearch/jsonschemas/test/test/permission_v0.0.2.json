@@ -1,0 +1,49 @@
+{
+  "title": "Custom record schema for permissions v0.0.2",
+  "id": "http://localhost:5000/schemas/test/permission_v0.0.2.json",
+  "$schema": "http://localhost:5000/schemas/test/permission_v0.0.2.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "_data": {
+      "type": "object",
+      "content": {
+        "type": "string"
+      },
+      "control_number": {
+        "type": "string"
+      }
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}

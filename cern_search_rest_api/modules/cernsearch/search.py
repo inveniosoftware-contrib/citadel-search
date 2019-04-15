@@ -1,13 +1,14 @@
 #!/usr/bin/python
 # -*- coding: utf-8 -*-
-# Copyright (C) 2018, CERN
-# This software is distributed under the terms of the GNU General Public
-# Licence version 3 (GPL Version 3), copied verbatim in the file "COPYING".
-# In applying this license, CERN does not waive the privileges and immunities
-# granted to it by virtue of its status as Intergovernmental Organization
-# or submit itself to any jurisdiction.
+#
+# This file is part of CERN Search.
+# Copyright (C) 2018-2019 CERN.
+#
+# CERN Search is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
 
 from elasticsearch_dsl import Q
+from invenio_records_rest.query import default_search_factory
 from invenio_search import RecordsSearch
 from invenio_search.api import DefaultFilter
 from flask import request, current_app
@@ -73,6 +74,20 @@ def get_egroups():
             return None
     # Else use user's token ACLs
     return get_user_provides()
+
+
+def search_factory(self, search, query_parser=None):
+
+    def _csas_query_parser(qstr=None):
+        """Default parser that uses the Q() from elasticsearch_dsl."""
+        if qstr:
+            return Q('query_string', query=qstr, default_field='_data.*')
+        return Q()
+
+    return default_search_factory(self, search, _csas_query_parser)
+
+
+csas_search_factory = search_factory
 
 
 class RecordCERNSearch(RecordsSearch):
