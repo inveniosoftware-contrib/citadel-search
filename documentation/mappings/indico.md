@@ -31,6 +31,7 @@ The first version of the _Events_ mapping stores the information about an Indico
 * __speakers_chairs__: Speakers/charimans of the event. Stored as a nested object (This field cannot be flatten since the searches are done for a specific person of a specific organization.) with two fields:
 	- __name__: Name of the speaker/chairman. Stored both as keyword and text, for exact match and full-text search.
 	- __affiliation__: Affiliation of the speaker/chairman. Stored as text for full-text search.
+* __url__: URL to the event. Stored as keyword for exact match queries.
 
 - jsonschema path: '/cernsearch/jsonschemas/indico/events_v1.0.0.json'
 - mapping path: '/cernsearch/mappings/v5/indico/events_v1.0.0.json'
@@ -59,6 +60,7 @@ The first version of the _Contributions_ mapping stores the information about an
 	- __name__: Name of the person. Stored both as keyword and text, for exact match and full-text search.
 	- __affiliation__: Affiliation of the person. Stored as text for full-text search.
 	- __role__: Role(s) of the person. Stored as keyword for exact match.
+* __url__: URL to the contribution. Stored as keyword for exact match queries.
 
 - jsonschema path: '/cernsearch/jsonschemas/indico/contributions_v1.0.0.json'
 - mapping path: '/cernsearch/mappings/v5/indico/contributions_v1.0.0.json'
@@ -88,6 +90,7 @@ The first version of the _Subcontributions_ mapping stores the information about
 	- __name__: Name of the person. Stored both as keyword and text, for exact match and full-text search.
 	- __affiliation__: Affiliation of the person. Stored as text for full-text search.
 	- __role__: Role(s) of the person. Stored as keyword for exact match.
+* __url__: URL to the subcontribution. Stored as keyword for exact match queries.
 
 - jsonschema path: '/cernsearch/jsonschemas/indico/subcontributions_v1.0.0.json'
 - mapping path: '/cernsearch/mappings/v5/indico/subcontributions_v1.0.0.json'
@@ -110,6 +113,7 @@ The first version of the _Attachment_ mapping stores the information about an In
 * __creation_date__: Creation date of the attachment. Stored as date with 'YYYY-MM-DDZHH:MM' format.
 * __filename__: Filename of the attachment. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analyzis helps improve query relevance.
 * __content__: Content of the attachment. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
+* __url__: URL to the attachement. Stored as keyword for exact match queries.
 
 - jsonschema path: '/cernsearch/jsonschemas/indico/attachments_v1.0.0.json'
 - mapping path: '/cernsearch/mappings/v5/indico/attachments_v1.0.0.json'
@@ -131,6 +135,7 @@ The first version of the _Notes_ mapping stores the information about an Indico 
 * __subcontribution_id__: ID of the subcontribution to which the note belongs to. Stored as keyword for exact match queries.
 * __creation_date__: Creation date of the note. Stored as date with 'YYYY-MM-DDZHH:MM' format.
 * __content__: Content of the note. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
+* __url__: URL to the note. Stored as keyword for exact match queries.
 
 - jsonschema path: '/cernsearch/jsonschemas/indico/notes_v1.0.0.json'
 - mapping path: '/cernsearch/mappings/v5/indico/notes_v1.0.0.json'
