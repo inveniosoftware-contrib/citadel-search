@@ -56,25 +56,12 @@
           "type": "string",
           "description": "Website content"
         },
-        "extras": {
+        "authors": {
           "type": "array",
-          "description": "Attachments and followed links present in the website",
+          "description": "Authors of the site",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Linked website name or title"
-              },
-              "url": {
-                "type": "string",
-                "description": "Linked website full path website URL"
-              },
-              "content": {
-                "type": "string",
-                "description": "Linked website content"
-              }
-            }
+            "type": "string",
+            "description": "Author name"
           }
         }
       }
@@ -89,6 +76,9 @@
       }
     },
     "collection": {
+      "type": "string"
+    },
+    "type_format": {
       "type": "string"
     },
     "image_source": {

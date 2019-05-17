@@ -103,40 +103,12 @@
                 }
               }
             },
-            "extras": {
-              "type": "object",
-              "properties": {
-                "name": {
-                  "type": "keyword",
-                  "fields": {
-                    "french": {
-                      "type": "text",
-                      "analyzer": "french"
-                    },
-                    "english": {
-                      "type": "text",
-                      "analyzer": "english"
-                    }
-                  }
-                },
-                "url": {
-                  "type": "keyword",
-                  "fields": {
-                    "full_text": {
-                      "type": "text",
-                      "analyzer": "url_analyzer"
-                    }
-                  }
-                },
-                "content": {
-                  "type": "text",
-                  "analyzer": "english",
-                  "fields": {
-                    "french": {
-                      "type": "text",
-                      "analyzer": "french"
-                    }
-                  }
+            "authors": {
+              "type": "keyword",
+              "eager_global_ordinals": true,
+              "fields": {
+                "full_text": {
+                  "type": "text"
                 }
               }
             }
@@ -150,6 +122,10 @@
           "normalizer": "case_insensitive_normalizer"
         },
         "collection": {
+          "type": "keyword",
+          "eager_global_ordinals": true
+        },
+        "type_format": {
           "type": "keyword",
           "eager_global_ordinals": true
         },
