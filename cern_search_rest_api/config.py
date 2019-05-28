@@ -130,6 +130,21 @@ RECORDS_REST_FACETS = {
     }
 }
 
+RECORDS_REST_SORT_OPTIONS = {
+    'cernsearchqa-webservices': {
+        'bestmatch': {
+            'fields': ['-_score'],
+            'title': 'Best match',
+            'default_order': 'asc',
+        },
+        'mostrecent': {
+            'fields': ['_updated'],
+            'title': 'Newest',
+            'default_order': 'asc',
+        }
+    }
+}
+
 
 RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS = copy.deepcopy(
     irr_config.RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS)
