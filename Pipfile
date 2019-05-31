@@ -13,7 +13,7 @@ invenio-app = ">=1.1.0,<1.2.0"
 invenio-base = ">=1.0.0,<1.1.0"
 invenio-config = ">=1.0.0,<1.1.0"
 invenio-db = {version = ">=1.0.0,<1.1.0",extras = ["postgresql", "versioning"]}
-invenio-indexer = {version = ">=1.0.0,<1.1.0",extras = ["elasticsearch6"]}
+invenio-indexer = {version = "==1.0.2",extras = ["elasticsearch6"]}
 invenio-jsonschemas = ">=1.0.0,<1.1.0"
 invenio-logging = ">=1.0.0,<1.1.0"
 invenio-records-rest = {version = ">=1.3.0,<1.4.0",extras = ["elasticsearch6"]}
