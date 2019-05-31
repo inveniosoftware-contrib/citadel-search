@@ -122,10 +122,33 @@ RECORDS_REST_FACETS = {
         'aggs': {
             'collection': {
                 'terms': {'field': 'collection'}
+            },
+            'type_format': {
+                'terms': {'field': 'type_format'}
+            },
+            'authors': {
+                'terms': {'field': '_data.authors.exact_match'}
             }
         },
         'post_filters': {
-            'collection': terms_filter("collection")
+            'collection': terms_filter("collection"),
+            'type_format': terms_filter("type_format"),
+            'authors': terms_filter("_data.authors.exact_match")
+        }
+    }
+}
+
+RECORDS_REST_SORT_OPTIONS = {
+    'cernsearchqa-webservices': {
+        'bestmatch': {
+            'fields': ['-_score'],
+            'title': 'Best match',
+            'default_order': 'asc',
+        },
+        'mostrecent': {
+            'fields': ['_updated'],
+            'title': 'Newest',
+            'default_order': 'asc',
         }
     }
 }

@@ -10,7 +10,9 @@
 FROM inveniosoftware/centos7-python:3.6
 
 # Install pre-requisites
-RUN yum update -y && \
+RUN yum erase -y python36u python36u-devel python36u-pip && \
+    yum install -y rh-python36 python36-devel python36-pip && \
+    yum update -y && \
     yum install -y \
         gcc \
         openssl \

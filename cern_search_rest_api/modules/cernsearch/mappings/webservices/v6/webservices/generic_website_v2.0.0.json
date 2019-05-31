@@ -9,11 +9,17 @@
           "pattern": "\\.|(\\:\\/\\/)|\\/"
         }
       },
+      "filter":{
+        "url_stop": {
+          "type": "stop",
+          "stopwords": ["http", "https", "ftp", "www", "web", "cern", "ch"]
+        }
+      },
       "analyzer": {
         "url_analyzer": {
-          "type": "standard",
+          "type": "custom",
           "tokenizer": "url_tokenizer",
-          "stopwords": ["http", "https", "ftp", "www", "web", "cern", "ch"]
+          "filter": ["url_stop"]
         }
       },
       "normalizer": {
@@ -54,42 +60,42 @@
           "type": "object",
           "properties": {
             "name": {
-              "type": "keyword",
+              "type": "text",
+              "analyzer": "english",
               "fields": {
                 "french": {
                   "type": "text",
                   "analyzer": "french"
                 },
-                "english": {
-                  "type": "text",
-                  "analyzer": "english"
+                "exact_match": {
+                  "type": "keyword"
                 }
               }
             },
             "url": {
-              "type": "keyword",
+              "type": "text",
+              "analyzer": "url_analyzer",
               "fields": {
-                "full_text": {
-                  "type": "text",
-                  "analyzer": "url_analyzer"
+                "exact_match": {
+                  "type": "keyword"
                 }
               }
             },
             "website": {
-              "type": "keyword",
+              "type": "text",
+              "analyzer": "url_analyzer",
               "fields": {
-                "full_text": {
-                  "type": "text",
-                  "analyzer": "url_analyzer"
+                "exact_match": {
+                  "type": "keyword"
                 }
               }
             },
             "origin": {
-              "type": "keyword",
+              "type": "text",
+              "analyzer": "url_analyzer",
               "fields": {
-                "full_text": {
-                  "type": "text",
-                  "analyzer": "url_analyzer"
+                "exact_match": {
+                  "type": "keyword"
                 }
               }
             },
@@ -103,40 +109,12 @@
                 }
               }
             },
-            "extras": {
-              "type": "object",
-              "properties": {
-                "name": {
+            "authors": {
+              "type": "text",
+              "fields": {
+                "exact_match": {
                   "type": "keyword",
-                  "fields": {
-                    "french": {
-                      "type": "text",
-                      "analyzer": "french"
-                    },
-                    "english": {
-                      "type": "text",
-                      "analyzer": "english"
-                    }
-                  }
-                },
-                "url": {
-                  "type": "keyword",
-                  "fields": {
-                    "full_text": {
-                      "type": "text",
-                      "analyzer": "url_analyzer"
-                    }
-                  }
-                },
-                "content": {
-                  "type": "text",
-                  "analyzer": "english",
-                  "fields": {
-                    "french": {
-                      "type": "text",
-                      "analyzer": "french"
-                    }
-                  }
+                  "eager_global_ordinals": true
                 }
               }
             }
@@ -150,6 +128,10 @@
           "normalizer": "case_insensitive_normalizer"
         },
         "collection": {
+          "type": "keyword",
+          "eager_global_ordinals": true
+        },
+        "type_format": {
           "type": "keyword",
           "eager_global_ordinals": true
         },
