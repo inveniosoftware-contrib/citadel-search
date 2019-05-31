@@ -7,7 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 # Use CentOS7:
-FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:d1f96a1c3600a9a00e76433b593d0edc0a49e532
+FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:cfe1fe3d1aba819d240acbb6a7bfe79678f82ee5
 ARG build_devel
 ENV DEVEL=$build_devel
 
