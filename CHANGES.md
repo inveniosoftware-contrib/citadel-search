@@ -1,6 +1,21 @@
 Changes
 =======
 
+Version 0.7.0 (released 2019-05-31)
+
+Features:
+
+- Refactor folders hierarchy
+- Created datamodel convention for searchable data (_data)
+- Improve Webservices Mappings
+- Upgrade to ES6
+- Enable OCR extraction in ES
+- Migrate to Python3
+- Migrate to Pipenv
+- Split docker images (Base and App)
+
+----
+
 Version 0.6.0 (released 2018-01-17)
 
 Features:
