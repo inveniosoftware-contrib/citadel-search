@@ -1,0 +1,76 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_string": true,
+    "index.mapping.total_fields.limit": 3000,
+    "analysis": {
+      "analyzer": {
+        "autocomplete": {
+          "tokenizer": "autocomplete",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "autocomplete_search": {
+          "tokenizer": "lowercase"
+        }
+      },
+      "tokenizer": {
+        "autocomplete": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 20,
+          "token_chars": [
+            "letter"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "suggest_v0.0.2": {
+      "numeric_detection": true,
+      "_meta": {
+        "_owner": "CernSearch-Administrators@cern.ch"
+      },
+      "properties": {
+        "_access": {
+          "type": "object",
+          "properties": {
+            "owner":{
+              "type": "keyword"
+            },
+            "read": {
+              "type": "keyword"
+            },
+            "update": {
+              "type": "keyword"
+            },
+            "delete": {
+              "type": "keyword"
+            }
+          }
+        },
+        "_data": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "keyword",
+              "copy_to": "suggest"
+            }
+          }
+        },
+        "suggest": {
+          "type": "text",
+          "analyzer": "autocomplete",
+          "search_analyzer": "autocomplete_search"
+        },
+        "control_number": {
+          "type": "keyword"
+        },
+        "$schema": {
+          "enabled": false
+        }
+      }
+    }
+  }
+}
