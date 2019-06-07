@@ -7,6 +7,14 @@
         "url_tokenizer": {
           "type": "pattern",
           "pattern": "\\.|(\\:\\/\\/)|\\/"
+        },
+        "autocomplete": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 20,
+          "token_chars": [
+            "letter"
+          ]
         }
       },
       "filter":{
@@ -20,6 +28,15 @@
           "type": "custom",
           "tokenizer": "url_tokenizer",
           "filter": ["url_stop"]
+        },
+        "autocomplete": {
+          "tokenizer": "autocomplete",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "autocomplete_search": {
+          "tokenizer": "lowercase"
         }
       },
       "normalizer": {
@@ -61,6 +78,7 @@
           "properties": {
             "name": {
               "type": "text",
+              "copy_to": "suggest",
               "analyzer": "english",
               "fields": {
                 "french": {
@@ -111,6 +129,7 @@
             },
             "authors": {
               "type": "text",
+              "copy_to": "suggest",
               "fields": {
                 "exact_match": {
                   "type": "keyword",
@@ -119,6 +138,11 @@
               }
             }
           }
+        },
+        "suggest": {
+          "type": "text",
+          "analyzer": "autocomplete",
+          "search_analyzer": "autocomplete_search"
         },
         "promoted": {
           "type": "boolean"

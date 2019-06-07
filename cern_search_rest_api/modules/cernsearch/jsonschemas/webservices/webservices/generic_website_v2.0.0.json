@@ -66,6 +66,12 @@
         }
       }
     },
+    "suggest": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
     "promoted": {
       "type": "boolean"
     },
