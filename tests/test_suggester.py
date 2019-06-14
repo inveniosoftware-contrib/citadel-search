@@ -51,7 +51,7 @@ def create_record(endpoint, api_key, title):
     return resp_body.get("control_number")
 
 
-# @pytest.mark.unit
+@pytest.mark.unit
 def test_suggester(endpoint, api_key):
     """
     Test search over public documents. Test that the ``_access.*`` field is
