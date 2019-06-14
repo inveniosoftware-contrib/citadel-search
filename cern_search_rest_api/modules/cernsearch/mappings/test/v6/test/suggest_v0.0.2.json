@@ -7,11 +7,18 @@
         "autocomplete": {
           "tokenizer": "autocomplete",
           "filter": [
-            "lowercase"
+            "lowercase",
+            "asciifolding"
           ]
         },
-        "autocomplete_search": {
-          "tokenizer": "lowercase"
+        "didyoumean": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": ["lowercase", "asciifolding", "shingle"]
+        },
+        "suggester_search": {
+          "tokenizer": "standard",
+          "filter": ["lowercase"]
         }
       },
       "tokenizer": {
@@ -22,6 +29,13 @@
           "token_chars": [
             "letter"
           ]
+        }
+      },
+      "filter": {
+        "shingle": {
+          "type": "shingle",
+          "min_shingle_size": 2,
+          "max_shingle_size": 3
         }
       }
     }
@@ -54,15 +68,29 @@
           "type": "object",
           "properties": {
             "title": {
-              "type": "keyword",
-              "copy_to": "suggest"
+              "type": "text",
+              "analyzer": "english",
+              "copy_to": [
+                "suggest",
+                "didyoumean"
+              ],
+              "fields": {
+                "exact_match": {
+                  "type": "keyword"
+                }
+              }
             }
           }
         },
         "suggest": {
           "type": "text",
           "analyzer": "autocomplete",
-          "search_analyzer": "autocomplete_search"
+          "search_analyzer": "suggester_search"
+        },
+        "didyoumean": {
+          "type": "text",
+          "analyzer": "didyoumean",
+          "search_analyzer": "suggester_search"
         },
         "control_number": {
           "type": "keyword"

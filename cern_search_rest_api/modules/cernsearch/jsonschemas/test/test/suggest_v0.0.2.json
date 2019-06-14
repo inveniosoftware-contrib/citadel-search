@@ -43,6 +43,9 @@
     "suggest": {
       "type": "string"
     },
+    "didyoumean": {
+      "type": "string"
+    },
     "control_number": {
       "type": "string"
     },
