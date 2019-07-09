@@ -25,7 +25,7 @@ def has_and_needs_binary(original_data):
 class CSASRecordSchemaV1(RecordMetadataSchemaJSONV1):
 
     @validates_schema(pass_original=True)
-    def add_unknown_fields(self, data, original_data):
+    def validate_record(self, data, original_data):
         if not original_data.get('_access'):
             raise ValidationError('Missing field _access')
         delete = original_data.get('_access').get('delete')
