@@ -11,7 +11,10 @@
 from flask import current_app
 from invenio_records_rest.schemas import RecordMetadataSchemaJSONV1
 from invenio_indexer.utils import default_record_to_index
-from marshmallow import validates_schema, ValidationError
+from invenio_records_rest.schemas.json import RecordSchemaJSONV1
+from marshmallow import validates_schema, ValidationError, post_dump
+
+from cern_search_rest_api.modules.cernsearch.utils import record_from_index
 
 
 def has_and_needs_binary(original_data):
@@ -46,3 +49,15 @@ class CSASRecordSchemaV1(RecordMetadataSchemaJSONV1):
             raise ValidationError('Record to be index belongs to binary index '
                                   'but does not contain the [b64] field')
         return
+
+
+class CSASRecordSearchSchemaJSONV1(RecordSchemaJSONV1):
+
+    @post_dump()
+    def remove_base64(self, data):
+        """ If needed remove the base64 data from the response """
+        es_index, doc = record_from_index(data)
+        binary_index_list = current_app.config['SEARCH_DOC_PIPELINES']
+        if doc in binary_index_list:
+            data.get('metadata').get("_data").pop('b64')
+        return data

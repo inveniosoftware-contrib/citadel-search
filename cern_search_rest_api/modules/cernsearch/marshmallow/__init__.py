@@ -9,6 +9,6 @@
 
 from __future__ import absolute_import, print_function
 
-from .json import CSASRecordSchemaV1
+from .json import CSASRecordSchemaV1, CSASRecordSearchSchemaJSONV1
 
-__all__ = ('CSASRecordSchemaV1',)
+__all__ = ('CSASRecordSchemaV1', 'CSASRecordSearchSchemaJSONV1')

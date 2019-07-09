@@ -93,7 +93,7 @@ RECORDS_REST_ENDPOINTS = dict(
         links_factory_imp='invenio_records_rest.links:default_links_factory',
         record_class='cern_search_rest_api.modules.cernsearch.api:CernSearchRecord',
         record_serializers={
-            'application/json': ('invenio_records_rest.serializers'
+            'application/json': ('cern_search_rest_api.modules.cernsearch.serializers'
                                  ':json_v1_response'),
         },
         record_loaders={
@@ -104,7 +104,7 @@ RECORDS_REST_ENDPOINTS = dict(
         search_class='cern_search_rest_api.modules.cernsearch.search.RecordCERNSearch',
         search_index=os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test'),
         search_serializers={
-            'application/json': ('invenio_records_rest.serializers'
+            'application/json': ('cern_search_rest_api.modules.cernsearch.serializers'
                                  ':json_v1_search'),
         },
         search_factory_imp='cern_search_rest_api.modules.cernsearch.search.csas_search_factory',

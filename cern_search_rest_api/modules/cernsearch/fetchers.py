@@ -16,7 +16,7 @@ from .providers import CERNSearchRecordIdProvider
 def recid_fetcher(record_uuid, data):
     """Fetch PID from record."""
     return FetchedPID(
-        provider=CERNSearchRecordIdProvider,
+        # provider=CERNSearchRecordIdProvider,
         pid_type='recid',
         pid_value=str(data['recid'])
     )
