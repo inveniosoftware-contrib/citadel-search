@@ -55,7 +55,7 @@ def test_binary_es_ocr(endpoint, api_key):
     assert resp_data.get('title') == 'Test binary'
     assert resp_data.get('description') == 'Test binary with ingest pipeline'
     assert resp_data.get('link') == 'localhost/test'
-    assert resp_data.get('b64') == "{binary_content}".format(binary_content=BINARY_CONTENT)
+    assert resp_data.get('b64', None) is None
 
     control_number = resp_body.get("control_number")
     # Search record
