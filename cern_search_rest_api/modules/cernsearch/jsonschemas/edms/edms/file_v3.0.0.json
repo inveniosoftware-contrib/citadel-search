@@ -1,7 +1,7 @@
 {
-  "title": "EDMS Object Type File schema v1.0.0",
-  "id": "http://0.0.0.0:5000/schemas/edms/file_v2.0.0.json",
-  "$schema": "http://0.0.0.0:5000/schemas/edms/file_v2.0.0.json",
+  "title": "EDMS Object Type File schema v3.0.0",
+  "id": "http://0.0.0.0:5000/schemas/edms/file_v3.0.0.json",
+  "$schema": "http://0.0.0.0:5000/schemas/edms/file_v3.0.0.json",
   "type": "object",
   "properties": {
     "_access": {
@@ -43,6 +43,9 @@
         "file_id": {
           "type": "integer"
         },
+        "external_reference": {
+          "type": "string"
+        },
         "version": {
           "type": "string"
         },
@@ -59,7 +62,15 @@
           "type": "string"
         },
         "context": {
-          "type": "string"
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "context_id": {
+              "type": "string"
+            }
+          }
         },
         "document_type": {
           "type": "string"
@@ -67,14 +78,19 @@
         "release_procedure": {
           "type": "string"
         },
-        "status": {
-          "type": "string"
-        },
         "obsolete": {
           "type": "boolean"
         },
         "author": {
-          "type": "string"
+          "type": "object",
+          "properties": {
+            "full_name": {
+              "type": "string"
+            },
+            "email": {
+              "type": "string"
+            }
+          }
         },
         "keywords": {
           "type": "string"
@@ -86,34 +102,6 @@
           "type": "array",
           "items": {
             "type": "string"
-          }
-        },
-        "object_properties": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "value": {
-                "type": "string"
-              }
-            }
-          }
-        },
-        "parents": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "parent_type": {
-                "type": "string"
-              },
-              "parent_id": {
-                "type": "string"
-              }
-            }
           }
         },
         "b64": {
@@ -142,6 +130,43 @@
             "content_type": {
               "type": "string"
             }
+          }
+        }
+      }
+    },
+    "owner": {
+      "type": "string"
+    },
+    "group":{
+      "type": "string"
+    },
+    "parents": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "parent_type": {
+            "type": "string"
+          },
+          "parent_id": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "status": {
+      "type": "string"
+    },
+    "object_properties": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          },
+          "value": {
+            "type": "string"
           }
         }
       }

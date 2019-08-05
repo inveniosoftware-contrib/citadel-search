@@ -4,12 +4,11 @@
     "index.mapping.total_fields.limit": 500
   },
   "mappings": {
-    "document_v2.0.0": {
+    "document_v3.0.0": {
       "dynamic": "strict",
       "numeric_detection": true,
       "_meta": {
-        "_owner": "CernSearch-Administrators@cern.ch,en-dep-ace-edm@cern.ch",
-        "_comment": "Fields to ignore for global search obsolete, latest_version, (version, obsolete, release_procedure, status)"
+        "_owner": "CernSearch-Administrators@cern.ch,en-dep-ace-plm@cern.ch"
       },
       "properties": {
         "_access": {
@@ -34,10 +33,18 @@
               "type": "keyword"
             },
             "cern_id": {
-              "type": "keyword",
+              "type": "text",
               "fields": {
-                "full_text": {
-                  "type": "text"
+                "exact_match": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "external_reference": {
+              "type": "text",
+              "fields": {
+                "exact_match": {
+                  "type": "keyword"
                 }
               }
             },
@@ -74,37 +81,55 @@
               }
             },
             "context": {
-              "type": "keyword",
-              "fields": {
-                "full_text": {
-                  "type": "text"
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "text",
+                  "fields": {
+                    "exact_match": {
+                      "type": "keyword"
+                    }
+                  }
+                },
+                "context_id": {
+                  "type": "text",
+                  "fields": {
+                    "exact_match": {
+                      "type": "keyword"
+                    }
+                  }
                 }
               }
             },
             "document_type": {
-              "type": "keyword",
+              "type": "text",
               "fields": {
-                "full_text": {
-                  "type": "text"
+                "exact_match": {
+                  "type": "keyword"
                 }
               }
             },
             "release_procedure": {
-              "type": "keyword",
+              "type": "text",
               "fields": {
-                "full_text": {
-                  "type": "text"
+                "exact_match": {
+                  "type": "keyword"
                 }
               }
-            },
-            "status": {
-              "type": "keyword"
             },
             "obsolete": {
               "type": "keyword"
             },
             "author": {
-              "type": "text"
+              "type": "object",
+              "properties": {
+                "full_name": {
+                  "type": "text"
+                },
+                "email": {
+                  "type": "text"
+                }
+              }
             },
             "keywords": {
               "type": "keyword",
@@ -124,40 +149,49 @@
             },
             "attributes": {
               "type": "keyword"
+            }
+          }
+        },
+        "owner": {
+          "type": "keyword"
+        },
+        "group": {
+          "type": "keyword"
+        },
+        "parents": {
+          "type": "object",
+          "properties": {
+            "parent_type": {
+              "type": "keyword"
             },
-            "object_properties": {
-              "properties": {
-                "name": {
+            "parent_id": {
+              "type": "text",
+              "fields": {
+                "exact_match": {
                   "type": "keyword"
-                },
-                "value": {
-                  "type": "keyword",
-                  "fields": {
-                    "english": {
-                      "type": "text",
-                      "analyzer": "english"
-                    },
-                    "french": {
-                      "type": "text",
-                      "analyzer": "french"
-                    }
-                  }
                 }
               }
+            }
+          }
+        },
+        "status": {
+          "type": "keyword"
+        },
+        "object_properties": {
+          "properties": {
+            "name": {
+              "type": "keyword"
             },
-            "parents": {
-              "type": "object",
-              "properties": {
-                "parent_type": {
-                  "type": "keyword"
+            "value": {
+              "type": "keyword",
+              "fields": {
+                "english": {
+                  "type": "text",
+                  "analyzer": "english"
                 },
-                "parent_id": {
-                  "type": "keyword",
-                  "fields": {
-                    "full_text": {
-                      "type": "text"
-                    }
-                  }
+                "french": {
+                  "type": "text",
+                  "analyzer": "french"
                 }
               }
             }
@@ -171,7 +205,13 @@
           "type": "date",
           "format": "yyyy-MM-dd'T'HH:mm:ss"
         },
-        "custom_pid": {
+        "_updated": {
+          "type": "date"
+        },
+        "_created": {
+          "type": "date"
+        },
+        "control_number": {
           "type": "keyword"
         },
         "$schema": {
