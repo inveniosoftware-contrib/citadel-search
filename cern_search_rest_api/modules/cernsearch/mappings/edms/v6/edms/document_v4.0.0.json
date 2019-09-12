@@ -1,0 +1,234 @@
+{
+    "settings": {
+      "index.percolator.map_unmapped_fields_as_string": true,
+      "index.mapping.total_fields.limit": 500
+    },
+    "mappings": {
+      "document_v4.0.0": {
+        "dynamic": "strict",
+        "numeric_detection": true,
+        "_meta": {
+          "_owner": "CernSearch-Administrators@cern.ch,edms-search@cern.ch,edms-search-dev@cern.ch,en-dep-ace-plm@cern.ch"
+        },
+        "properties": {
+          "_access": {
+            "type": "object",
+            "properties": {
+              "owner":{"type": "keyword"},
+              "read": {"type": "keyword"},
+              "update": {"type": "keyword"},
+              "delete": {"type": "keyword"}
+            }
+          },
+          "_data": {
+            "type": "object",
+            "properties": {
+              "document_id": {
+                "type": "keyword",
+                "boost": 20
+              },
+              "document_id_version": {
+                "type": "keyword",
+                "boost": 20
+              },
+              "cern_id": {
+                "type": "keyword",
+                "boost": 20,
+                "fields": {
+                  "exact_match": {
+                    "type": "keyword",
+                    "boost": 20
+                  }
+                }
+              },
+              "cern_id_version": {
+                "type": "keyword",
+                "boost": 20
+              },
+              "external_reference": {
+                "type": "text",
+                "boost": 8,
+                "fields": {
+                  "exact_match": {
+                    "type": "keyword",
+                    "boost": 8
+                  }
+                }
+              },
+              "version": {
+                "type": "keyword"
+              },
+              "title": {
+                "type": "text",
+                "boost": 8,
+                "fields": {
+                  "english": {
+                    "type": "text",
+                    "boost": 8,
+                    "analyzer": "english"
+                  },
+                  "french": {
+                    "type": "text",
+                    "boost": 8,
+                    "analyzer": "french"
+                  },
+                  "exact_match": {
+                    "type": "keyword",
+                    "boost": 8
+                  }
+                }
+              },
+              "description": {
+                "type": "text",
+                "boost": 4,
+                "fields": {
+                  "english": {
+                    "type": "text",
+                    "boost": 4,
+                    "analyzer": "english"
+                  },
+                  "french": {
+                    "type": "text",
+                    "boost": 4,
+                    "analyzer": "french"
+                  }
+                }
+              },
+              "author": {
+                "type": "object",
+                "properties": {
+                  "full_name": {
+                    "type": "text",
+                    "boost": 2
+                  },
+                  "email": {
+                    "type": "text",
+                    "boost": 2
+                  }
+                }
+              },
+              "keywords": {
+                "type": "text",
+                "boost": 6,
+                "fields": {
+                  "english": {
+                    "type": "text",
+                    "analyzer": "english",
+                    "boost": 6
+                  },
+                  "french": {
+                    "type": "text",
+                    "analyzer": "french",
+                    "boost": 6
+                  },
+                  "exact_match": {
+                    "type": "keyword",
+                    "boost": 6
+                  }
+                }
+              },
+              "equipment_code": {
+                "type": "keyword",
+                "boost": 6
+              }
+            }
+          },
+          "cid": {
+            "type": "keyword"
+          },
+          "owner": {
+            "type": "keyword"
+          },
+          "group": {
+            "type": "keyword"
+          },
+          "object_type": {
+            "type": "keyword"
+          },
+          "parents": {
+            "type": "object",
+            "properties": {
+              "parent_type": {
+                "type": "keyword"
+              },
+              "parent_id": {
+                "type": "keyword"
+              }
+            }
+          },
+          "status": {
+            "type": "keyword"
+          },
+          "latest_version": {
+            "type": "keyword"
+          },
+          "obsolete": {
+            "type": "keyword"
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "keyword"
+              },
+              "context_id": {
+                "type": "keyword"
+              }
+            }
+          },
+          "document_type": {
+            "type": "keyword"
+          },
+          "release_procedure": {
+            "type": "keyword"
+          },
+          "object_properties": {
+            "properties": {
+              "name": {
+                "type": "keyword"
+              },
+              "value": {
+                "type": "text",
+                "fields": {
+                  "english": {
+                    "type": "text",
+                    "analyzer": "english"
+                  },
+                  "french": {
+                    "type": "text",
+                    "analyzer": "french"
+                  },
+                  "exact_match": {
+                    "type": "keyword"
+                  }
+                }
+              }
+            }
+          },
+          "attributes": {
+            "type": "keyword"
+          },
+          "creation_date": {
+            "type": "date",
+            "format": "yyyy-MM-dd'T'HH:mm:ss"
+          },
+          "modification_date": {
+            "type": "date",
+            "format": "yyyy-MM-dd'T'HH:mm:ss"
+          },
+          "_updated": {
+            "type": "date"
+          },
+          "_created": {
+            "type": "date"
+          },
+          "control_number": {
+            "type": "keyword"
+          },
+          "$schema": {
+            "enabled": false
+          }
+        }
+      }
+    }
+  }
