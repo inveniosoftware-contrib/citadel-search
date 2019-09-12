@@ -150,6 +150,18 @@ RECORDS_REST_SORT_OPTIONS = {
             'title': 'Newest',
             'default_order': 'asc',
         }
+    },
+    'cernsearchqa-edms': {
+        'bestmatch': {
+            'fields': ['-_score'],
+            'title': 'Best match',
+            'default_order': 'asc',
+        },
+        'mostrecent': {
+            'fields': ['_updated'],
+            'title': 'Newest',
+            'default_order': 'asc',
+        }
     }
 }
 
