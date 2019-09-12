@@ -23,7 +23,7 @@ secrets/
 
 # Local env source
 
-env-*.sh
+env/
 *.ini
 
 # Debug and other logs
