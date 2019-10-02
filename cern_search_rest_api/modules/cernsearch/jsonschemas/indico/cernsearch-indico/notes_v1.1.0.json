@@ -1,0 +1,80 @@
+{
+  "title": "Indico Notes schema v1.0.0",
+  "id": "http://localhost:5000/schemas/indico/notes_v1.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/notes_v1.0.0.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "id": {
+      "type": "string",
+      "description": "Notes id."
+    },
+    "category_path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Notes category path (ordered array)."
+    },
+    "event_id": {
+      "type": "string",
+      "description": "Notes id."
+    },
+    "contribution_id": {
+      "type": "string",
+      "description": "Notes id.",
+      "required": false
+    },
+    "subcontribution_id": {
+      "type": "string",
+      "description": "Notes id.",
+      "required": false
+    },
+    "creation_date": {
+      "type": "string",
+      "description": "Notes creation date."
+    },
+    "content": {
+      "type": "string",
+      "description": "Notes content."
+    },
+    "url": {
+      "type": "string",
+      "description": "Notes URL."
+    },
+    "custom_pid": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}
