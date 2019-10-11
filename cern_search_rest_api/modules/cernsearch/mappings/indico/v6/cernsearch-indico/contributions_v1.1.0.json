@@ -98,16 +98,7 @@
         },
         "url": {
           "type": "text",
-          "fields": {
-            "english": {
-              "type": "text",
-              "analyzer": "english"
-            },
-            "french": {
-              "type": "text",
-              "analyzer": "french"
-            }
-          }
+          "enabled" : false
         },
         "custom_pid": {
           "type": "keyword"
