@@ -16,6 +16,7 @@ secrets/
 
 *.key
 *.crt
+*.csr
 
 # Dump files
 

@@ -7,16 +7,15 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 # Use CentOS7:
-FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:f813c09e1f92c96f7eb71b2d43c076388be57680
-ARG build_devel
-ENV DEVEL=$build_devel
+FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:7ad59c5ed72e1672454acf3bed61e45f8df132d6
+ARG build_env
 
 # CERN Search installation
 WORKDIR /${WORKING_DIR}/src
 ADD . /${WORKING_DIR}/src
 
 # If env is development, install development dependencies
-RUN if [ -n "${DEVEL-}" ]; then pip install -r requirements-devel.txt; fi
+RUN if [ "$build_env" != "prod" ]; then pipenv install --system --ignore-pipfile --deploy --dev; fi
 
 # Install CSaS
 RUN pip install -e .

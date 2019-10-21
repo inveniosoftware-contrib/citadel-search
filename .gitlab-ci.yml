@@ -59,7 +59,7 @@ build_dev_version:
     - docker-image-build
   script: 'echo "Building Dev/QA Docker image..."'
   variables:
-    BUILD_ARG: build_devel=1
+    BUILD_ARG: build_env=dev
 
 ########## PROD ##########
 build_prod_version:
@@ -70,6 +70,8 @@ build_prod_version:
   tags:
     - docker-image-build
   script: 'echo "Building Prod Docker image..."'
+  variables:
+    BUILD_ARG: build_env=prod
 
 ########## ALL ##########
 ### When building tags, use the git tag as the docker tag of the image
