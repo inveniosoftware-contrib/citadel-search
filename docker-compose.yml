@@ -1,0 +1,53 @@
+# To be used with pipenv locally
+#
+# Requires:
+#  - pipenv
+#  - python@3.6.0
+
+version: "3.7"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.4
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      discovery.type: single-node
+    networks:
+      - default
+    volumes:
+      - es-data:/usr/share/elasticsearch/data
+
+  kibana:
+    image: docker.elastic.co/kibana/kibana-oss:6.2.4
+    depends_on:
+      - elasticsearch
+    ports:
+      - 5601:5601
+    networks:
+      - default
+
+  redis:
+    image: redis:5.0.6
+    networks:
+      - default
+
+  postgres:
+    image: centos/postgresql-95-centos7
+    environment:
+      - POSTGRESQL_USER
+      - POSTGRESQL_PASSWORD
+      - POSTGRESQL_DATABASE
+    volumes:
+      - pgsql-data:/var/lib/pgsql/data
+    networks:
+      - default
+    ports:
+      - 5432:5432
+
+networks:
+  default:
+
+volumes:
+  es-data:
+  pgsql-data:

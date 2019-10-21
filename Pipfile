@@ -4,6 +4,10 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
+pytest = "*"
+flake8 = "*"
+flake8-docstrings = "*"
+isort = "==4.3.21"
 
 [packages]
 invenio-access = ">=1.0.0,<1.1.0"
@@ -33,4 +37,4 @@ Flask = "*"
 uWSGI = ">=2.0.16"
 
 [requires]
-python_version = "3.4"
+python_version = "3.6"

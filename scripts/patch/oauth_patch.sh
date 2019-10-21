@@ -7,7 +7,8 @@
 # CERN Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-location=$(pip show invenio-oauthclient | grep Location | awk '{print $2}')
+readonly LOCATION=$(pip show invenio-oauthclient | grep Location | awk '{print $2}')
+readonly SCRIPT_PATH=$(dirname $0)
 
-rm -f ${location}/invenio_oauthclient/contrib/cern.py
-cp /${WORKING_DIR}/src/scripts/patch/cern.py ${location}/invenio_oauthclient/contrib/cern.py
+rm -f ${LOCATION}/invenio_oauthclient/contrib/cern.py
+cp ${SCRIPT_PATH}/cern.py ${LOCATION}/invenio_oauthclient/contrib/cern.py
