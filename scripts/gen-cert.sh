@@ -12,6 +12,8 @@ readonly TLS_DIR="$SCRIPT_PATH/../nginx/tls"
 readonly KEY="tls.key"
 readonly CRT="tls.crt"
 
+mkdir -p $TLS_DIR
+
 openssl req -x509 -nodes -newkey rsa:4096 \
   -subj '/C=CH/ST=Geneve/L=Geneve/O=CERN/OU=IT Department/CN=Search as a Service' \
   -keyout "$TLS_DIR/$KEY" -out "$TLS_DIR/$CRT"

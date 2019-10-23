@@ -6,6 +6,8 @@ services:
       args:
         build_env: ${ENV}
     container_name: ${CONTAINER_NAME}
+    volumes:
+      - ./:/opt/invenio/src:delegated
     ports:
       - "5000:5000"
     depends_on:

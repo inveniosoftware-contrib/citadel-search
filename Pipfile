@@ -35,6 +35,7 @@ redis = ">=2.10.0,<3.0.0"
 uwsgi-tools = ">=1.1.1,<1.2.0"
 Flask = "*"
 uWSGI = ">=2.0.16"
+marshmallow = "<3"
 
 [requires]
 python_version = "3.6"
