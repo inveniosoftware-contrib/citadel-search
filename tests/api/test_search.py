@@ -8,23 +8,15 @@
 
 import json
 
-import pytest
-import requests
-
-HEADERS = {
-    "Accept": "application/json",
-    "Content-Type": "application/json; charset=utf-8",
-    "Authorization": ''
-}
+from pytest_invenio.fixtures import appctx, base_client
+from tests.api.helpers import get_headers, get_schemas_endpoint
 
 
-@pytest.mark.unit
-def test_search(endpoint, api_key):
+def test_testclient(appctx, base_client):
     """
     Test search over public documents. Test that the ``_access.*`` field is
     not searched over.
     """
-    HEADERS['Authorization'] = 'Bearer {credentials}'.format(credentials=api_key)
 
     body = {
         "_access": {
@@ -36,19 +28,18 @@ def test_search(endpoint, api_key):
             "title": "Test default search field",
             "description": "This contains CernSearch and should appear"
         },
-        "$schema": "{endpoint}/schemas/test/doc_v0.0.2.json".format(
-            endpoint=endpoint
-        )
+        "$schema": get_schemas_endpoint(appctx, "test/doc_v0.0.2.json")
     }
 
     # Create first test record
-    resp = requests.post('{endpoint}/api/records/'.format(endpoint=endpoint),
-                         headers=HEADERS, data=json.dumps(body))
+    resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
+
+    print(resp.data)
 
     assert resp.status_code == 201
 
     # Check non presence of OCR content in DB record
-    resp_body = resp.json()['metadata']
+    resp_body = resp.json['metadata']
     assert resp_body.get('control_number') is not None
     resp_data = resp_body.get("_data")
     assert resp_data.get('title') == 'Test default search field'
@@ -60,13 +51,12 @@ def test_search(endpoint, api_key):
     body["_data"]['description'] = 'This does not contains the magic word and should not appear'
 
     # Create test record
-    resp = requests.post('{endpoint}/api/records/'.format(endpoint=endpoint),
-                         headers=HEADERS, data=json.dumps(body))
+    resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
     assert resp.status_code == 201
 
     # Check non presence of OCR content in DB record
-    resp_body = resp.json()['metadata']
+    resp_body = resp.json['metadata']
     assert resp_body.get('control_number') is not None
     resp_data = resp_body.get("_data")
     assert resp_data.get('title') == 'Test default search field'
@@ -76,24 +66,22 @@ def test_search(endpoint, api_key):
 
     # # Needed to allow ES to process the file
     import time
-    time.sleep(1)
+    time.sleep(3)
+
     # Search records
     # Test search with no query
-    resp = requests.get('{endpoint}/api/records/'.format(endpoint=endpoint),
-                        headers=HEADERS, data=json.dumps(body))
+    resp = base_client.get('/records/', headers=get_headers(), data=json.dumps(body))
 
     assert resp.status_code == 200
 
-    resp_hits = resp.json()['hits']
+    resp_hits = resp.json['hits']
     assert resp_hits.get('total') == 2
 
-    resp = requests.get('{endpoint}/api/records/?q=CernSearch'
-                        .format(endpoint=endpoint),
-                        headers=HEADERS, data=json.dumps(body))
+    resp = base_client.get('/records/?q=CernSearch', headers=get_headers(), data=json.dumps(body))
 
     assert resp.status_code == 200
 
-    resp_hits = resp.json()['hits']
+    resp_hits = resp.json['hits']
     assert resp_hits.get('total') == 1
 
     description = resp_hits['hits'][0]['metadata'].get("_data").get('description')
@@ -101,14 +89,19 @@ def test_search(endpoint, api_key):
     assert description == 'This contains CernSearch and should appear'
 
     # Clean the instance. Delete record
-    resp = requests.delete('{endpoint}/api/record/{control_number}'
-                           .format(endpoint=endpoint, control_number=control_number_one),
-                           headers=HEADERS, data=json.dumps(body))
+    resp = base_client.delete(
+        '/record/{control_number}'.format(control_number=control_number_one),
+        headers=get_headers(),
+        data=json.dumps(body)
+    )
 
     assert resp.status_code == 204
 
-    resp = requests.delete('{endpoint}/api/record/{control_number}'
-                           .format(endpoint=endpoint, control_number=control_number_two),
-                           headers=HEADERS, data=json.dumps(body))
+    resp = base_client.delete(
+        '/record/{control_number}'
+        .format(control_number=control_number_two),
+        headers=get_headers(),
+        data=json.dumps(body)
+    )
 
     assert resp.status_code == 204

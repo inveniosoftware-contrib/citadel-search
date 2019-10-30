@@ -14,12 +14,17 @@ fixtures are available.
 from __future__ import absolute_import, print_function
 
 import pytest
-from invenio_app.factory import create_api
+from invenio_app.factory import create_ui
+
+
+@pytest.fixture(scope='module')
+def create_app(instance_path):
+    return create_ui
 
 
 @pytest.fixture(scope='module')
 def app_config(app_config):
-    del app_config['SECRET_KEY']
-    del app_config['SECURITY_PASSWORD_SALT']
+    app_config['SERVER_NAME'] = 'localhost'
     app_config['LOGGING_CONSOLE_LEVEL'] = 'DEBUG'
+
     return app_config

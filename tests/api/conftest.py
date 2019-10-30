@@ -18,8 +18,6 @@ from invenio_app.factory import create_api
 
 
 @pytest.fixture(scope='module')
-def app_config(app_config):
-    del app_config['SECRET_KEY']
-    del app_config['SECURITY_PASSWORD_SALT']
-    app_config['LOGGING_CONSOLE_LEVEL'] = 'DEBUG'
-    return app_config
+def create_app(instance_path):
+    """Application factory fixture."""
+    return create_api
