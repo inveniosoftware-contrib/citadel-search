@@ -78,7 +78,7 @@ test:
 
 PIPENV_DOTENV := .pipenv.env
 PYTHON_VERSION_FILE := .python-version
-PYTHON_VERSION := $(shell cat $(PYTHON_VERSION_FILE) | xargs)
+PYTHON_VERSION := $(cat $(PYTHON_VERSION_FILE))
 PIPENV_DOCKER_FILE := docker-compose.yml
 
 check-requirements-local:
