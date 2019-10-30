@@ -82,7 +82,7 @@ PYTHON_VERSION := $(cat $(PYTHON_VERSION_FILE))
 PIPENV_DOCKER_FILE := docker-compose.yml
 
 check-requirements-local:
-	PYTHON_VERSION=$(PYTHON_VERSION) sh scripts/pipenv/requirements.sh
+	PYTHON_VERSION=$(PYTHON_VERSION) /bin/bash scripts/pipenv/requirements.sh
 .PHONY: check-requirements-local
 
 build-local-env: check-requirements-local

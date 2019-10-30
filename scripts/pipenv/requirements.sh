@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # check python version
 if [[ "$(python --version)" =~ "Python ${PYTHON_VERSION}" ]]; then
     echo Python ${PYTHON_VERSION} is installed
