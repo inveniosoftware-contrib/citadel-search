@@ -33,3 +33,6 @@ env/
 
 # Gitlab CI Runner
 builds/
+
+# Test files
+.api_token

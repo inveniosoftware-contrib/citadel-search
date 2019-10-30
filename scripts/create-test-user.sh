@@ -8,5 +8,6 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 invenio users create test@example.com --password test1234 --active
-export API_TOKEN=$(invenio tokens create -n test -u test@example.com)
-echo "API TOKEN: $API_TOKEN"
+invenio roles create CernSearch-Administrators@cern.ch
+invenio roles add test@example.com CernSearch-Administrators@cern.ch
+invenio tokens create -n test -u test@example.com > .api_token

@@ -15,6 +15,17 @@ from setuptools import find_packages, setup
 readme = open('README.md').read()
 history = open('CHANGES.md').read()
 
+setup_requires = [
+    'pytest-runner>=3.0.0,<5',
+]
+
+tests_require = [
+    'pytest-runner>=3.0.0,<5',
+]
+
+install_requires = [
+    'pytest',
+]
 
 # Get the version string. Cannot be done with import!
 g = {}
@@ -72,4 +83,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Development Status :: 1 - Pre-Alpha',
     ],
+    setup_requires=setup_requires,
+    tests_require=tests_require,
+    install_requires=install_requires,
 )

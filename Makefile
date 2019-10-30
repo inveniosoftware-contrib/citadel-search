@@ -16,6 +16,7 @@
 
 SERVICE_NAME :=  cern-search-api
 DOCKER_FILE := docker-compose.full.yml
+API_TOKEN := .api_token
 
 build-env:
 	docker-compose -f $(DOCKER_FILE) up -d --build --remove-orphans
@@ -59,8 +60,8 @@ generate-certificates:
 .PHONY: generate-certificates
 
 test:
-	@echo todo
-#	python pytest
+	docker-compose -f $(DOCKER_FILE) exec $(SERVICE_NAME) /bin/bash -c \
+	"API_TOKEN=$$(<$(API_TOKEN)) pytest tests -vv;"
 .PHONY: test
 
 lint:
@@ -92,6 +93,10 @@ PIPENV_DOTENV := .pipenv.env
 PYTHON_VERSION_FILE := .python-version
 PYTHON_VERSION := $(shell cat $(PYTHON_VERSION_FILE) | xargs)
 PIPENV_DOCKER_FILE := docker-compose.yml
+
+local-env-logs:
+	docker-compose -f $(PIPENV_DOCKER_FILE) logs -f
+.PHONY: local-env-logs
 
 check-requirements-local:
 	PYTHON_VERSION=$(PYTHON_VERSION) sh scripts/pipenv/requirements.sh
