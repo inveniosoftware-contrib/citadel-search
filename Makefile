@@ -27,12 +27,12 @@ logs:
 .PHONY: logs
 
 populate-instance:
-	docker-compose -f $(DOCKER_FILE) exec $(SERVICE_NAME) /bin/bash -c \
+	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
 		"sh /opt/invenio/src/scripts/populate-instance.sh"
 .PHONY: load-fixtures
 
 load-fixtures:
-	docker-compose -f $(DOCKER_FILE) exec $(SERVICE_NAME) /bin/bash -c \
+	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
 		"sh /opt/invenio/src/scripts/create-test-user.sh"
 .PHONY: load-fixtures
 
@@ -60,7 +60,7 @@ generate-certificates:
 .PHONY: generate-certificates
 
 test:
-	docker-compose -f $(DOCKER_FILE) exec $(SERVICE_NAME) /bin/bash -c \
+	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
 	"API_TOKEN=$$(<$(API_TOKEN)) pytest tests -vv;"
 .PHONY: test
 

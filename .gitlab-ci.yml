@@ -160,12 +160,12 @@ deploy_production:
     GIT_STRATEGY: none
 
 ########## MERGE REQUESTS ##########
-lint_test:
+lint:
   services:
     - docker:dind
   stage: test
   image: tmaier/docker-compose:latest
-  script: make build-env lint test
+  script: make build-env lint
   before_script:
     - docker info
     - docker-compose --version
@@ -174,5 +174,21 @@ lint_test:
   - merge_requests
   - tags
   allow_failure: true
+  tags:
+    - docker-privileged-xl
+
+test:
+  services:
+    - docker:dind
+  stage: test
+  image: tmaier/docker-compose:latest
+  script: make generate-certificates build-env populate-instance load-fixtures test
+  before_script:
+    - docker info
+    - docker-compose --version
+    - apk add make
+    - apk add openssl
+  only:
+  - merge_requests
   tags:
     - docker-privileged-xl

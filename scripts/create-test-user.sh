@@ -11,3 +11,4 @@ invenio users create test@example.com --password test1234 --active
 invenio roles create CernSearch-Administrators@cern.ch
 invenio roles add test@example.com CernSearch-Administrators@cern.ch
 invenio tokens create -n test -u test@example.com > .api_token
+echo TOKEN: $(<.api_token)
