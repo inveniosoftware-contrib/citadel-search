@@ -7,11 +7,9 @@
 # CERN Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-from cern_search_rest_api.config import LOGGING_CONSOLE_LEVEL
 from cern_search_rest_api.modules.cernsearch.indexer import csas_indexer_receiver
 from cern_search_rest_api.modules.cernsearch.views import build_blueprint
 from invenio_indexer.signals import before_record_index
-from invenio_logging.console import InvenioLoggingConsole
 
 
 class CERNSearch(object):
@@ -30,9 +28,6 @@ class CERNSearch(object):
         before_record_index.connect(csas_indexer_receiver, sender=app)
         app.extensions["cern-search"] = self
 
-        #InvenioLoggingConsole(app)
-        app.logger.setLevel(LOGGING_CONSOLE_LEVEL)
-        app.logger.debug('Starting up...')
 
     def init_config(self, app):
         """Initialize configuration."""

@@ -21,5 +21,5 @@ from invenio_app.factory import create_api
 def app_config(app_config):
     del app_config['SECRET_KEY']
     del app_config['SECURITY_PASSWORD_SALT']
-    app_config['LOGGING_CONSOLE_LEVEL'] = 'DEBUG'
+
     return app_config

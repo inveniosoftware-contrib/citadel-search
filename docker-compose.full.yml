@@ -1,4 +1,4 @@
-version: "3.7"
+version: "2.3"
 services:
   cern-search-api:
     build:
@@ -8,12 +8,16 @@ services:
     container_name: ${CONTAINER_NAME}
     volumes:
       - ./:/opt/invenio/src:delegated
+      - cern_search_rest_api.egg-info:/opt/invenio/src/cern_search_rest_api.egg-info
     ports:
       - "5000:5000"
     depends_on:
-      - elasticsearch
-      - redis
-      - postgres
+      elasticsearch:
+        condition: service_healthy
+      redis:
+        condition: service_started
+      postgres:
+        condition: service_started
     networks:
       - default
     env_file:
@@ -30,6 +34,11 @@ services:
       - default
     volumes:
       - es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD", "curl", "-f", "localhost:9200/_cluster/health?wait_for_status=green"]
+      interval: 30s
+      timeout: 30s
+      retries: 5
 
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:6.2.4
@@ -81,3 +90,4 @@ volumes:
   nginx-run:
   nginx-cache:
   nginx-tls:
+  cern_search_rest_api.egg-info:

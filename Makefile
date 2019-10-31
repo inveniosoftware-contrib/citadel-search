@@ -61,7 +61,7 @@ generate-certificates:
 
 test:
 	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
-	"API_TOKEN=$$(<$(API_TOKEN)) pytest tests -vv;"
+	"API_TOKEN=$$(cat $(API_TOKEN)) pytest tests -vv;"
 .PHONY: test
 
 lint:
@@ -91,7 +91,7 @@ lint:
 
 PIPENV_DOTENV := .pipenv.env
 PYTHON_VERSION_FILE := .python-version
-PYTHON_VERSION := $(shell cat $(PYTHON_VERSION_FILE) | xargs)
+PYTHON_VERSION := $(cat $(PYTHON_VERSION_FILE) | xargs)
 PIPENV_DOCKER_FILE := docker-compose.yml
 
 local-env-logs:
