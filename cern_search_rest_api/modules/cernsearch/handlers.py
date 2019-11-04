@@ -11,22 +11,18 @@
 
 from __future__ import absolute_import, print_function
 
-from flask import current_app, redirect, session, url_for, g, after_this_request
+from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
+from flask import after_this_request, current_app, g, redirect, session, url_for
 from flask_login import current_user, user_logged_in
 from flask_security import logout_user
 from flask_security.utils import get_post_logout_redirect
 from invenio_db import db
-
+from invenio_oauthclient.handlers import (get_session_next_url, oauth_error_handler, response_token_setter,
+                                          token_getter, token_session_key)
 from invenio_oauthclient.proxies import current_oauthclient
-from invenio_oauthclient.signals import account_info_received, account_setup_committed, \
-    account_setup_received
-from invenio_oauthclient.utils import oauth_authenticate, oauth_get_user, create_csrf_disabled_registrationform, \
-    fill_form, oauth_register
-from invenio_oauthclient.handlers import oauth_error_handler, token_session_key, response_token_setter, \
-    token_getter, get_session_next_url
-
-
-from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
+from invenio_oauthclient.signals import account_info_received, account_setup_committed, account_setup_received
+from invenio_oauthclient.utils import (create_csrf_disabled_registrationform, fill_form, oauth_authenticate,
+                                       oauth_get_user, oauth_register)
 
 
 @oauth_error_handler

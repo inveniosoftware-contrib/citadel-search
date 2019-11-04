@@ -7,12 +7,11 @@
 # CERN Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-from flask_security import current_user
-from flask import request, current_app
-from invenio_search import current_search_client
-from invenio_indexer.utils import default_record_to_index
-
 from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
+from flask import current_app, request
+from flask_security import current_user
+from invenio_indexer.utils import default_record_to_index
+from invenio_search import current_search_client
 
 """Access control for CERN Search."""
 

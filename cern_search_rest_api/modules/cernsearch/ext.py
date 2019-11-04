@@ -7,10 +7,9 @@
 # CERN Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-from invenio_indexer.signals import before_record_index
-
 from cern_search_rest_api.modules.cernsearch.indexer import csas_indexer_receiver
 from cern_search_rest_api.modules.cernsearch.views import build_blueprint
+from invenio_indexer.signals import before_record_index
 
 
 class CERNSearch(object):

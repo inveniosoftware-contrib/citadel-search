@@ -7,13 +7,13 @@
 # CERN Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
+from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
 from elasticsearch_dsl import Q
+from flask import current_app, request
 from invenio_records_rest.query import default_search_factory
 from invenio_search import RecordsSearch
 from invenio_search.api import DefaultFilter
-from flask import request, current_app
 
-from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
 
 """
 The Filter emulates the following query:

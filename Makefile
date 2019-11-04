@@ -11,7 +11,8 @@
 # make load-fixtures          # loads fixtures
 # make populate-instance      # create database, tables and indeces
 # make generate-certificates  # generate nginx certificates
-# make test                   # run test
+# make test                   # runs tests
+# make lint                   # runs linting tools
 
 SERVICE_NAME :=  cern-search-api
 DOCKER_FILE := docker-compose.full.yml
@@ -58,8 +59,17 @@ generate-certificates:
 .PHONY: generate-certificates
 
 test:
-	make pytest
+	@echo todo
+#	python pytest
 .PHONY: test
+
+lint:
+	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
+		"echo running isort...; \
+		isort -rc -c -df; \
+		echo running flake8...; \
+		flake8 --max-complexity 10 --ignore E501,D401"
+.PHONY: lint
 
 ###################  Local development helpful directives  ####################
 ###################           (pipenv + docker)            ####################
@@ -75,6 +85,8 @@ test:
 # make destroy-local-env        # stop and remove containers, networks, images, and volume and pipenv
 # make reload-local-env         # restart containers, networks, images, and volume and pipenv
 # make load-fixtures-local      # loads fixtures
+# make local-test               # runs tests
+# make local-lint               # runs linting tools
 
 PIPENV_DOTENV := .pipenv.env
 PYTHON_VERSION_FILE := .python-version
@@ -117,3 +129,15 @@ destroy-local-env:
 
 reload-local-env: destroy-local-env local-env
 .PHONY: reload-local-env
+
+local-test:
+	@echo todo
+#	python pytest
+.PHONY: test
+
+local-lint:
+	@echo running isort...;
+	pipenv run isort -rc -c -df;
+	@echo running flake8...;
+	pipenv run flake8 --max-complexity 10 --ignore E501,D401
+.PHONY: lint

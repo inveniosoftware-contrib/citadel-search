@@ -8,13 +8,12 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 
-from flask import current_app
-from invenio_records_rest.schemas import RecordMetadataSchemaJSONV1
-from invenio_indexer.utils import default_record_to_index
-from invenio_records_rest.schemas.json import RecordSchemaJSONV1
-from marshmallow import validates_schema, ValidationError, post_dump
-
 from cern_search_rest_api.modules.cernsearch.utils import record_from_index
+from flask import current_app
+from invenio_indexer.utils import default_record_to_index
+from invenio_records_rest.schemas import RecordMetadataSchemaJSONV1
+from invenio_records_rest.schemas.json import RecordSchemaJSONV1
+from marshmallow import ValidationError, post_dump, validates_schema
 
 
 def has_and_needs_binary(original_data):

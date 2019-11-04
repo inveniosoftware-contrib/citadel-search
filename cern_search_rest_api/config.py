@@ -12,16 +12,15 @@ from __future__ import absolute_import, print_function
 import ast
 import copy
 import os
+
 from flask import request
 from invenio_oauthclient.contrib import cern
 from invenio_records_rest import config as irr_config
 from invenio_records_rest.facets import terms_filter
 
-from .modules.cernsearch.permissions import (record_read_permission_factory,
-                                             record_create_permission_factory,
-                                             record_update_permission_factory,
-                                             record_delete_permission_factory,
-                                             record_list_permission_factory)
+from .modules.cernsearch.permissions import (record_create_permission_factory, record_delete_permission_factory,
+                                             record_list_permission_factory, record_read_permission_factory,
+                                             record_update_permission_factory)
 
 
 def _(x):

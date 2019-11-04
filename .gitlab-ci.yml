@@ -23,6 +23,7 @@ stages:
   - tag_image
   - import_image # This stage is only used when the built image is stored in the GitLab Registry
   - deploy
+  - test
 
 ### 'Build Base' stage
 ### Builds the base docker image and tags it according to the commit message.
@@ -157,3 +158,21 @@ deploy_production:
     OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
     NAMESPACE: ${NAMESPACE_PROD}
     GIT_STRATEGY: none
+
+########## MERGE REQUESTS ##########
+lint_test:
+  services:
+    - docker:dind
+  stage: test
+  image: tmaier/docker-compose:latest
+  script: make build-env lint test
+  before_script:
+    - docker info
+    - docker-compose --version
+    - apk add make
+  only:
+  - merge_requests
+  - tags
+  allow_failure: true
+  tags:
+    - docker-privileged-xl

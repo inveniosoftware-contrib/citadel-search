@@ -9,12 +9,9 @@
 
 from __future__ import absolute_import, print_function
 
+from cern_search_rest_api.modules.cernsearch.marshmallow import CSASRecordSchemaV1, CSASRecordSearchSchemaJSONV1
 from invenio_records_rest.serializers.json import JSONSerializer
-from invenio_records_rest.serializers.response import record_responsify, \
-    search_responsify
-
-from cern_search_rest_api.modules.cernsearch.marshmallow import \
-    CSASRecordSchemaV1, CSASRecordSearchSchemaJSONV1
+from invenio_records_rest.serializers.response import record_responsify, search_responsify
 
 # Serializers
 # ===========

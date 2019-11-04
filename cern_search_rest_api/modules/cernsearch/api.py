@@ -8,8 +8,8 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """ Record API"""
-from invenio_records.api import Record
 from invenio_pidstore.models import PersistentIdentifier
+from invenio_records.api import Record
 
 from .fetchers import recid_fetcher
 

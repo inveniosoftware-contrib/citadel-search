@@ -8,10 +8,8 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 
-from invenio_records_rest.loaders.marshmallow import \
-    marshmallow_loader
-from cern_search_rest_api.modules.cernsearch.marshmallow import \
-    CSASRecordSchemaV1
+from cern_search_rest_api.modules.cernsearch.marshmallow import CSASRecordSchemaV1
+from invenio_records_rest.loaders.marshmallow import marshmallow_loader
 
 csas_loader = marshmallow_loader(CSASRecordSchemaV1)
 

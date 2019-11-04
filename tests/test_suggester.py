@@ -7,10 +7,10 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 import json
+import time
 
 import pytest
 import requests
-import time
 
 HEADERS = {
     "Accept": "application/json",

@@ -18,22 +18,22 @@ import logging
 from copy import deepcopy
 from functools import partial
 
+from cern_search_rest_api.modules.cernsearch.errors import InvalidRecordFormatError
+from cern_search_rest_api.modules.cernsearch.search import RecordCERNSearch
 from elasticsearch_dsl.query import QueryString
+from flask import Blueprint, Response, current_app, json, make_response, request, url_for
 from flask_sqlalchemy import SQLAlchemy
 from invenio_db import db
+from invenio_indexer.utils import default_record_to_index
 from invenio_records_rest import current_records_rest
-from sqlalchemy import MetaData, util
-from invenio_records_rest.errors import UnsupportedMediaRESTError, InvalidDataRESTError
+from invenio_records_rest.errors import InvalidDataRESTError, UnsupportedMediaRESTError
 from invenio_records_rest.utils import obj_or_import_string
 from invenio_records_rest.views import create_error_handlers as records_rest_error_handlers
-from flask import Blueprint, Response, json, url_for, request, make_response, current_app
 from invenio_records_rest.views import need_record_permission, pass_record
 from invenio_rest import ContentNegotiatedMethodView
 from invenio_search import current_search_client
-from invenio_indexer.utils import default_record_to_index
-from cern_search_rest_api.modules.cernsearch.errors import InvalidRecordFormatError
+from sqlalchemy import MetaData, util
 
-from cern_search_rest_api.modules.cernsearch.search import RecordCERNSearch
 
 def elasticsearch_mapper_parsing_exception_handler(error):
     """Handle mapper parsing exceptions from ElasticSearch."""

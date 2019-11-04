@@ -16,7 +16,6 @@ secrets/
 
 *.key
 *.crt
-*.csr
 
 # Dump files
 
@@ -31,3 +30,6 @@ env/
 
 *.log
 *.pid
+
+# Gitlab CI Runner
+builds/

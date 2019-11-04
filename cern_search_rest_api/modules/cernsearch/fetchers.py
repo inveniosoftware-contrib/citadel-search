@@ -10,6 +10,7 @@
 """Persistent identifier fetcher."""
 
 from invenio_pidstore.fetchers import FetchedPID
+
 from .providers import CERNSearchRecordIdProvider
 
 
