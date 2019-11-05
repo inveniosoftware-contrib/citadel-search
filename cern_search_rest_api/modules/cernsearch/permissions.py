@@ -4,14 +4,13 @@
 # This file is part of CERN Search.
 # Copyright (C) 2018-2019 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
-from flask import current_app, request
+from flask import current_app
 from flask_security import current_user
-from invenio_indexer.utils import default_record_to_index
-from invenio_search import current_search_client
+from functools import partial
 
 """Access control for CERN Search."""
 
@@ -88,6 +87,14 @@ class RecordPermission(object):
             return cls(record, deny, user)
 
 
+def _granted(provides, needs):
+    return provides and not set(provides).isdisjoint(set(needs))
+
+
+def _user_granted(needs):
+    return _granted(provides=get_user_provides(), needs=needs)
+
+
 def has_owner_permission(user, record=None):
     """Check if user is authenticated and has create access"""
     log_action(user, 'CREATE/OWNER')
@@ -97,21 +104,11 @@ def has_owner_permission(user, record=None):
         return user.is_authenticated
     # Second authentication phase, record level
     if user.is_authenticated:
-        # Allow based in the '_access' key
-        user_provides = get_user_provides()
-        es_index, doc = default_record_to_index(record)
-        current_app.logger.debug('Using index {idx} and doc {doc}'.format(idx=es_index, doc=doc))
-        if current_search_client.indices.exists([es_index]):
-            mapping = current_search_client.indices.get_mapping([es_index])
-            if mapping is not None:
-                current_app.logger.debug('Using mapping for {idx}'.format(idx=es_index))
-                current_app.logger.debug('Mapping {mapping}'.format(mapping=mapping))
-                # set.isdisjoint() is faster than set.intersection()
-                create_access_groups = mapping[es_index]['mappings'][doc]['_meta']['_owner'].split(',')
-                if user_provides and not set(user_provides).isdisjoint(set(create_access_groups)):
-                    current_app.logger.debug('User authenticated correctly')
-                    return True
-                current_app.logger.debug('Could not authenticate user, group sets are disjoint')
+        admin_access = current_app.config.get('ADMIN_ACCESS_GROUPS', '')
+        admin_access = admin_access.split(',')
+
+        return _user_granted(admin_access)
+
     return False
 
 
@@ -125,27 +122,21 @@ def has_list_permission(user, record=None):
 
 
 def has_update_permission(user, record):
-    """Check if user is authenticated and has update access"""
+    """Check if user is authenticated and has update access."""
     log_action(user, 'UPDATE')
     if user.is_authenticated:
         # Allow based in the '_access' key
-        user_provides = get_user_provides()
-        # set.isdisjoint() is faster than set.intersection()
-        update_access_groups = get_access_set(record['_access'], 'update')
-        delete_access_groups = get_access_set(record['_access'], 'delete')
-        owner_access_groups = get_access_set(record['_access'], 'owner')
-        # If the record exists in ES
-        # The user provides egroup/membership
+        update_access = get_access_set(record['_access'], 'update')
+        delete_access = get_access_set(record['_access'], 'delete')
+        owner_access = get_access_set(record['_access'], 'owner')
+
         # The user is owner of the collection/schema
-        # The user is admin of the instance or any access group list is disjoint
+        # The user belongs to any access group, meaning the list is disjoint
         # Then grant access
-        if is_admin(user) or (
-            check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
-            (
-                not set(user_provides).isdisjoint(set(update_access_groups))
-                or not set(user_provides).isdisjoint(set(delete_access_groups))
-                or not set(user_provides).isdisjoint(set(owner_access_groups))
-            )
+        if has_owner_permission(user, record) or (
+            _user_granted(update_access) or
+            _user_granted(delete_access) or
+            _user_granted(owner_access)
         ):
             current_app.logger.debug('Group sets not disjoint, user allowed')
             return True
@@ -153,32 +144,26 @@ def has_update_permission(user, record):
 
 
 def has_read_record_permission(user, record):
-    """Check if user is authenticated and has read access. This implies reading one document"""
+    """Check if user is authenticated and has read access. This implies reading one document."""
     log_action(user, 'READ')
     if user.is_authenticated:
         # Allow based in the '_access' key
-        user_provides = get_user_provides()
-        # set.isdisjoint() is faster than set.intersection()
-        read_access_groups = get_access_set(record['_access'], 'read')
-        update_access_groups = get_access_set(record['_access'], 'update')
-        delete_access_groups = get_access_set(record['_access'], 'delete')
-        owner_access_groups = get_access_set(record['_access'], 'owner')
+        read_access = get_access_set(record['_access'], 'read')
+        update_access = get_access_set(record['_access'], 'update')
+        delete_access = get_access_set(record['_access'], 'delete')
+        owner_access = get_access_set(record['_access'], 'owner')
 
-        if not read_access_groups:
+        if not read_access:
             return True
-        # If the record exists in ES
-        # The user provides egroup/membership
+
         # The user is owner of the collection/schema
-        # The user is admin of the instance or any access group list is disjoint
+        # The user belongs to any access group, meaning the list is disjoint
         # Then grant access
-        if is_admin(user) or (
-            check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
-            (
-                not set(user_provides).isdisjoint(set(read_access_groups))
-                or not set(user_provides).isdisjoint(set(update_access_groups))
-                or not set(user_provides).isdisjoint(set(delete_access_groups))
-                or not set(user_provides).isdisjoint(set(owner_access_groups))
-            )
+        if has_owner_permission(user, record) or (
+            _user_granted(read_access) or
+            _user_granted(update_access) or
+            _user_granted(delete_access) or
+            _user_granted(owner_access)
         ):
             current_app.logger.debug('Group sets not disjoint, user allowed')
             return True
@@ -186,25 +171,19 @@ def has_read_record_permission(user, record):
 
 
 def has_delete_permission(user, record):
-    """Check if user is authenticated and has delete access"""
+    """Check if user is authenticated and has delete access."""
     log_action(user, 'DELETE')
     if user.is_authenticated:
         # Allow based in the '_access' key
-        user_provides = get_user_provides()
-        # set.isdisjoint() is faster than set.intersection()
-        delete_access_groups = get_access_set(record['_access'], 'delete')
-        owner_access_groups = get_access_set(record['_access'], 'owner')
-        # If the record exists in ES
-        # The user provides egroup/membership
+        delete_access = get_access_set(record['_access'], 'delete')
+        owner_access = get_access_set(record['_access'], 'owner')
+
         # The user is owner of the collection/schema
-        # The user is admin of the instance or any access group list is disjoint
+        # The user belongs to any access group, meaning the list is disjoint
         # Then grant access
-        if is_admin(user) or (
-            check_elasticsearch(record) and user_provides and has_owner_permission(user) and \
-            (
-                not set(user_provides).isdisjoint(set(delete_access_groups))
-                or not set(user_provides).isdisjoint(set(owner_access_groups))
-            )
+        if has_owner_permission(user, record) or (
+            _user_granted(delete_access) or
+            _user_granted(owner_access)
         ):
             current_app.logger.debug('Group sets not disjoint, user allowed')
             return True
@@ -270,30 +249,12 @@ def get_access_set(access, set):
         return []
 
 
-def is_admin(user):
-    """Check if the user is administrator"""
-    admin_user = current_app.config['ADMIN_USER']
-    if user.email == admin_user or user.email.replace('@cern.ch', '') == admin_user:
-        current_app.logger.debug('User {user} is admin'.format(user=user.email))
-        return True
-    return False
-
-
 def is_public(data, action):
     """Check if the record is fully public.
     In practice this means that the record doesn't have the ``access`` key or
     the action is not inside access or is empty.
     """
     return '_access' not in data or not data.get('_access', {}).get(action)
-
-
-def check_elasticsearch(record=None):
-    if record is not None:
-        """Try to search for given record."""
-        search = request._methodview.search_class()
-        search = search.get_record(str(record.id))
-        return search.count() == 1
-    return False
 
 
 def log_action(user, action):
