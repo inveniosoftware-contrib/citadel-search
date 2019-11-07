@@ -34,8 +34,6 @@ def test_testclient(appctx, base_client):
     # Create first test record
     resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
-    print(resp.data)
-
     assert resp.status_code == 201
 
     # Check non presence of OCR content in DB record

@@ -15,7 +15,5 @@ from flask import current_app, url_for
 @pytest.mark.unit
 def test_view1(appctx, base_client):
     resp = base_client.post("/account/settings/applications/", follow_redirects=True)
-    #resp = base_client.post(url_for("remoteaccount.action_view"), follow_redirects=True)
-    print(resp.data)
 
     assert resp.status_code == HTTPStatus.OK

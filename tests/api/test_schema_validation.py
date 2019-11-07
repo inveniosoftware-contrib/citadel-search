@@ -23,13 +23,12 @@ def test_control_number_update(appctx, base_client):
         "_data": {
             "title": "test_control_number_update",
             "description": "Not updated document"
-        },
+        }
     }
 
     # Create test record
     resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
-    print(resp.data)
     assert resp.status_code == 201
 
     orig_record = resp.json['metadata']
