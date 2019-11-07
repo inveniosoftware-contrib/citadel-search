@@ -1,0 +1,138 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_string": true,
+    "index.mapping.total_fields.limit": 500
+  },
+  "mappings": {
+    "project_v1.0.0": {
+      "numeric_detection": true,
+      "properties": {
+        "_access": {
+          "type": "object",
+          "properties": {
+            "owner": {
+              "type": "keyword"
+            },
+            "read": {
+              "type": "keyword"
+            },
+            "update": {
+              "type": "keyword"
+            },
+            "delete": {
+              "type": "keyword"
+            }
+          }
+        },
+        "_data": {
+          "type": "object",
+          "properties": {
+            "project_id": {
+              "type": "keyword",
+              "boost": 20
+            },
+            "name": {
+              "type": "text",
+              "boost": 8,
+              "fields": {
+                "english": {
+                  "type": "text",
+                  "boost": 8,
+                  "analyzer": "english"
+                },
+                "french": {
+                  "type": "text",
+                  "boost": 8,
+                  "analyzer": "french"
+                },
+                "exact_match": {
+                  "type": "keyword",
+                  "boost": 8
+                }
+              }
+            },
+            "description": {
+              "type": "text",
+              "boost": 4,
+              "fields": {
+                "english": {
+                  "type": "text",
+                  "boost": 4,
+                  "analyzer": "english"
+                },
+                "french": {
+                  "type": "text",
+                  "boost": 4,
+                  "analyzer": "french"
+                }
+              }
+            },
+            "context": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "keyword"
+                },
+                "context_id": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "responsible": {
+              "type": "text",
+              "boost": 4,
+              "fields": {
+                "english": {
+                  "type": "text",
+                  "boost": 2,
+                  "analyzer": "english"
+                },
+                "french": {
+                  "type": "text",
+                  "boost": 2,
+                  "analyzer": "french"
+                }
+              }
+            },
+            "equipment_code": {
+              "type": "keyword",
+              "boost": 10
+            }
+          }
+        },
+        "cid": {
+          "type": "keyword"
+        },
+        "owner": {
+          "type": "keyword"
+        },
+        "group": {
+          "type": "keyword"
+        },
+        "object_type": {
+          "type": "keyword"
+        },
+        "creation_date": {
+          "type": "date",
+          "format": "yyyy-MM-dd'T'HH:mm:ss"
+        },
+        "modification_date": {
+          "type": "date",
+          "format": "yyyy-MM-dd'T'HH:mm:ss"
+        },
+        "_updated": {
+          "type": "date"
+        },
+        "_created": {
+          "type": "date"
+        },
+        "control_number": {
+          "type": "keyword"
+        },
+        "$schema": {
+          "enabled": false
+        }
+      }
+    }
+  }
+}

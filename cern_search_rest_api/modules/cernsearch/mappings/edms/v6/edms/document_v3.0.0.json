@@ -7,9 +7,6 @@
     "document_v3.0.0": {
       "dynamic": "strict",
       "numeric_detection": true,
-      "_meta": {
-        "_owner": "CernSearch-Administrators@cern.ch,en-dep-ace-plm@cern.ch"
-      },
       "properties": {
         "_access": {
           "type": "object",
