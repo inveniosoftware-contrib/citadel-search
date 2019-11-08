@@ -9,7 +9,7 @@
 # Use CentOS7:
 FROM inveniosoftware/centos7-python:3.6
 
-# Install pre-requisites 
+# Install pre-requisites
 RUN yum update -y && \
     yum install -y \
         gcc \
