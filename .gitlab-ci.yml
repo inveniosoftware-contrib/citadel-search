@@ -170,9 +170,6 @@ lint:
     - docker info
     - docker-compose --version
     - apk add make
-  only:
-  - merge_requests
-  - tags
   allow_failure: true
   tags:
     - docker-privileged-xl
@@ -188,7 +185,5 @@ test:
     - docker-compose --version
     - apk add make
     - apk add openssl
-  only:
-  - merge_requests
   tags:
     - docker-privileged-xl
