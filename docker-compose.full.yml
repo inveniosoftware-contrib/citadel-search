@@ -6,9 +6,6 @@ services:
       args:
         build_env: ${ENV}
     container_name: ${CONTAINER_NAME}
-    volumes:
-      - ./:/opt/invenio/src:delegated
-      - cern_search_rest_api.egg-info:/opt/invenio/src/cern_search_rest_api.egg-info
     ports:
       - "5000:5000"
     depends_on:
@@ -90,4 +87,3 @@ volumes:
   nginx-run:
   nginx-cache:
   nginx-tls:
-  cern_search_rest_api.egg-info:

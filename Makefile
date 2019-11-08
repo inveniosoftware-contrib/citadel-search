@@ -1,3 +1,4 @@
+
 ###################  Docker development helpful directives  ####################
 #
 # Usage:
@@ -15,8 +16,15 @@
 # make lint                   # runs linting tools
 
 SERVICE_NAME :=  cern-search-api
-DOCKER_FILE := docker-compose.full.yml
 API_TOKEN := .api_token
+MODE?=full
+TEST_MODE=test
+
+ifeq ($(MODE),$(TEST_MODE))
+DOCKER_FILE := docker-compose.test.yml
+else
+DOCKER_FILE := docker-compose.full.yml
+endif
 
 build-env:
 	docker-compose -f $(DOCKER_FILE) up -d --build --remove-orphans

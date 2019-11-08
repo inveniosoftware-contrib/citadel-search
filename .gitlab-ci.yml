@@ -165,7 +165,7 @@ lint:
     - docker:dind
   stage: test
   image: tmaier/docker-compose:latest
-  script: make build-env lint
+  script: make build-env lint MODE=test
   before_script:
     - docker info
     - docker-compose --version
@@ -182,7 +182,7 @@ test:
     - docker:dind
   stage: test
   image: tmaier/docker-compose:latest
-  script: make generate-certificates build-env populate-instance load-fixtures test
+  script: make generate-certificates build-env populate-instance load-fixtures test MODE=test
   before_script:
     - docker info
     - docker-compose --version
