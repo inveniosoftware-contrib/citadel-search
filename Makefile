@@ -27,7 +27,7 @@ DOCKER_FILE := docker-compose.full.yml
 endif
 
 build-env:
-	docker-compose -f $(DOCKER_FILE) up -d --build --remove-orphans
+	docker-compose -f $(DOCKER_FILE) up -d --remove-orphans
 .PHONY: env
 
 logs:
@@ -55,10 +55,6 @@ reload-env: destroy-env env
 shell-env:
 	docker-compose -f $(DOCKER_FILE) exec $(SERVICE_NAME) /bin/bash
 .PHONY: shell-env
-
-root-shell-env:
-	docker-compose -f $(DOCKER_FILE) exec -u root $(SERVICE_NAME) /bin/bash
-.PHONY: root-shell-env
 
 env: generate-certificates build-env populate-instance load-fixtures shell-env
 .PHONY: env

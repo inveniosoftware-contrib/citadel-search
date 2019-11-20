@@ -9,7 +9,7 @@
 
 """ Record API"""
 from invenio_pidstore.models import PersistentIdentifier
-from invenio_records.api import Record
+from invenio_records_files.api import Record
 
 from .fetchers import recid_fetcher
 

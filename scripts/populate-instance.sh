@@ -9,5 +9,6 @@
 
 invenio db init
 invenio db create
+invenio files location default ${DEFAULT_RECORDS_FILES_LOCATION} --default
 invenio index init
 invenio index list

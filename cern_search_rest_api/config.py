@@ -4,8 +4,9 @@
 # This file is part of CERN Search.
 # Copyright (C) 2018-2019 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+"""Configuration for Citadel Search."""
 
 from __future__ import absolute_import, print_function
 
@@ -27,6 +28,7 @@ def _(x):
     """Identity function used to trigger string extraction."""
     return x
 
+
 # Theme
 # =====
 THEME_SEARCHBAR = False
@@ -40,7 +42,8 @@ CERN_REMOTE_APP["params"].update(dict(request_token_params={
     "scope": "Name Email Bio Groups",
 }))
 
-CERN_REMOTE_APP["authorized_handler"] = 'cern_search_rest_api.modules.cernsearch.handlers:cern_authorized_signup_handler'
+CERN_REMOTE_APP["authorized_handler"] = \
+    'cern_search_rest_api.modules.cernsearch.handlers:cern_authorized_signup_handler'
 
 OAUTHCLIENT_REMOTE_APPS = dict(
     cern=CERN_REMOTE_APP,
@@ -69,7 +72,7 @@ JSONSCHEMAS_REGISTER_ENDPOINTS_UI = True
 # Search configuration
 # =====================
 
-SEARCH_MAPPINGS = [os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test')]
+SEARCH_MAPPINGS = [os.getenv('CERN_SEARCH_INSTANCE', 'test')]
 SEARCH_USE_EGROUPS = ast.literal_eval(os.getenv('CERN_SEARCH_USE_EGROUPS', 'True'))
 SEARCH_DOC_PIPELINES = ast.literal_eval(os.getenv('CERN_SEARCH_DOC_PIPELINES', '{}'))
 
@@ -79,6 +82,14 @@ SEARCH_DOC_PIPELINES = ast.literal_eval(os.getenv('CERN_SEARCH_DOC_PIPELINES', '
 #: Records REST API configuration
 
 _Record_PID = 'pid(recid, record_class="cern_search_rest_api.modules.cernsearch.api:CernSearchRecord")'  # TODO
+
+RECORDS_FILES_REST_ENDPOINTS = {
+    'RECORDS_REST_ENDPOINTS': {
+        'docid': '/files',
+    }
+}
+
+FILES_REST_PERMISSION_FACTORY = 'cern_search_rest_api.modules.cernsearch.permissions:files_permission_factory'
 
 RECORDS_REST_ENDPOINTS = dict(
     docid=dict(
@@ -101,7 +112,7 @@ RECORDS_REST_ENDPOINTS = dict(
             'application/json-patch+json': lambda: request.get_json(force=True)
         },
         search_class='cern_search_rest_api.modules.cernsearch.search.RecordCERNSearch',
-        search_index=os.getenv('CERN_SEARCH_INSTANCE', 'cernsearch-test'),
+        search_index=os.getenv('CERN_SEARCH_INSTANCE', 'test'),
         search_serializers={
             'application/json': ('cern_search_rest_api.modules.cernsearch.serializers'
                                  ':json_v1_search'),
@@ -164,7 +175,6 @@ RECORDS_REST_SORT_OPTIONS = {
     }
 }
 
-
 RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS = copy.deepcopy(
     irr_config.RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS)
 RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS['mapper_parsing_exception'] = \
@@ -174,7 +184,7 @@ RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS['mapper_parsing_exception'] = \
 # ===
 
 RATELIMIT_DEFAULT = os.getenv('CERN_SEARCH_INSTANCE_RATELIMIT', '5000/hour')
-APP_HEALTH_BLUEPRINT_ENABLED = False
+APP_HEALTH_BLUEPRINT_ENABLED = True
 
 # CORS
 # ====

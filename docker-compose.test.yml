@@ -9,6 +9,7 @@ services:
     volumes:
       - ./:/opt/invenio/src:delegated
       - cern_search_rest_api.egg-info:/opt/invenio/src/cern_search_rest_api.egg-info
+      - files:/usr/share/cern-search-api/files
     ports:
       - "5000:5000"
     depends_on:
@@ -22,6 +23,7 @@ services:
       - default
     env_file:
       - .env
+    user: root
 
   elasticsearch:
     image: docker.elastic.co/elasticsearch/elasticsearch-oss:6.2.4
@@ -38,7 +40,7 @@ services:
       test: ["CMD", "curl", "-f", "localhost:9200/_cluster/health?wait_for_status=green"]
       interval: 30s
       timeout: 30s
-      retries: 5
+      retries: 10
 
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:6.2.4
@@ -91,3 +93,4 @@ volumes:
   nginx-cache:
   nginx-tls:
   cern_search_rest_api.egg-info:
+  files:

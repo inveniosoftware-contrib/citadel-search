@@ -10,8 +10,8 @@
 """Helper methods for CERN Search records."""
 
 from flask import current_app, g
+from invenio_indexer.utils import schema_to_index
 from invenio_search import current_search
-from invenio_search.utils import schema_to_index
 
 
 def get_user_provides():

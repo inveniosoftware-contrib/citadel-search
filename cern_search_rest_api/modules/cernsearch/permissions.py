@@ -6,18 +6,48 @@
 #
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+"""Access control for Citadel Search."""
 
 from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
 from flask import current_app
 from flask_security import current_user
-from functools import partial
-
-"""Access control for CERN Search."""
+from invenio_files_rest.models import Bucket, MultipartObject, ObjectVersion
+from invenio_records import Record
+from invenio_records_files.api import FileObject
+from invenio_records_files.models import RecordsBuckets
 
 
 def record_permission_factory(record=None, action=None):
     """Record permission factory."""
     return RecordPermission.create(record, action)
+
+
+def files_permission_factory(obj=None, action=None):
+    """Permission for files are always based on the type of bucket.
+
+    1. Record bucket: Read access only with open and restricted access.
+    2. Any other bucket is restricted to admins only.
+    """
+    # Extract bucket id
+    bucket_id = None
+    if isinstance(obj, Bucket):
+        bucket_id = str(obj.id)
+    elif isinstance(obj, ObjectVersion):
+        bucket_id = str(obj.bucket_id)
+    elif isinstance(obj, MultipartObject):
+        bucket_id = str(obj.bucket_id)
+    elif isinstance(obj, FileObject):
+        bucket_id = str(obj.bucket_id)
+
+    # Retrieve record
+    if bucket_id is not None:
+        record_bucket = RecordsBuckets.query.filter_by(bucket_id=bucket_id).one_or_none()
+        if record_bucket is not None:
+            record = Record.get_record(record_bucket.record_id)
+
+            return FilePermission.create(record, action)
+
+    return AdminPermission.create(obj, action)
 
 
 def record_create_permission_factory(record=None):
@@ -47,6 +77,7 @@ def record_delete_permission_factory(record=None):
 
 class RecordPermission(object):
     """Record permission.
+
     - Create action given to owners only.
     - Read access given to everyone if public, according to a record ownership if not.
     - Update access given to record owners.
@@ -87,16 +118,35 @@ class RecordPermission(object):
             return cls(record, deny, user)
 
 
+class FilePermission(RecordPermission):
+    """File permission.
+
+    Given according to record permissions.
+    - Create file
+    - Update file
+    - Read file
+    - Delete file
+    """
+
+    create_actions = []
+    read_actions = ['object-read']  # GET /files/file
+    list_actions = []
+    update_actions = ['bucket-update']  # PUT /files/file
+    delete_actions = ['object-delete']  # DELETE /files/file
+
+
 def _granted(provides, needs):
+    """Check if user provided permissions and necessary permissions match."""
     return provides and not set(provides).isdisjoint(set(needs))
 
 
 def _user_granted(needs):
+    """Check if user is granted needed permissions."""
     return _granted(provides=get_user_provides(), needs=needs)
 
 
 def has_owner_permission(user, record=None):
-    """Check if user is authenticated and has create access"""
+    """Check if user is authenticated and has create access."""
     log_action(user, 'CREATE/OWNER')
 
     # First authentication phase, decorator level
@@ -113,7 +163,7 @@ def has_owner_permission(user, record=None):
 
 
 def has_list_permission(user, record=None):
-    """Check if user is authenticated and has create access"""
+    """Check if user is authenticated and has create access."""
     if user:
         log_action(user, 'LIST')
         return user.is_authenticated
@@ -134,9 +184,9 @@ def has_update_permission(user, record):
         # The user belongs to any access group, meaning the list is disjoint
         # Then grant access
         if has_owner_permission(user, record) or (
-            _user_granted(update_access) or
-            _user_granted(delete_access) or
-            _user_granted(owner_access)
+                _user_granted(update_access)
+                or _user_granted(delete_access)
+                or _user_granted(owner_access)
         ):
             current_app.logger.debug('Group sets not disjoint, user allowed')
             return True
@@ -160,10 +210,10 @@ def has_read_record_permission(user, record):
         # The user belongs to any access group, meaning the list is disjoint
         # Then grant access
         if has_owner_permission(user, record) or (
-            _user_granted(read_access) or
-            _user_granted(update_access) or
-            _user_granted(delete_access) or
-            _user_granted(owner_access)
+                _user_granted(read_access)
+                or _user_granted(update_access)
+                or _user_granted(delete_access)
+                or _user_granted(owner_access)
         ):
             current_app.logger.debug('Group sets not disjoint, user allowed')
             return True
@@ -182,8 +232,8 @@ def has_delete_permission(user, record):
         # The user belongs to any access group, meaning the list is disjoint
         # Then grant access
         if has_owner_permission(user, record) or (
-            _user_granted(delete_access) or
-            _user_granted(owner_access)
+                _user_granted(delete_access)
+                or _user_granted(owner_access)
         ):
             current_app.logger.debug('Group sets not disjoint, user allowed')
             return True
@@ -199,6 +249,7 @@ def admin_permission_factory(view):
 
 
 class AdminPermission(object):
+    """Admin permission."""
 
     def __init__(self, func, user, view):
         """Initialize a file permission object."""
@@ -218,6 +269,7 @@ class AdminPermission(object):
 
 
 def has_admin_view_permission(user):
+    """Check if has admin permission."""
     admin_access_groups = current_app.config['ADMIN_VIEW_ACCESS_GROUPS']
     if user.is_authenticated and admin_access_groups:
         # Allow based in the '_access' key
@@ -243,6 +295,7 @@ def allow(user, record):
 
 
 def get_access_set(access, set):
+    """Get access set."""
     try:
         return access[set]
     except KeyError:
@@ -251,6 +304,7 @@ def get_access_set(access, set):
 
 def is_public(data, action):
     """Check if the record is fully public.
+
     In practice this means that the record doesn't have the ``access`` key or
     the action is not inside access or is empty.
     """
@@ -258,6 +312,7 @@ def is_public(data, action):
 
 
 def log_action(user, action):
+    """Log action."""
     try:
         email = user.email
     except AttributeError:
