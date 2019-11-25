@@ -4,14 +4,15 @@
 # This file is part of CERN Search.
 # Copyright (C) 2018-2019 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Helper methods for CERN Search records."""
 
 from flask import current_app, g
-from invenio_indexer.utils import schema_to_index
-from invenio_search import current_search
+from invenio_indexer.utils import default_record_to_index, schema_to_index
+from invenio_search import current_search, current_search_client
+from invenio_search.utils import prefix_index
 
 
 def get_user_provides():
@@ -40,3 +41,27 @@ def record_from_index(record):
     else:
         return (current_app.config['INDEXER_DEFAULT_INDEX'],
                 current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
+
+
+def default_record_to_mapping(record):
+    """Get mapping given a record.
+
+    It tries to extract from `record['$schema']` the index and doc_type.
+    If it fails, uses the default values.
+
+    :param record: The record object.
+    :returns: mapping
+    """
+    index, doc = default_record_to_index(record)
+    index = prefix_index(index)
+    current_app.logger.debug('Using index {idx} and doc {doc}'.format(idx=index, doc=doc))
+
+    mapping = current_search_client.indices.get_mapping([index])
+    if mapping is not None:
+        doc_type = next(iter(mapping))
+        current_app.logger.debug('Using mapping for {idx}'.format(idx=index))
+        current_app.logger.debug('Mapping {mapping}'.format(mapping=mapping))
+
+        return mapping[doc_type]['mappings'][doc]
+
+    return None

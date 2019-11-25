@@ -5,6 +5,7 @@
   },
   "mappings": {
     "date_v0.0.2": {
+      "dynamic": "strict",
       "numeric_detection": true,
       "_meta": {
         "_owner": "CernSearch-Administrators@cern.ch"
@@ -48,6 +49,12 @@
               "format": "yyyy-MM-dd'T'HH:mm:ss"
             }
           }
+        },
+        "_updated": {
+          "type": "date"
+        },
+        "_created": {
+          "type": "date"
         },
         "control_number": {
           "type": "keyword"
