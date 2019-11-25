@@ -25,7 +25,6 @@
           }
         },
         "_bucket": {
-          "type": "keyword",
           "enabled": false
         },
         "_data": {
