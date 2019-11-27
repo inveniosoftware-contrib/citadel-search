@@ -1,6 +1,5 @@
 
 variables:
-
   ### Disable cache in Docker builds, as this has occasionally resulted in images not containing what was
   ### expected multiple MRs where being built/retried.
   NO_CACHE: 'true'
@@ -9,161 +8,86 @@ variables:
   ### also the variable name
   RESOURCE: cern-search-rest-api
   ### OpenShift namespace and server values
-  NAMESPACE_DEV: cern-search-master
-  OPENSHIFT_SERVER_DEV: https://openshift.cern.ch
-  NAMESPACE_PROD: cern-search-master
-  OPENSHIFT_SERVER_PROD: https://openshift.cern.ch
-
+  NAMESPACE: cern-search-master
+  OPENSHIFT_SERVER: https://openshift.cern.ch
 
 ### By default, there are 6 stages that we may use:
 ### Feel free to adapt this to your specific case.
 stages:
   - build_base
+  - check_base
+  - test
   - build
   - tag_image
   - import_image # This stage is only used when the built image is stored in the GitLab Registry
   - deploy
-  - test
 
-### 'Build Base' stage
-### Builds the base docker image and tags it according to the commit message.
+### Build the image and store it in the registry. It is important that this step
+### doesn't override the image the applications are running, as we haven't tested the image yet
+.build_image:
+  stage: build
+  tags:
+    - docker-image-build
+  script: 'echo "Building Docker image..."'
+
+### Import image into OpenShift.
+.import_image:
+  stage: import_image
+  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
+  script:
+    - oc import-image ${RESOURCE}:${TAG} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
+
+### If a new tag is pushed it needs to be referenced into the ImageStream
+.tag_image:
+  stage: tag_image
+  only:
+  - tags
+  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
+  script:
+    - oc tag --source=docker ${CI_REGISTRY_IMAGE}:${CI_REGISTRY_TAG} ${RESOURCE}:${TAG} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
+
+
+######################################################
+################### Merge Requests ###################
+
+#'Build Base' stage
+# Builds the base docker image and tags it according to the commit message.
 build_base_image:
+  extends: .build_image
   stage: build_base
   only:
+    refs:
+      - merge_requests
     changes:
       - Dockerfile-base
       - Pipfile
       - Pipfile.lock
-  tags:
-    - docker-image-build
-  script: 'echo "Building base Docker image..."'
+  when: manual
   variables:
     DOCKER_FILE: Dockerfile-base
     TO: gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:${CI_COMMIT_SHA}
 
-### 'Build' stage
-### Build the image and store it in the registry. It is important that this step
-### doesn't override the image the applications are running, as we haven't tested the image yet
-########## DEV ##########
-build_dev_version:
-  stage: build
-  except:
+# Validate dockerfile is updated with base image tag
+validate-base-image-updated:
+  stage: check_base
+  only:
     refs:
-      - tags
-      - master
+      - merge_requests
     changes:
       - Dockerfile-base
       - Pipfile
       - Pipfile.lock
-  environment: staging
-  tags:
-    - docker-image-build
-  script: 'echo "Building Dev/QA Docker image..."'
-  variables:
-    BUILD_ARG: build_env=dev
-
-########## PROD ##########
-build_prod_version:
-  stage: build
-  only:
-    - master
-  environment: master
-  tags:
-    - docker-image-build
-  script: 'echo "Building Prod Docker image..."'
-  variables:
-    BUILD_ARG: build_env=prod
-
-########## ALL ##########
-### When building tags, use the git tag as the docker tag of the image
-build_tagged_version:
-  stage: build
-  only:
-    - tags
-  tags:
-    - docker-image-build
-  script: 'echo "Building Docker image..."'
-  variables:
-    TO: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
-
-########## DEV ##########
-### If a new tag is pushed it needs to be referenced into the ImageStream
-tag_image_dev: &tag_image_openshift
-  stage: tag_image
-  only:
-  - tags
-  environment: staging
-  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
   script:
-    - oc tag --source=docker ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG} ${RESOURCE}:${CI_COMMIT_TAG} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
-  variables:
-    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
-    NAMESPACE: ${NAMESPACE_DEV}
-    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
+    - git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME | grep -q -E "(^|[^-])\bDockerfile\b([^-]|$)"
 
-########## PROD ##########
-### If a new tag is pushed it needs to be referenced into the ImageStream
-tag_image_prod:
-  <<: *tag_image_openshift
-  variables:
-    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
-    NAMESPACE: ${NAMESPACE_PROD}
-    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
-
-########## DEV ##########
-### Import image into OpenShift. Import $CI_COMMIT_TAG if present or 'latest' if not.
-import_image_dev:
-  stage: import_image
-  except:
-    changes:
-      - Dockerfile\-base
-      - Pipfile
-      - Pipfile.lock
-  environment: staging
-  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
-  script:
-    - oc import-image ${RESOURCE}:${CI_COMMIT_TAG:-latest} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
-  variables:
-    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
-    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
-    NAMESPACE: ${NAMESPACE_DEV}
-
-########## PROD ##########
-### Import image into OpenShift. Import $CI_COMMIT_TAG if present or 'latest' if not.
-import_image_prod:
-  stage: import_image
-  environment: master
-  only:
-  - tags
-  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
-  script:
-    - oc import-image ${RESOURCE}:${CI_COMMIT_TAG:-latest} --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE}
-  variables:
-    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
-    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
-    NAMESPACE: ${NAMESPACE_PROD}
-
-########## PROD ##########
-deploy_production:
-  stage: deploy
-  environment: production
-  only:
-  - tags
-  when: manual
-  image: gitlab-registry.cern.ch/paas-tools/openshift-client:latest
-  script:
-    - oc --token=${TOKEN} --server=${OPENSHIFT_SERVER} -n ${NAMESPACE} tag ${RESOURCE}:${CI_COMMIT_TAG} ${RESOURCE}:stable
-  variables:
-    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
-    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_PROD}
-    NAMESPACE: ${NAMESPACE_PROD}
-    GIT_STRATEGY: none
-
-########## MERGE REQUESTS ##########
+# Lint
 lint:
   services:
     - docker:dind
   stage: test
+  only:
+    refs:
+      - merge_requests
   image: tmaier/docker-compose:latest
   script: make build-env lint MODE=test
   before_script:
@@ -174,10 +98,14 @@ lint:
   tags:
     - docker-privileged-xl
 
+# Test
 test:
   services:
     - docker:dind
   stage: test
+  only:
+    refs:
+      - merge_requests
   image: tmaier/docker-compose:latest
   script: make generate-certificates build-env populate-instance load-fixtures test MODE=test
   before_script:
@@ -187,3 +115,101 @@ test:
     - apk add openssl
   tags:
     - docker-privileged-xl
+
+# Build the image and store it in the registry.
+build_test_version_manual:
+  extends: .build_image
+  only:
+    refs:
+      - merge_requests
+  when: manual
+  variables:
+    BUILD_ARG: build_env=dev
+    TO: ${CI_REGISTRY_IMAGE}:$CI_COMMIT_REF_SLUG
+
+# If a new tag is pushed it needs to be referenced into the ImageStream
+tag_image_test:
+  extends: .tag_image
+  only:
+    refs:
+      - merge_requests
+  environment:
+    name: branch/$CI_COMMIT_REF_SLUG
+  when: manual
+  variables:
+    CI_REGISTRY_TAG: $CI_COMMIT_REF_SLUG
+    TAG: $CI_COMMIT_REF_SLUG
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+
+# Import image into OpenShift.
+import_image_test:
+  extends: .import_image
+  only:
+    refs:
+      - merge_requests
+  environment:
+    name: branch/$CI_COMMIT_REF_SLUG
+  when: manual
+  variables:
+    TAG: $CI_COMMIT_REF_SLUG
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+
+######################################################
+##################### Dev branch #####################
+build_dev_version:
+  extends: .build_image
+  only:
+    - dev
+  variables:
+    BUILD_ARG: build_env=dev
+
+### Import image into OpenShift.
+import_image_dev_test:
+  extends: .import_image
+  only:
+    - dev
+  environment:
+    name: staging
+  variables:
+    TAG: latest
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+
+
+######################################################
+####################### Tags ########################
+build_tagged_version:
+  extends: .build_image
+  only:
+    - tags
+  variables:
+    TO: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
+
+tag_image_prod:
+  extends: .tag_image
+  environment:
+    name:  production
+  variables:
+    CI_REGISTRY_TAG: ${CI_COMMIT_TAG}
+    TAG: ${CI_COMMIT_TAG}
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+
+import_tagged_image_prod:
+  extends: .import_image
+  environment:
+    name:  production
+  only:
+  - tags
+  variables:
+    TAG: ${CI_COMMIT_TAG}
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+
+deploy_production:
+  extends: .tag_image
+  stage: deploy
+  environment:
+    name:  production
+  when: manual
+  variables:
+    CI_REGISTRY_TAG: ${CI_COMMIT_TAG}
+    TAG: stable
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}

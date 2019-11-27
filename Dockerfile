@@ -30,6 +30,7 @@ RUN sh /${WORKING_DIR}/src/scripts/patch/oauth_patch.sh
 # Install UI
 USER invenio
 
+
 RUN invenio collect -v
 RUN invenio webpack buildall
 # Move static files to instance folder
