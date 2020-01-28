@@ -82,7 +82,7 @@ def test_access_fields_existence(appctx, base_client):
     resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
     assert resp.status_code == 400
-    assert {"field": "_schema", "message": "Missing field _access"} in resp.json['errors']
+    assert {"field": "_schema", "message": "Missing field _access", 'parents': []} in resp.json['errors']
 
     # Without _access.delete field
     body = {
@@ -98,7 +98,7 @@ def test_access_fields_existence(appctx, base_client):
     resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
     assert resp.status_code == 400
-    assert {"field": "_schema", "message": "Missing or wrong type (not an array) in field _access.delete"} in resp.json['errors']
+    assert {"field": "_schema", "message": "Missing or wrong type (not an array) in field _access.delete", 'parents': []} in resp.json['errors']
 
     # Without _access.update field
     body = {
@@ -114,7 +114,7 @@ def test_access_fields_existence(appctx, base_client):
     resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
     assert resp.status_code == 400
-    assert {"field": "_schema", "message": "Missing or wrong type (not an array) in field _access.update"} in resp.json['errors']
+    assert {"field": "_schema", "message": "Missing or wrong type (not an array) in field _access.update", 'parents': []} in resp.json['errors']
 
     # Without _access.owner field
     body = {
@@ -130,7 +130,7 @@ def test_access_fields_existence(appctx, base_client):
     resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
     assert resp.status_code == 400
-    assert {"field": "_schema", "message": "Missing or wrong type (not an array) in field _access.owner"} in resp.json['errors']
+    assert {"field": "_schema", "message": "Missing or wrong type (not an array) in field _access.owner", 'parents': []} in resp.json['errors']
 
 
 @pytest.mark.unit
@@ -149,4 +149,4 @@ def test_data_field_existence(appctx, base_client):
     resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
     assert resp.status_code == 400
-    assert {"field": "_schema", "message": "Missing field _data"} in resp.json['errors']
+    assert {"field": "_schema", "message": "Missing field _data", 'parents': []} in resp.json['errors']

@@ -8,17 +8,20 @@
 
 """Unit tests fixtures."""
 
+from io import BytesIO
+
 import pytest
 
-from invenio_app.factory import create_app
 from flask_login import AnonymousUserMixin, UserMixin
+from invenio_app.factory import create_api
+from invenio_db import db
+from invenio_files_rest.models import Bucket, ObjectVersion
+
 
 @pytest.fixture(scope='module')
-def app():
+def create_app(instance_path):
     """Application factory fixture."""
-    # FIXME: use pytest-invenio
-    # Applies to all calls of `with_app_context`
-    return create_app()
+    return create_api
 
 
 @pytest.fixture()
@@ -66,3 +69,34 @@ def public_access_record():
             'owner': ['owner-perm']
         }
     }
+
+
+@pytest.yield_fixture()
+def bucket():
+    """File system location."""
+    b1 = Bucket.create()
+    b1.id = '00000000-0000-0000-0000-000000000000'
+    db.session.commit()
+
+    yield b1
+
+    b1.remove()
+    db.session.commit()
+
+
+@pytest.yield_fixture()
+def objects(bucket):
+    """Multipart object."""
+    content = b'some content'
+    obj = ObjectVersion.create(
+        bucket,
+        'test.pdf',
+        stream=BytesIO(content),
+        size=len(content)
+    )
+    db.session.commit()
+
+    yield obj
+
+    ObjectVersion.delete(bucket, obj.key)
+    db.session.commit()

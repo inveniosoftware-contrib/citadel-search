@@ -14,7 +14,6 @@ fixtures are available.
 from __future__ import absolute_import, print_function
 
 import pytest
-from invenio_app.factory import create_api
 
 
 @pytest.fixture(scope='module')

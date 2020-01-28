@@ -69,6 +69,9 @@ setup(
         ],
         'invenio_base.blueprints': [
             'health_check = cern_search_rest_api.modules.cernsearch.views:build_health_blueprint'
+        ],
+        'invenio_celery.tasks': [
+            'cern-search = cern_search_rest_api.modules.cernsearch.tasks'
         ]
     },
     classifiers=[
@@ -79,8 +82,8 @@ setup(
         'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules',
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 3.6',
         'Development Status :: 1 - Pre-Alpha',
     ],
     setup_requires=setup_requires,

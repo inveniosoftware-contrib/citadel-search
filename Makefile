@@ -16,6 +16,7 @@
 # make lint                   # runs linting tools
 
 SERVICE_NAME :=  cern-search-api
+WORKER_NAME :=  worker
 API_TOKEN := .api_token
 MODE?=full
 TEST_MODE=test
@@ -27,7 +28,7 @@ DOCKER_FILE := docker-compose.full.yml
 endif
 
 build-env:
-	docker-compose -f $(DOCKER_FILE) up -d --remove-orphans
+	docker-compose -f $(DOCKER_FILE) up -d --build --remove-orphans
 .PHONY: env
 
 logs:
@@ -54,6 +55,10 @@ reload-env: destroy-env env
 
 shell-env:
 	docker-compose -f $(DOCKER_FILE) exec $(SERVICE_NAME) /bin/bash
+.PHONY: shell-env
+
+shell-worker:
+	docker-compose -f $(DOCKER_FILE) exec $(WORKER_NAME) /bin/bash
 .PHONY: shell-env
 
 env: generate-certificates build-env populate-instance load-fixtures shell-env

@@ -15,9 +15,11 @@ import copy
 import os
 
 from flask import request
+
 from invenio_oauthclient.contrib import cern
 from invenio_records_rest import config as irr_config
 from invenio_records_rest.facets import terms_filter
+from kombu import Exchange, Queue
 
 from .modules.cernsearch.permissions import (record_create_permission_factory, record_delete_permission_factory,
                                              record_list_permission_factory, record_read_permission_factory,
@@ -202,3 +204,37 @@ SECURITY_CONFIRMABLE = False
 SECURITY_REGISTERABLE = False  # Avoid user registration outside of CERN SSO
 SECURITY_RECOVERABLE = False  # Avoid user password recovery
 SESSION_COOKIE_SECURE = True
+
+# Celery Configuration
+# ====================
+FILES_PROCESSOR_QUEUE = os.getenv("CERN_SEARCH_FILES_PROCESSOR_QUEUE", 'files_processor')
+FILES_PROCESSOR_QUEUE_DLX = os.getenv("CERN_SEARCH_FILES_PROCESSOR_QUEUE_DLX", 'files_processor_dlx')
+FILES_PROCESSOR_EXCHANGE = os.getenv("CERN_SEARCH_FILES_PROCESSOR_EXCHANGE", 'default')
+FILES_PROCESSOR_EXCHANGE_DLX = os.getenv("CERN_SEARCH_FILES_PROCESSOR_EXCHANGE_DLX", 'dlx')
+
+#: URL of message broker for Celery (default is RabbitMQ).
+CELERY_BROKER_URL = os.getenv('INVENIO_CELERY_BROKER_URL', 'amqp://guest:guest@localhost:5672')
+#: URL of backend for result storage (default is Redis).
+CELERY_RESULT_BACKEND = os.getenv('INVENIO_CELERY_RESULT_BACKEND',
+                                  'redis://localhost:6379/2')
+
+CELERY_TASK_QUEUES = {
+    Queue(
+        name=FILES_PROCESSOR_QUEUE,
+        exchange=Exchange(FILES_PROCESSOR_EXCHANGE, type='direct'),
+        routing_key=FILES_PROCESSOR_QUEUE,
+        queue_arguments={
+            'x-dead-letter-exchange': FILES_PROCESSOR_EXCHANGE_DLX,
+            'x-dead-letter-routing-key': FILES_PROCESSOR_QUEUE_DLX
+        }
+    )
+}
+
+CELERY_TASK_ROUTES = {
+    'cern_search_rest_api.modules.cernsearch.tasks.process_file_async': {
+        'queue': FILES_PROCESSOR_QUEUE,
+        'routing_key': FILES_PROCESSOR_QUEUE,
+    }
+}
+
+CELERY_BROKER_POOL_LIMIT = os.getenv("BROKER_POOL_LIMIT", None)
