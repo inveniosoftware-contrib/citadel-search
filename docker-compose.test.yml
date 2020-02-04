@@ -74,7 +74,7 @@ services:
     volumes:
       - es-data:/usr/share/elasticsearch/data
     healthcheck:
-      test: ["CMD", "curl", "-f", "localhost:9200/_cluster/health?wait_for_status=green"]
+      test: ["CMD", "curl", "-f", "localhost:9200/_cluster/health?wait_for_status=yellow"]
       interval: 30s
       timeout: 10s
       retries: 5

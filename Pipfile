@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [dev-packages]
-flake8 = ">=3.7.8"
+flake8 = ">=3.7.9"
 flake8-docstrings = ">=1.5.0"
 isort = "==4.3.21"
 pytest-invenio = ">=1.2.0"

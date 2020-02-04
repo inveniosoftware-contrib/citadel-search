@@ -28,7 +28,7 @@ DOCKER_FILE := docker-compose.full.yml
 endif
 
 build-env:
-	docker-compose -f $(DOCKER_FILE) up -d --build --remove-orphans
+	docker-compose -f $(DOCKER_FILE) up -d --remove-orphans
 .PHONY: env
 
 logs:
@@ -48,6 +48,10 @@ load-fixtures:
 destroy-env:
 	docker-compose -f $(DOCKER_FILE) down --volumes
 	docker-compose -f $(DOCKER_FILE) rm -f
+.PHONY: destroy-env
+
+stop-env:
+	docker-compose -f $(DOCKER_FILE) down --volumes
 .PHONY: destroy-env
 
 reload-env: destroy-env env

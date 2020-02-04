@@ -7,11 +7,11 @@
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 """Background Tasks."""
-from flask import current_app
 
 from celery import shared_task
 from celery.app.task import Context
 from celery.exceptions import MaxRetriesExceededError, Reject
+from flask import current_app
 from invenio_files_rest.models import ObjectVersion
 
 
@@ -23,15 +23,14 @@ from invenio_files_rest.models import ObjectVersion
     default_retry_delay=60
 )
 def process_file_async(self, bucket_id, key_id):
+    """Process file with processor tika."""
     try:
         current_app.logger.debug(f"Processing file {bucket_id}:{key_id}")
 
-        f = ObjectVersion.get(bucket_id, key_id)  # type: ObjectVersion
+        _ = ObjectVersion.get(bucket_id, key_id)  # type: ObjectVersion
 
         ctx = self.request  # type: Context
         current_app.logger.debug(str(ctx))
-
-        raise Exception("testing deadletter")
     except Exception:
         try:
             raise self.retry()

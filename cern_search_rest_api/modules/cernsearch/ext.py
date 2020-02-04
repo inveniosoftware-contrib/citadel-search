@@ -4,8 +4,9 @@
 # This file is part of CERN Search.
 # Copyright (C) 2018-2019 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+"""Cern Search module."""
 
 from cern_search_rest_api.modules.cernsearch.celery import DeclareDeadletter
 from cern_search_rest_api.modules.cernsearch.indexer import csas_indexer_receiver

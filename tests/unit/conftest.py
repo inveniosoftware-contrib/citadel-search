@@ -7,15 +7,40 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Unit tests fixtures."""
-
 from io import BytesIO
 
 import pytest
-
 from flask_login import AnonymousUserMixin, UserMixin
 from invenio_app.factory import create_api
-from invenio_db import db
 from invenio_files_rest.models import Bucket, ObjectVersion
+
+
+@pytest.fixture(scope='module')
+def database(database):
+    """Clear database.
+
+    Scope: module
+
+    Remove this after all tests are migrated to fixtures instead of scripts for initialization.
+    """
+    from invenio_db import db as db_
+    from sqlalchemy_utils.functions import database_exists
+    if database_exists(str(db_.engine.url)):
+        db_.drop_all()
+        db_.create_all()
+
+    yield database
+
+
+@pytest.fixture(scope='function')
+def db(database, db):
+    """Clear database.
+
+    Scope: function
+
+    Remove this after all tests are migrated to fixtures instead of scripts for initialization.
+    """
+    yield db
 
 
 @pytest.fixture(scope='module')
@@ -37,7 +62,7 @@ def anonymous_user():
 
 @pytest.fixture()
 def authenticated_user():
-    """Authenticated user (logged in)."""
+    """Authenticate user (logged in)."""
     class User(UserMixin):
 
         def __init__(self):
@@ -71,8 +96,8 @@ def public_access_record():
     }
 
 
-@pytest.yield_fixture()
-def bucket():
+@pytest.fixture()
+def bucket(db, location):
     """File system location."""
     b1 = Bucket.create()
     b1.id = '00000000-0000-0000-0000-000000000000'
@@ -84,8 +109,8 @@ def bucket():
     db.session.commit()
 
 
-@pytest.yield_fixture()
-def objects(bucket):
+@pytest.fixture()
+def objects(db, bucket):
     """Multipart object."""
     content = b'some content'
     obj = ObjectVersion.create(
