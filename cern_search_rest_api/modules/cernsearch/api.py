@@ -99,7 +99,7 @@ class CernSearchRecord(Record, CernSearchFilesMixin):
         return buckets_allowed
 
     @classmethod
-    def create(cls, data, id_=None, with_bucket=True, **kwargs):
+    def create(cls, data, id_=None, with_bucket=False, **kwargs):
         """Create a record and the associated buckets.
 
          Creates buckets:
@@ -110,7 +110,7 @@ class CernSearchRecord(Record, CernSearchFilesMixin):
         """
         bucket_content = None
 
-        bucket_allowed = cls.__buckets_allowed(data)
+        bucket_allowed = with_bucket or cls.__buckets_allowed(data)
         if bucket_allowed:
             bucket_content = cls.create_bucket(data)
             if bucket_content:
@@ -119,7 +119,7 @@ class CernSearchRecord(Record, CernSearchFilesMixin):
         record = super(CernSearchRecord, cls).create(data, id_=id_, with_bucket=bucket_allowed, **kwargs)
 
         # Create link between record and file content bucket
-        if with_bucket and bucket_content:
+        if bucket_allowed and bucket_content:
             RecordsBuckets.create(record=record.model, bucket=bucket_content)
             record._bucket_content = bucket_content
 

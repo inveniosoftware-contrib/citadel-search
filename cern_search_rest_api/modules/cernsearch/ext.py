@@ -9,12 +9,11 @@
 """Cern Search module."""
 
 from cern_search_rest_api.modules.cernsearch.celery import DeclareDeadletter
-from cern_search_rest_api.modules.cernsearch.indexer import csas_indexer_receiver
-from cern_search_rest_api.modules.cernsearch.receivers import process_file
-from cern_search_rest_api.modules.cernsearch.views import build_blueprint
+from cern_search_rest_api.modules.cernsearch.receivers import file_processed_listener, file_uploaded_listener
+from cern_search_rest_api.modules.cernsearch.views import build_blueprint, build_blueprint_record_files_content
 from invenio_celery import InvenioCelery
+from invenio_files_processor.signals import file_processed
 from invenio_files_rest.signals import file_uploaded
-from invenio_indexer.signals import before_record_index
 
 
 class CERNSearch(object):
@@ -31,8 +30,12 @@ class CERNSearch(object):
 
         blueprint = build_blueprint(app)
         app.register_blueprint(blueprint)
-        before_record_index.connect(csas_indexer_receiver, sender=app)
-        file_uploaded.connect(process_file)
+
+        blueprint_record_files_content = build_blueprint_record_files_content(app)
+        app.register_blueprint(blueprint_record_files_content)
+
+        file_uploaded.connect(file_uploaded_listener)
+        file_processed.connect(file_processed_listener)
 
         celery = InvenioCelery(app)
         celery.celery.steps['worker'].add(DeclareDeadletter)

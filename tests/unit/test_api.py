@@ -10,7 +10,9 @@
 from io import BytesIO
 from unittest import mock
 
+import pytest
 from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
+from invenio_files_rest.signals import file_uploaded
 from invenio_files_rest.storage import FileStorage
 
 READ_MODE_BINARY = 'rb'
@@ -70,5 +72,52 @@ def test_record_create_files(db, location):
 
     try:
         assert file_content == fp.read()
+    finally:
+        fp.close()
+
+
+test_record_update_file_version_cases = [
+    ("Update file version, ie change content", "hello.txt", b'Hello again!'),
+    ("Update file, ie send a different file", "another.pdf", b'Hello again!')
+]
+
+
+# TODO: migrate to integration tests
+@pytest.mark.parametrize(
+    "obj_name, content",
+    [
+        ("hello.txt", b'Hello again!'),  # Update file version, ie change content
+        ("another.pdf", b'Hello again!')  # Update file, ie send a different file
+    ]
+)
+def test_record_update_file(db, record_with_file_processed, obj_name, content):
+    """Test record file updates."""
+    record = CernSearchRecord.get_record(record_with_file_processed.id)
+
+    assert 0 == len(record.files)
+    assert 1 == len(record.files_content)
+
+    record.files[obj_name] = BytesIO(content)
+    db.session.commit()
+
+    # mimic file uploaded flow
+    file_uploaded.send(record.files[obj_name].obj)
+
+    record = CernSearchRecord.get_record(record.id)
+
+    assert record['_bucket'] == record.bucket_id
+    assert record['_bucket_content'] == record.bucket_content_id
+
+    assert 0 == len(record.files)
+    assert 1 == len(record.files_content)
+
+    file_1 = record.files_content[obj_name]
+    assert obj_name == file_1['key']
+
+    storage = file_1.obj.file.storage()  # type: FileStorage
+    fp = storage.open(mode=READ_MODE_BINARY)
+
+    try:
+        assert content == fp.read()
     finally:
         fp.close()

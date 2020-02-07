@@ -4,19 +4,16 @@
 # This file is part of CERN Search.
 # Copyright (C) 2018-2019 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+"""Indexer utilities."""
 
-from flask import current_app
+from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
+from invenio_indexer.api import RecordIndexer
 
 
-def csas_indexer_receiver(sender, json=None, record=None, index=None,
-                          doc_type=None, arguments=None, **kwargs):
-
-    pipeline_mapping = current_app.config['SEARCH_DOC_PIPELINES']
-
-    if pipeline_mapping:
-        pipeline = pipeline_mapping.get(doc_type, None)
-
-        if pipeline:
-            arguments['pipeline'] = pipeline
+def index_file_content(record: CernSearchRecord, file_content: str, filename: str):
+    """Index file content in search."""
+    record['_data']['_attachment'] = dict(_content=file_content)
+    record['_file'] = filename
+    RecordIndexer().index(record)

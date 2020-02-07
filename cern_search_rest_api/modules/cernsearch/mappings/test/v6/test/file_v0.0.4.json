@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 3000
   },
   "mappings": {
-    "file_v0.0.3": {
+    "file_v0.0.4": {
       "dynamic": "strict",
       "numeric_detection": true,
       "_meta": {
@@ -33,6 +33,25 @@
           "properties": {
             "title": {
               "type": "keyword"
+            },
+            "_attachment": {
+              "dynamic": true,
+              "type": "object",
+              "properties": {
+                "_content": {
+                  "type": "text",
+                  "fields": {
+                    "english": {
+                      "type": "text",
+                      "analyzer": "english"
+                    },
+                    "french": {
+                      "type": "text",
+                      "analyzer": "french"
+                    }
+                  }
+                }
+              }
             }
           }
         },
@@ -40,6 +59,12 @@
           "type": "keyword"
         },
         "_bucket_content": {
+          "type": "keyword"
+        },
+        "_file": {
+          "type": "keyword"
+        },
+        "_url": {
           "type": "keyword"
         },
         "_updated": {

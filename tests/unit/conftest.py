@@ -10,9 +10,11 @@
 from io import BytesIO
 
 import pytest
+from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
 from flask_login import AnonymousUserMixin, UserMixin
-from invenio_app.factory import create_api
+from invenio_app.factory import create_app as create_ui_api
 from invenio_files_rest.models import Bucket, ObjectVersion
+from invenio_files_rest.signals import file_uploaded
 
 
 @pytest.fixture(scope='module')
@@ -46,12 +48,13 @@ def db(database, db):
 @pytest.fixture(scope='module')
 def create_app(instance_path):
     """Application factory fixture."""
-    return create_api
+    return create_ui_api
 
 
 @pytest.fixture()
 def anonymous_user():
     """Anonymous user (not logged in)."""
+
     class User(AnonymousUserMixin):
 
         def __init__(self):
@@ -63,6 +66,7 @@ def anonymous_user():
 @pytest.fixture()
 def authenticated_user():
     """Authenticate user (logged in)."""
+
     class User(UserMixin):
 
         def __init__(self):
@@ -110,7 +114,7 @@ def bucket(db, location):
 
 
 @pytest.fixture()
-def objects(db, bucket):
+def object_version(db, bucket):
     """Multipart object."""
     content = b'some content'
     obj = ObjectVersion.create(
@@ -125,3 +129,47 @@ def objects(db, bucket):
 
     ObjectVersion.delete(bucket, obj.key)
     db.session.commit()
+
+
+@pytest.fixture()
+def record_with_file(db, location):
+    """File system location."""
+    record = CernSearchRecord.create({'title': 'test'}, with_bucket=True)
+    record.files['hello.txt'] = BytesIO(b'Hello world!')
+    db.session.commit()
+
+    yield record
+
+    record.delete(force=True)
+    db.session.commit()
+
+
+@pytest.fixture()
+def record_with_file_processed(db, location):
+    """File system location."""
+    record = CernSearchRecord.create({
+        '_data': {
+            'title': 'test',
+        },
+        "$schema": "https://0.0.0.0/schemas/test/file_v0.0.4.json"
+    }, with_bucket=True)
+    record.files['hello.txt'] = BytesIO(b'Hello world!')
+    db.session.commit()
+
+    record = CernSearchRecord.get_record(record.id)
+
+    # mimic file uploaded flow
+    file_uploaded.send(record.files['hello.txt'].obj)
+
+    yield record
+
+    record.delete(force=True)
+    db.session.commit()
+
+
+@pytest.fixture(scope='module')
+def app_config(app_config):
+    """Set configuration variables."""
+    app_config['CELERY_TASK_ALWAYS_EAGER'] = True
+
+    return app_config
