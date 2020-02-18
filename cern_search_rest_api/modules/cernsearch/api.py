@@ -94,7 +94,7 @@ class CernSearchRecord(Record, CernSearchFilesMixin):
 
         mapping = default_record_to_mapping(data)
         if mapping is not None:
-            buckets_allowed = '_bucket' in mapping['properties']
+            buckets_allowed = BUCKET_KEY in mapping['properties']
 
         return buckets_allowed
 
@@ -139,7 +139,7 @@ class CernSearchRecord(Record, CernSearchFilesMixin):
         :param data: A dictionary of the record metadata.
         :param bucket: The created bucket for the record.
         """
-        data["_bucket_content"] = str(bucket.id)
+        data[BUCKET_CONTENT_KEY] = str(bucket.id)
 
     @classmethod
     def load_bucket_content(cls, record):
@@ -161,6 +161,32 @@ class CernSearchRecord(Record, CernSearchFilesMixin):
             if self.bucket_content_id:
                 self._bucket_content = Bucket.get(self.bucket_content_id)
         return self._bucket_content
+
+    def clear(self) -> None:
+        """Clear that keeps protected fields."""
+        # extract protected fields
+        protected_fields = {
+            BUCKET_CONTENT_KEY: self.bucket_content_id,
+            BUCKET_KEY: self.bucket_id,
+        }
+
+        super(CernSearchRecord, self).clear()
+
+        # keep protected fields
+        self.update({k: v for k, v in protected_fields.items() if v})
+
+    def update(self, other=None, **kwargs):
+        """Update that keeps protected fields."""
+        # extract protected fields
+        protected_fields = {
+            BUCKET_CONTENT_KEY: self.bucket_content_id,
+            BUCKET_KEY: self.bucket_id,
+        }
+
+        super(CernSearchRecord, self).update(other, **kwargs)
+
+        # keep protected fields
+        super(CernSearchRecord, self).update({k: v for k, v in protected_fields.items() if v})
 
     def delete(self, force=False):
         """Delete a record and also remove the RecordsBuckets if necessary.

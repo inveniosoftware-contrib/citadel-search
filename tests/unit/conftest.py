@@ -18,35 +18,7 @@ from invenio_files_rest.signals import file_uploaded
 
 
 @pytest.fixture(scope='module')
-def database(database):
-    """Clear database.
-
-    Scope: module
-
-    Remove this after all tests are migrated to fixtures instead of scripts for initialization.
-    """
-    from invenio_db import db as db_
-    from sqlalchemy_utils.functions import database_exists
-    if database_exists(str(db_.engine.url)):
-        db_.drop_all()
-        db_.create_all()
-
-    yield database
-
-
-@pytest.fixture(scope='function')
-def db(database, db):
-    """Clear database.
-
-    Scope: function
-
-    Remove this after all tests are migrated to fixtures instead of scripts for initialization.
-    """
-    yield db
-
-
-@pytest.fixture(scope='module')
-def create_app(instance_path):
+def create_app():
     """Application factory fixture."""
     return create_ui_api
 
@@ -132,7 +104,7 @@ def object_version(db, bucket):
 
 
 @pytest.fixture()
-def record_with_file(db, location):
+def record_with_file(db, location, es_clear):
     """File system location."""
     record = CernSearchRecord.create({'title': 'test'}, with_bucket=True)
     record.files['hello.txt'] = BytesIO(b'Hello world!')
@@ -145,7 +117,7 @@ def record_with_file(db, location):
 
 
 @pytest.fixture()
-def record_with_file_processed(db, location):
+def record_with_file_processed(db, location, es_clear):
     """File system location."""
     record = CernSearchRecord.create({
         '_data': {
@@ -165,11 +137,3 @@ def record_with_file_processed(db, location):
 
     record.delete(force=True)
     db.session.commit()
-
-
-@pytest.fixture(scope='module')
-def app_config(app_config):
-    """Set configuration variables."""
-    app_config['CELERY_TASK_ALWAYS_EAGER'] = True
-
-    return app_config

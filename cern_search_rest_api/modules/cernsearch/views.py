@@ -18,7 +18,9 @@ from __future__ import absolute_import, print_function
 
 from copy import deepcopy
 from functools import partial, wraps
+from typing import Callable
 
+from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
 from cern_search_rest_api.modules.cernsearch.errors import InvalidRecordFormatError
 from cern_search_rest_api.modules.cernsearch.search import RecordCERNSearch
 from flask import Blueprint, Response, current_app, json, make_response, request, url_for
@@ -72,17 +74,14 @@ def build_blueprint_record_files_content(app):
     ):
         for endpoint_prefix, files_path_name in iteritems(rec_files_mappings):
             if endpoint_prefix not in app.config[rest_endpoint_config]:
-                raise ValueError(
-                    'Endpoint {0} is not present in {1}'.format(
-                        endpoint_prefix, rest_endpoint_config))
+                raise ValueError(f'Endpoint {endpoint_prefix} is not present in {rest_endpoint_config}')
+
             # e.g. /api/records/<recid>
-            rec_item_route = app.config[rest_endpoint_config][endpoint_prefix][
-                "item_route"
-            ]
+            rec_item_route = app.config[rest_endpoint_config][endpoint_prefix]["item_route"]
             # e.g. /files
             files_path_name = urljoin("/", files_path_name)
 
-            object_view = RecordObjectResource.as_view(
+            object_view = SearchRecordObjectResource.as_view(
                 endpoint_prefix + "_object_api",
                 serializers={
                     "application/json": partial(
@@ -176,58 +175,34 @@ def build_blueprint(app):
     return blueprint
 
 
-def pass_bucket_id(f):
+def pass_bucket_content_id(f: Callable):
     """Decorate to retrieve a bucket."""
 
     @wraps(f)
     def decorate(*args, **kwargs):
-        current_app.logger.debug(f'decorate ')
+        current_app.logger.debug(f'decorate {getattr(kwargs["record"], "bucket_content_id", "")}')
 
         """Get the bucket id from the record and pass it as kwarg."""
         kwargs["bucket_id"] = getattr(kwargs["record"], "bucket_content_id", "")
-        return f(*args, **kwargs)
 
+        return f(*args, **kwargs)
     return decorate
 
 
-class RecordObjectResource(ObjectResource):
+class SearchRecordObjectResource(ObjectResource):
     """RecordObject item resource."""
 
     @pass_record
-    @pass_bucket_id
-    def get(self, pid, record, **kwargs):
+    @pass_bucket_content_id
+    def get(self, pid: int, record: CernSearchRecord, **kwargs):
         """Get object or list parts of a multpart upload.
 
-        :param pid: The pid value of the record to get the bucket from.
-        :kwargs: contains all the parameters used by the ObjectResource view in
-            Invenio-Files-Rest
+        :param pid: The pid value of the record to get the content bucket from.
+        :param record: The record.
+        :kwargs: contains all the parameters used by the ObjectResource view in Invenio-Files-Rest
         :returns: A Flask response.
         """
-        return super(RecordObjectResource, self).get(**kwargs)
-
-    @pass_record
-    @pass_bucket_id
-    def put(self, pid, record, **kwargs):
-        """Update a new object or upload a part of a multipart upload.
-
-        :param pid: The pid value of the record to get the bucket from.
-        :kwargs: contains all the parameters used by the ObjectResource view in
-            Invenio-Files-Rest
-        :returns: A Flask response.
-        """
-        return super(RecordObjectResource, self).put(**kwargs)
-
-    @pass_record
-    @pass_bucket_id
-    def delete(self, pid, record, **kwargs):
-        """Delete an object or abort a multipart upload.
-
-        :param pid: The pid value of the record to get the bucket from.
-        :kwargs: contains all the parameters used by the ObjectResource view in
-            Invenio-Files-Rest
-        :returns: A Flask response.
-        """
-        return super(RecordObjectResource, self).delete(**kwargs)
+        return super(SearchRecordObjectResource, self).get(**kwargs)
 
 
 class UBQRecordResource(ContentNegotiatedMethodView):
@@ -284,8 +259,6 @@ class UBQRecordResource(ContentNegotiatedMethodView):
             body=script)
 
         # Check that the query has only updated one record
-        print(es_response['updated'])
-        print(es_response['total'])
         if es_response['updated'] == 1 and es_response['updated'] == es_response['total']:
             # Get record from ES
             search_obj = self.search_class()

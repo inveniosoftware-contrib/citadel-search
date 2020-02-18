@@ -10,9 +10,9 @@
 from .helpers import get_headers
 
 
-def test_testclient(base_client):
+def test_testclient(app, client, user):
     """Test Client."""
-    res = base_client.get('/records/', headers=get_headers())
+    res = client.get('/records/', headers=get_headers())
 
     assert res.json == {
         "aggregations": {},

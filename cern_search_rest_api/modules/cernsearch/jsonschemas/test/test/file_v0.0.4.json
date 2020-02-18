@@ -43,9 +43,6 @@
     "control_number": {
       "type": "string"
     },
-    "_file": {
-      "type": "string"
-    },
     "_url": {
       "type": "string"
     },

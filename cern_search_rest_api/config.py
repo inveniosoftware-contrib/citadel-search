@@ -215,8 +215,7 @@ FILES_PROCESSOR_EXCHANGE_DLX = os.getenv("CERN_SEARCH_FILES_PROCESSOR_EXCHANGE_D
 #: URL of message broker for Celery (default is RabbitMQ).
 CELERY_BROKER_URL = os.getenv('INVENIO_CELERY_BROKER_URL', 'amqp://guest:guest@localhost:5672')
 #: URL of backend for result storage (default is Redis).
-CELERY_RESULT_BACKEND = os.getenv('INVENIO_CELERY_RESULT_BACKEND',
-                                  'redis://localhost:6379/2')
+CELERY_RESULT_BACKEND = os.getenv('INVENIO_CELERY_RESULT_BACKEND', 'redis://localhost:6379/2')
 
 CELERY_TASK_QUEUES = {
     Queue(
@@ -227,7 +226,8 @@ CELERY_TASK_QUEUES = {
             'x-dead-letter-exchange': FILES_PROCESSOR_EXCHANGE_DLX,
             'x-dead-letter-routing-key': FILES_PROCESSOR_QUEUE_DLX
         }
-    )
+    ),
+    Queue('celery', Exchange('celery'), routing_key='celery')
 }
 
 CELERY_TASK_ROUTES = {
@@ -236,5 +236,7 @@ CELERY_TASK_ROUTES = {
         'routing_key': FILES_PROCESSOR_QUEUE,
     }
 }
+
+CELERY_TASK_DEFAULT_QUEUE = 'celery'
 
 CELERY_BROKER_POOL_LIMIT = os.getenv("BROKER_POOL_LIMIT", None)

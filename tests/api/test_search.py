@@ -5,19 +5,19 @@
 #
 # CERN Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+"""Search tests."""
 
 import json
+from http import HTTPStatus
 
-from pytest_invenio.fixtures import appctx, base_client
 from tests.api.helpers import get_headers, get_schemas_endpoint
 
 
-def test_testclient(appctx, base_client):
-    """
-    Test search over public documents. Test that the ``_access.*`` field is
-    not searched over.
-    """
+def test_testclient(app, client, user):
+    """Test search over public documents.
 
+    Test that the ``_access.*`` field is not searched over.
+    """
     body = {
         "_access": {
             "owner": ["CernSearch-Administrators@cern.ch"],
@@ -28,13 +28,13 @@ def test_testclient(appctx, base_client):
             "title": "Test default search field",
             "description": "This contains CernSearch and should appear"
         },
-        "$schema": get_schemas_endpoint(appctx, "test/doc_v0.0.2.json")
+        "$schema": get_schemas_endpoint("test/doc_v0.0.2.json")
     }
 
     # Create first test record
-    resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
+    resp = client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
-    assert resp.status_code == 201
+    assert resp.status_code == HTTPStatus.CREATED
 
     # Check non presence of OCR content in DB record
     resp_body = resp.json['metadata']
@@ -49,9 +49,9 @@ def test_testclient(appctx, base_client):
     body["_data"]['description'] = 'This does not contains the magic word and should not appear'
 
     # Create test record
-    resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
+    resp = client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
-    assert resp.status_code == 201
+    assert resp.status_code == HTTPStatus.CREATED
 
     # Check non presence of OCR content in DB record
     resp_body = resp.json['metadata']
@@ -64,20 +64,20 @@ def test_testclient(appctx, base_client):
 
     # # Needed to allow ES to process the file
     import time
-    time.sleep(3)
+    time.sleep(1)
 
     # Search records
     # Test search with no query
-    resp = base_client.get('/records/', headers=get_headers(), data=json.dumps(body))
+    resp = client.get('/records/', headers=get_headers())
 
-    assert resp.status_code == 200
+    assert resp.status_code == HTTPStatus.OK
 
     resp_hits = resp.json['hits']
     assert resp_hits.get('total') == 2
 
-    resp = base_client.get('/records/?q=CernSearch', headers=get_headers(), data=json.dumps(body))
+    resp = client.get('/records/?q=CernSearch', headers=get_headers())
 
-    assert resp.status_code == 200
+    assert resp.status_code == HTTPStatus.OK
 
     resp_hits = resp.json['hits']
     assert resp_hits.get('total') == 1
@@ -87,19 +87,19 @@ def test_testclient(appctx, base_client):
     assert description == 'This contains CernSearch and should appear'
 
     # Clean the instance. Delete record
-    resp = base_client.delete(
+    resp = client.delete(
         '/record/{control_number}'.format(control_number=control_number_one),
         headers=get_headers(),
         data=json.dumps(body)
     )
 
-    assert resp.status_code == 204
+    assert resp.status_code == HTTPStatus.NO_CONTENT
 
-    resp = base_client.delete(
+    resp = client.delete(
         '/record/{control_number}'
         .format(control_number=control_number_two),
         headers=get_headers(),
         data=json.dumps(body)
     )
 
-    assert resp.status_code == 204
+    assert resp.status_code == HTTPStatus.NO_CONTENT

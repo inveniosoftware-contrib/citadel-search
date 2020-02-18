@@ -13,9 +13,8 @@ import pytest
 
 
 @pytest.mark.unit
-@pytest.mark.skip(reason="TODO:https://gitlab.cern.ch/webservices/cern-search/cern-search-rest-api/issues/89")
-def test_view(appctx, base_client):
+def test_view(appctx, app, client):
     """Tests view."""
-    resp = base_client.post("/account/settings/applications/", follow_redirects=True)
+    resp = client.post("/account/settings/applications/", follow_redirects=True)
 
     assert resp.status_code == HTTPStatus.OK

@@ -74,8 +74,14 @@ generate-certificates:
 
 test:
 	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
-	"API_TOKEN=$$(cat $(API_TOKEN)) pytest tests -vv;"
+	"pytest tests -vv;"
 .PHONY: test
+
+ci-test: build-env test
+.PHONY: ci-test
+
+local-test: stop-env build-env test
+.PHONY: local-test
 
 lint:
 	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
@@ -121,7 +127,7 @@ build-local-env: check-requirements-local
 .PHONY: build-local-env
 
 populate-instance-local:
-	PIPENV_DOTENV_LOCATION=$(PIPENV_DOTENV) pipenv run sh scripts/populate-instance.sh
+	PIPENV_DOTENV_LOCATION=$(PIPENV_DOTENV) pipenv run sh scripts/pipenv/populate-instance.sh
 .PHONY: populate-instance-local
 
 load-fixtures-local:

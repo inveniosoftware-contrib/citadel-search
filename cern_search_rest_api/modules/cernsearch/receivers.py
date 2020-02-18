@@ -7,13 +7,14 @@
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 """Signal Receivers."""
-
-from cern_search_rest_api.modules.cernsearch.files import (delete_file, delete_previous_record_file_if_exists,
+from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
+from cern_search_rest_api.modules.cernsearch.files import (delete_all_record_files, delete_file_instance,
+                                                           delete_previous_record_file_if_exists, delete_record_file,
                                                            persist_file_content, record_from_object_version)
-from cern_search_rest_api.modules.cernsearch.indexer import index_file_content
 from cern_search_rest_api.modules.cernsearch.tasks import process_file_async
 from flask import current_app
 from invenio_files_rest.models import ObjectVersion
+from invenio_indexer.api import RecordIndexer
 
 
 def file_uploaded_listener(obj: ObjectVersion = None):
@@ -37,8 +38,24 @@ def file_processed_listener(app, processor_id, file: ObjectVersion, data):
     record = record_from_object_version(file)
 
     persist_file_content(record, file_content, file.basename)
-    index_file_content(record, file_content, file.basename)
-    delete_file(file)
+    RecordIndexer().index(record)
+    # delete file from filesystem only after indexing successfully
+    delete_file_instance(file)
+
+
+def file_deleted_listener(obj: ObjectVersion = None):
+    """File deleted through api calls: cleanup files and reindex."""
+    current_app.logger.debug(f"File deleted listener: {str(obj)}")
+
+    delete_record_file(obj)
+    record = record_from_object_version(obj)
+    RecordIndexer().index(record)
+
+
+def record_deleted_listener(sender, record: CernSearchRecord, *args, **kwargs):
+    """Record deleted through api calls: cleanup files."""
+    current_app.logger.debug(f"File deleted listener: {str(record)}")
+    delete_all_record_files(record)
 
 
 def __extract_content(data: dict):

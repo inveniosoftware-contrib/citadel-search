@@ -12,8 +12,10 @@ from unittest import mock
 
 import pytest
 from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
+from invenio_files_rest.models import ObjectVersion
 from invenio_files_rest.signals import file_uploaded
 from invenio_files_rest.storage import FileStorage
+from pytest import raises
 
 READ_MODE_BINARY = 'rb'
 
@@ -90,12 +92,18 @@ test_record_update_file_version_cases = [
         ("another.pdf", b'Hello again!')  # Update file, ie send a different file
     ]
 )
-def test_record_update_file(db, record_with_file_processed, obj_name, content):
+def test_record_update_file(appctx, db, record_with_file_processed, obj_name, content):
     """Test record file updates."""
     record = CernSearchRecord.get_record(record_with_file_processed.id)
+    initial_file_name = 'hello.txt'
+    initial_file = record.files[initial_file_name].obj  # type: ObjectVersion
+    initial_file_content = record.files_content[initial_file_name].obj  # type: ObjectVersion
 
-    assert 0 == len(record.files)
+    assert 1 == len(record.files)
     assert 1 == len(record.files_content)
+    assert initial_file.file.readable is False
+    assert initial_file.deleted is False
+    assert initial_file_content.file.readable is True
 
     record.files[obj_name] = BytesIO(content)
     db.session.commit()
@@ -108,8 +116,17 @@ def test_record_update_file(db, record_with_file_processed, obj_name, content):
     assert record['_bucket'] == record.bucket_id
     assert record['_bucket_content'] == record.bucket_content_id
 
-    assert 0 == len(record.files)
+    assert 1 == len(record.files)
     assert 1 == len(record.files_content)
+    assert record.files[obj_name].obj.file.readable is False
+    assert initial_file_content.file.readable is False
+
+    # different file upload creates a delete marker
+    if initial_file_name != obj_name:
+        with raises(KeyError):
+            record.files[initial_file_name]
+        with raises(KeyError):
+            record.files_content[initial_file_name]
 
     file_1 = record.files_content[obj_name]
     assert obj_name == file_1['key']
