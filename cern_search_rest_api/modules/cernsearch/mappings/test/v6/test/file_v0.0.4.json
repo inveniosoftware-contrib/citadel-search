@@ -36,17 +36,7 @@
               "type": "object",
               "properties": {
                 "_content": {
-                  "type": "text",
-                  "fields": {
-                    "english": {
-                      "type": "text",
-                      "analyzer": "english"
-                    },
-                    "french": {
-                      "type": "text",
-                      "analyzer": "french"
-                    }
-                  }
+                  "type": "text"
                 }
               }
             }
