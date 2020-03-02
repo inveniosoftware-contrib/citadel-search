@@ -21,7 +21,7 @@ def index_file_content(sender, json=None, record: CernSearchRecord = None, index
                        arguments=None, **kwargs):
     """Index file content in search."""
     for file_obj in record.files_content:
-        current_app.logger.debug(f"Index file content: {str(file_obj)}")
+        current_app.logger.debug(f"Index file content {file_obj.obj.basename} in {record.id}")
 
         storage = file_obj.obj.file.storage()  # type: FileStorage
         fp = storage.open(mode=READ_MODE_BINARY)

@@ -53,7 +53,7 @@ services:
     command: [
       "/bin/bash",
       "-c",
-      "celery worker -A ${WORKER_APP} --loglevel=${CELERY_LOG_LEVEL} --autoscale=1000,500 --without-gossip --without-mingle --pool=gevent"
+      "celery worker -A ${WORKER_APP} -l DEBUG --autoscale=25,1 --pool=eventlet"
     ]
     healthcheck:
       test: ["CMD", "celery inspect ping -A ${WORKER_APP} -d celery@$$(hostname)"]

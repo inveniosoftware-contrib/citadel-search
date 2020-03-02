@@ -9,10 +9,9 @@
 """Background Tasks."""
 
 from celery import shared_task
-from celery.app.task import Context
 from celery.exceptions import MaxRetriesExceededError, Reject
-from cern_search_rest_api.modules.cernsearch.errors import ObjectNotFoundError
 from flask import current_app
+from invenio_files_processor.errors import InvalidProcessor
 from invenio_files_processor.processors.tika import TikaProcessor
 from invenio_files_processor.proxies import current_processors
 from invenio_files_rest.models import ObjectVersion
@@ -23,24 +22,21 @@ from invenio_files_rest.models import ObjectVersion
     acks_late=True,
     reject_on_worker_lost=True,
     max_retries=3,
-    default_retry_delay=60
+    default_retry_delay=60,
 )
 def process_file_async(self, bucket_id, key_id):
     """Process file with processor tika."""
     try:
         current_app.logger.debug(f"Processing file {bucket_id}:{key_id}")
-        ctx = self.request  # type: Context
-        current_app.logger.debug(str(ctx))
 
-        f = ObjectVersion.get(bucket_id, key_id)  # type: ObjectVersion
-
-        if not f:
-            raise ObjectNotFoundError(f"ObjectVersion with bucket {bucket_id} and key {key_id}")
-
+        obj = ObjectVersion.get(bucket_id, key_id)  # type: ObjectVersion
         processor = current_processors.get_processor(name=TikaProcessor.id())  # type: TikaProcessor
-        output = processor.process(f)
+        processor.process(obj)
 
-        current_app.logger.debug(f"Processed file {bucket_id}:{key_id} with result {str(output)}")
+        current_app.logger.debug(f"Processed file {bucket_id}:{key_id}")
+    except InvalidProcessor:
+        # Because we use use reject_on_worker_lost, we need to handle occasional processed files been requeued.
+        current_app.logger.debug(f"Requeued file {bucket_id}:{key_id} already processed")
     except Exception:
         try:
             raise self.retry()

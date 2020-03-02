@@ -44,6 +44,8 @@ invenio-files-rest = ">=1.0.5,<1.1.0"
 gevent = ">=1.4.0"
 invenio-files-processor = {extras = ["tika"],git = "https://github.com/carantunes/invenio-files-processor.git",ref = "global/implement-processor-tika"}
 Werkzeug = ">=0.15,<1.0.0"
+pip = "*"
+eventlet = "*"
 
 [requires]
 python_version = "3.6"

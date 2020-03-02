@@ -240,3 +240,14 @@ CELERY_TASK_ROUTES = {
 CELERY_TASK_DEFAULT_QUEUE = 'celery'
 
 CELERY_BROKER_POOL_LIMIT = os.getenv("BROKER_POOL_LIMIT", None)
+
+SQLALCHEMY_ENGINE_OPTIONS = {
+    'pool_size': int(os.getenv("SQLALCHEMY_POOL_SIZE", 5)),
+    'max_overflow': int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 10)),
+    'pool_recycle': int(os.getenv("SQLALCHEMY_POOL_RECYCLE", 300)),  # in seconds
+}
+
+SEARCH_CLIENT_CONFIG = dict(
+    # allow up to 25 connections to each node
+    maxsize=int(os.getenv("ELASTICSEARCH_MAX_SIZE", 5)),
+)

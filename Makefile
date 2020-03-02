@@ -72,15 +72,15 @@ generate-certificates:
 	sh scripts/gen-cert.sh
 .PHONY: generate-certificates
 
-test:
+pytest:
 	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
 	"pytest tests -vv;"
 .PHONY: test
 
-ci-test: build-env test
+ci-test: build-env pytest
 .PHONY: ci-test
 
-local-test: stop-env build-env test
+test: stop-env build-env pytest
 .PHONY: local-test
 
 lint:
@@ -155,8 +155,8 @@ reload-local-env: destroy-local-env local-env
 .PHONY: reload-local-env
 
 local-test:
-	@echo todo
-#	python pytest
+	@echo running tests...;
+	pipenv run pytest tests -v;
 .PHONY: test
 
 local-lint:

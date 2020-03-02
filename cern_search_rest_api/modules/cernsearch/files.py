@@ -11,7 +11,6 @@
 from io import BytesIO
 
 from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
-from cern_search_rest_api.modules.cernsearch.errors import ObjectNotFoundError
 from flask import current_app
 from invenio_db import db
 from invenio_files_rest.models import Bucket, FileInstance, ObjectVersion
@@ -23,24 +22,18 @@ def record_from_object_version(obj: ObjectVersion):
     """Retrieve Record given an ObjectVersion."""
     record_bucket = RecordsBuckets.query.filter_by(bucket_id=obj.bucket_id).one_or_none()
 
-    if not record_bucket:
-        raise ObjectNotFoundError(f"RecordsBuckets with bucket_id {obj.bucket_id}")
-
     current_app.logger.debug(f"Record Bucket: {str(record_bucket)}")
 
     record = CernSearchRecord.get_record(record_bucket.record_id)
 
-    if not record:
-        raise ObjectNotFoundError(f"CernSearchRecord with id {record_bucket.record_id}")
-
-    current_app.logger.debug(f"Record: {str(record)}")
+    current_app.logger.debug(f"Record: {record.id}")
 
     return record
 
 
 def persist_file_content(record: CernSearchRecord, file_content: str, filename: str):
     """Persist file's extracted content in bucket on filesystem and database."""
-    current_app.logger.debug(f"Persist file: {filename}")
+    current_app.logger.debug(f"Persist file: {filename} in record {record.id}")
 
     bucket_content = record.files_content.bucket
     ObjectVersion.create(bucket_content, filename, stream=BytesIO(file_content.encode()))
@@ -74,9 +67,6 @@ def delete_file_instance(obj: ObjectVersion):
 
     if obj.file_id:
         f = FileInstance.get(str(obj.file_id))  # type: FileInstance
-
-        if not f:
-            raise ObjectNotFoundError(f"FileInstance with id {obj.file_id}")
 
         is_readable = f.readable
 
