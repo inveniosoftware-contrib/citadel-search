@@ -82,7 +82,7 @@ def test_file_ops(app, appctx, db, client, user, location):
 
         # Needed to allow ES to process the file
         import time
-        time.sleep(1)
+        time.sleep(2)
 
         res = client.get(f'/records/?q={quote_plus(case["content"])}', headers=get_headers())
         assert res.status_code == HTTPStatus.OK

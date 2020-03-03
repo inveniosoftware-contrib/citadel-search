@@ -64,7 +64,7 @@ def test_testclient(app, client, user):
 
     # # Needed to allow ES to process the file
     import time
-    time.sleep(1)
+    time.sleep(2)
 
     # Search records
     # Test search with no query

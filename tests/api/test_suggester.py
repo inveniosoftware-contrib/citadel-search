@@ -57,7 +57,7 @@ def test_suggester(app, client, user):
         __create_record(client, 'The final suggester')
     ]
 
-    time.sleep(1)
+    time.sleep(2)
 
     query = {
         "q": 'suggest:the f'
