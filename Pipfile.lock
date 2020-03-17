@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "70a34fdd74b6f3e185b4045df6829e5deb6af64c351125b02cf1e4a46c1d563d"
+            "sha256": "1fd060af5b2e4ad91145b2daaf03122a0c8cc61142cbc4b05ecc41f9c76eb444"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -641,11 +641,11 @@
                 "postgresql"
             ],
             "hashes": [
-                "sha256:5818e2dcef2de1d0b3e827b60c13588ce24f60f368a73b8d70ab75d7275eef63",
-                "sha256:c500e7f8c6cee77ed818e7ce13f610e6dd9f96762369d9a99afdaed4e13aa1b7"
+                "sha256:81d7d72ac1c36acd992b54ba0f9d3555725a547f604588bc516a9c0794ab1848",
+                "sha256:fb951880ab02bed7aab599d5bdf2d3d0a6ce232a35abe546cb6de2b3caf141dd"
             ],
             "index": "pypi",
-            "version": "==1.0.2"
+            "version": "==1.2.2"
         },
         "invenio-records-files": {
             "hashes": [
