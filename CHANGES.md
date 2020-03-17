@@ -1,6 +1,29 @@
 Changes
 =======
 
+Version 1.0.0-beta (released 2020-03-17)
+
+
+Changes:
+
+- [SEARCH-1] File indexing via Tika + remore support for OCR extraction via ES pipelines
+- [#94] Fix rate limit configuration
+- [#91] CI: refactor to dev, test and prod usecase
+- [#85] EDMS: file v5
+- [#88] Files: implement file upload
+- [#77] Tests: Run on CI against local changes
+- [#83] Mappings: add edms objects
+- [#48] Permissions: make schema owner configurable and refactor logic
+- [#79] Automate linting
+- [#82] Build: bugfixes and improvements
+- [#53] Create docker-compose environments
+- [#68] Improvements on EDMS documents schema
+- [EDMS] config: add sorting options for cernsearchqa-edms
+- [EDMS] mappings: new versions
+- [TEST] mappings: refactor search-as-you-type analyzer and add did-you-mean
+- [WEBSERVICES] mappings: add suggest field for search-as-you-type
+- [TEST] mappings: add suggest schema
+
 Version 0.7.0 (released 2019-05-31)
 
 Features:
