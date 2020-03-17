@@ -4,12 +4,19 @@
 # This file is part of CERN Search.
 # Copyright (C) 2018-2019 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
-
-from cern_search_rest_api.modules.cernsearch.indexer import csas_indexer_receiver
-from cern_search_rest_api.modules.cernsearch.views import build_blueprint
+"""Cern Search module."""
+from celery import current_app as current_celery
+from cern_search_rest_api.modules.cernsearch.celery import DeclareDeadletter
+from cern_search_rest_api.modules.cernsearch.indexer import index_file_content
+from cern_search_rest_api.modules.cernsearch.receivers import (file_deleted_listener, file_processed_listener,
+                                                               file_uploaded_listener, record_deleted_listener)
+from cern_search_rest_api.modules.cernsearch.views import build_blueprint, build_blueprint_record_files_content
+from invenio_files_processor.signals import file_processed
+from invenio_files_rest.signals import file_deleted, file_uploaded
 from invenio_indexer.signals import before_record_index
+from invenio_records.signals import after_record_delete
 
 
 class CERNSearch(object):
@@ -23,11 +30,18 @@ class CERNSearch(object):
     def init_app(self, app):
         """Flask application initialization."""
         self.init_config(app)
+
         blueprint = build_blueprint(app)
         app.register_blueprint(blueprint)
-        before_record_index.connect(csas_indexer_receiver, sender=app)
-        app.extensions["cern-search"] = self
 
+        blueprint_record_files_content = build_blueprint_record_files_content(app)
+        app.register_blueprint(blueprint_record_files_content)
+
+        current_celery.steps['worker'].add(DeclareDeadletter)
+
+        self.register_signals()
+
+        app.extensions["cern-search"] = self
 
     def init_config(self, app):
         """Initialize configuration."""
@@ -35,3 +49,11 @@ class CERNSearch(object):
         for k in dir(app.config):
             if k.startswith('CERN_SEARCH'):
                 app.config.setdefault(k, getattr(app.config, k))
+
+    def register_signals(self):
+        """Register signals."""
+        file_uploaded.connect(file_uploaded_listener)
+        file_processed.connect(file_processed_listener)
+        file_deleted.connect(file_deleted_listener)
+        after_record_delete.connect(record_deleted_listener)
+        before_record_index.connect(index_file_content)

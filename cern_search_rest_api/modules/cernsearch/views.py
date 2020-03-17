@@ -4,27 +4,31 @@
 # This file is part of CERN Search.
 # Copyright (C) 2018-2019 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+"""Search views.
 
-"""
 Custom UPDATE REST API for CERN Search to support _update_by_query.
 Limitation: The query fails when the _version value (version_id in invenio-records) is 0 (<1).
+
+Custom GET file api to get file content instead of real file.
 """
 
 from __future__ import absolute_import, print_function
 
-import logging
 from copy import deepcopy
-from functools import partial
+from functools import partial, wraps
+from typing import Callable
 
+from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
 from cern_search_rest_api.modules.cernsearch.errors import InvalidRecordFormatError
 from cern_search_rest_api.modules.cernsearch.search import RecordCERNSearch
-from elasticsearch_dsl.query import QueryString
 from flask import Blueprint, Response, current_app, json, make_response, request, url_for
-from flask_sqlalchemy import SQLAlchemy
 from invenio_db import db
+from invenio_files_rest.serializer import json_serializer
+from invenio_files_rest.views import ObjectResource
 from invenio_indexer.utils import default_record_to_index
+from invenio_records_files.serializer import serializer_mapping
 from invenio_records_rest import current_records_rest
 from invenio_records_rest.errors import InvalidDataRESTError, UnsupportedMediaRESTError
 from invenio_records_rest.utils import obj_or_import_string
@@ -32,17 +36,16 @@ from invenio_records_rest.views import create_error_handlers as records_rest_err
 from invenio_records_rest.views import need_record_permission, pass_record
 from invenio_rest import ContentNegotiatedMethodView
 from invenio_search import current_search_client
-from sqlalchemy import MetaData, util
+from six import iteritems
+from six.moves.urllib.parse import urljoin
 
 
 def elasticsearch_mapper_parsing_exception_handler(error):
     """Handle mapper parsing exceptions from ElasticSearch."""
-    description = 'The format of the record is invalid. {reason}.' \
-                  '{caused_by}'.format(
-        reason=error.info['error']['root_cause'],
-        caused_by=error.info['error']['caused_by']['reason']
-    )
+    description = f"The format of the record is invalid. " \
+                  f"{error.info['error']['root_cause']}. {error.info['error']['caused_by']['reason']}"
     return InvalidRecordFormatError(description=description).get_response()
+
 
 def create_error_handlers(blueprint):
     """Create error handlers on blueprint."""
@@ -57,6 +60,47 @@ def build_url_action_for_pid(pid, action):
         action=action,
         _external=True
     )
+
+
+def build_blueprint_record_files_content(app):
+    """Build blueprint for file content routes."""
+    invenio_records_files_content = Blueprint(
+        "invenio_records_files_content", __name__, url_prefix=""
+    )
+
+    # Files Content
+    for rest_endpoint_config, rec_files_mappings in iteritems(
+            app.config["RECORDS_FILES_REST_ENDPOINTS"]
+    ):
+        for endpoint_prefix, files_path_name in iteritems(rec_files_mappings):
+            if endpoint_prefix not in app.config[rest_endpoint_config]:
+                raise ValueError(f'Endpoint {endpoint_prefix} is not present in {rest_endpoint_config}')
+
+            # e.g. /api/records/<recid>
+            rec_item_route = app.config[rest_endpoint_config][endpoint_prefix]["item_route"]
+            # e.g. /files
+            files_path_name = urljoin("/", files_path_name)
+
+            object_view = SearchRecordObjectResource.as_view(
+                endpoint_prefix + "_object_api",
+                serializers={
+                    "application/json": partial(
+                        json_serializer,
+                        view_name="{}_object_api".format(endpoint_prefix),
+                        serializer_mapping=serializer_mapping,
+                    )
+                },
+            )
+
+            invenio_records_files_content.add_url_rule(
+                "{rec_item_route}{files_path_name}/<path:key>".format(
+                    **locals()
+                ),
+                view_func=object_view,
+                methods=['GET']
+            )
+
+    return invenio_records_files_content
 
 
 def build_blueprint(app):
@@ -122,7 +166,6 @@ def build_blueprint(app):
             record_serializers=record_serializers
         )
 
-
         blueprint.add_url_rule(
             options['item_route'],
             view_func=ubq_view,
@@ -130,6 +173,36 @@ def build_blueprint(app):
         )
 
     return blueprint
+
+
+def pass_bucket_content_id(f: Callable):
+    """Decorate to retrieve a bucket."""
+
+    @wraps(f)
+    def decorate(*args, **kwargs):
+        current_app.logger.debug(f'decorate {getattr(kwargs["record"], "bucket_content_id", "")}')
+
+        """Get the bucket id from the record and pass it as kwarg."""
+        kwargs["bucket_id"] = getattr(kwargs["record"], "bucket_content_id", "")
+
+        return f(*args, **kwargs)
+    return decorate
+
+
+class SearchRecordObjectResource(ObjectResource):
+    """RecordObject item resource."""
+
+    @pass_record
+    @pass_bucket_content_id
+    def get(self, pid: int, record: CernSearchRecord, **kwargs):
+        """Get object or list parts of a multpart upload.
+
+        :param pid: The pid value of the record to get the content bucket from.
+        :param record: The record.
+        :kwargs: contains all the parameters used by the ObjectResource view in Invenio-Files-Rest
+        :returns: A Flask response.
+        """
+        return super(SearchRecordObjectResource, self).get(**kwargs)
 
 
 class UBQRecordResource(ContentNegotiatedMethodView):
@@ -145,9 +218,7 @@ class UBQRecordResource(ContentNegotiatedMethodView):
                  links_factory=None,
                  record_serializers=None,
                  **kwargs):
-        """Constructor.
-        :param resolver: Persistent identifier resolver instance.
-        """
+        """Initialize the resource."""
         super(UBQRecordResource, self).__init__(
             method_serializers={
                 'PUT': record_serializers,
@@ -156,7 +227,7 @@ class UBQRecordResource(ContentNegotiatedMethodView):
                 'PUT': default_media_type
             },
             default_media_type=default_media_type,
-            )
+        )
         self.update_permission_factory = update_permission_factory
         self.search_class = search_class
         self.loaders = record_loaders or current_records_rest.loaders
@@ -165,7 +236,7 @@ class UBQRecordResource(ContentNegotiatedMethodView):
     @pass_record
     @need_record_permission('update_permission_factory')
     def put(self, pid, record):
-        """Custom UPDATE REST API endpoint."""
+        """Update by query endpoint."""
         if request.mimetype not in self.loaders:
             raise UnsupportedMediaRESTError(request.mimetype)
 
@@ -188,8 +259,6 @@ class UBQRecordResource(ContentNegotiatedMethodView):
             body=script)
 
         # Check that the query has only updated one record
-        print(es_response['updated'])
-        print(es_response['total'])
         if es_response['updated'] == 1 and es_response['updated'] == es_response['total']:
             # Get record from ES
             search_obj = self.search_class()
@@ -208,7 +277,6 @@ class UBQRecordResource(ContentNegotiatedMethodView):
                 # Return success
                 return self.make_response(
                     pid, record, links_factory=self.links_factory)
-
 
         # If more than one record was updated return error and the querystring
         # so the user can handle the issue
@@ -237,9 +305,7 @@ class UBQRecordListResource(ContentNegotiatedMethodView):
 
     def __init__(self, update_permission_factory=None, default_media_type=None,
                  search_class=None, **kwargs):
-        """Constructor.
-        :param resolver: Persistent identifier resolver instance.
-        """
+        """Initialize the resource."""
         super(UBQRecordListResource, self).__init__(
             default_method_media_type={
                 'PUT': default_media_type
@@ -252,7 +318,7 @@ class UBQRecordListResource(ContentNegotiatedMethodView):
 
     @need_record_permission('update_permission_factory')
     def put(self):
-        """Custom UPDATE REST API endpoint."""
+        """Update by query endpoint."""
         # Make query to get all records
 
         # Get DB session
@@ -279,7 +345,7 @@ class UBQRecordListResource(ContentNegotiatedMethodView):
 
 
 def build_health_blueprint(app):
-
+    """Build blueprint for health routes."""
     blueprint = Blueprint('health_check', __name__)
 
     @blueprint.route('/health/uwsgi')

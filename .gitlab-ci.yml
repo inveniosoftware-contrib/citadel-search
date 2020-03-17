@@ -84,6 +84,15 @@ validate-base-image-updated:
 lint:
   services:
     - docker:dind
+  variables:
+    # As of GitLab 12.5, privileged runners at CERN mount a /certs/client docker volume that enables use of TLS to
+    # communicate with the docker daemon. This avoids a warning about the docker service possibly not starting
+    # successfully.
+    # See https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
+    DOCKER_TLS_CERTDIR: "/certs"
+    # Note that we do not need to set DOCKER_HOST when using the official docker client image: it automatically
+    # defaults to tcp://docker:2376 upon seeing the TLS certificate directory.
+    #DOCKER_HOST: tcp://docker:2376/
   stage: test
   only:
     refs:
@@ -92,6 +101,7 @@ lint:
   script: make build-env lint MODE=test
   before_script:
     - docker info
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker-compose --version
     - apk add make
   allow_failure: true
@@ -102,14 +112,24 @@ lint:
 test:
   services:
     - docker:dind
+  variables:
+    # As of GitLab 12.5, privileged runners at CERN mount a /certs/client docker volume that enables use of TLS to
+    # communicate with the docker daemon. This avoids a warning about the docker service possibly not starting
+    # successfully.
+    # See https://docs.gitlab.com/ee/ci/docker/using_docker_build.html#tls-enabled
+    DOCKER_TLS_CERTDIR: "/certs"
+    # Note that we do not need to set DOCKER_HOST when using the official docker client image: it automatically
+    # defaults to tcp://docker:2376 upon seeing the TLS certificate directory.
+    #DOCKER_HOST: tcp://docker:2376/
   stage: test
   only:
     refs:
       - merge_requests
   image: tmaier/docker-compose:latest
-  script: make generate-certificates build-env populate-instance load-fixtures test MODE=test
+  script: make ci-test MODE=test
   before_script:
     - docker info
+    - docker login -u "$CI_REGISTRY_USER" -p "$CI_REGISTRY_PASSWORD" $CI_REGISTRY
     - docker-compose --version
     - apk add make
     - apk add openssl

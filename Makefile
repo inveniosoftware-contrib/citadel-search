@@ -16,6 +16,7 @@
 # make lint                   # runs linting tools
 
 SERVICE_NAME :=  cern-search-api
+WORKER_NAME :=  worker
 API_TOKEN := .api_token
 MODE?=full
 TEST_MODE=test
@@ -49,11 +50,19 @@ destroy-env:
 	docker-compose -f $(DOCKER_FILE) rm -f
 .PHONY: destroy-env
 
+stop-env:
+	docker-compose -f $(DOCKER_FILE) down --volumes
+.PHONY: destroy-env
+
 reload-env: destroy-env env
 .PHONY: reload-env
 
 shell-env:
 	docker-compose -f $(DOCKER_FILE) exec $(SERVICE_NAME) /bin/bash
+.PHONY: shell-env
+
+shell-worker:
+	docker-compose -f $(DOCKER_FILE) exec $(WORKER_NAME) /bin/bash
 .PHONY: shell-env
 
 env: generate-certificates build-env populate-instance load-fixtures shell-env
@@ -63,10 +72,16 @@ generate-certificates:
 	sh scripts/gen-cert.sh
 .PHONY: generate-certificates
 
-test:
+pytest:
 	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
-	"API_TOKEN=$$(cat $(API_TOKEN)) pytest tests -vv;"
+	"pytest tests -vv;"
 .PHONY: test
+
+ci-test: build-env pytest
+.PHONY: ci-test
+
+test: stop-env build-env pytest
+.PHONY: local-test
 
 lint:
 	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
@@ -112,7 +127,7 @@ build-local-env: check-requirements-local
 .PHONY: build-local-env
 
 populate-instance-local:
-	PIPENV_DOTENV_LOCATION=$(PIPENV_DOTENV) pipenv run sh scripts/populate-instance.sh
+	PIPENV_DOTENV_LOCATION=$(PIPENV_DOTENV) pipenv run sh scripts/pipenv/populate-instance.sh
 .PHONY: populate-instance-local
 
 load-fixtures-local:
@@ -140,8 +155,8 @@ reload-local-env: destroy-local-env local-env
 .PHONY: reload-local-env
 
 local-test:
-	@echo todo
-#	python pytest
+	@echo running tests...;
+	pipenv run pytest tests -v;
 .PHONY: test
 
 local-lint:

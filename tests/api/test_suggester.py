@@ -5,15 +5,17 @@
 #
 # CERN Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+"""Suggester tests."""
 
 import json
 import time
+from http import HTTPStatus
 
 import pytest
 from tests.api.helpers import get_headers, get_schemas_endpoint
 
 
-def create_record(appctx, base_client, title):
+def __create_record(client, title):
     body = {
         "_access": {
             "owner": ["CernSearch-Administrators@cern.ch"],
@@ -23,13 +25,13 @@ def create_record(appctx, base_client, title):
         "_data": {
             "title": title
         },
-        "$schema": get_schemas_endpoint(appctx, "test/suggest_v0.0.2.json")
+        "$schema": get_schemas_endpoint("test/suggest_v0.0.2.json")
     }
 
     # Create test record
-    resp = base_client.post('/records/', headers=get_headers(), data=json.dumps(body))
+    resp = client.post('/records/', headers=get_headers(), data=json.dumps(body))
 
-    assert resp.status_code == 201
+    assert resp.status_code == HTTPStatus.CREATED
 
     # Check non presence of OCR content in DB record
     resp_body = resp.json['metadata']
@@ -41,49 +43,48 @@ def create_record(appctx, base_client, title):
 
 
 @pytest.mark.unit
-def test_suggester(appctx, base_client):
-    """
-    Test search over public documents. Test that the ``_access.*`` field is
-    not searched over.
-    """
+def test_suggester(app, client, user):
+    """Test search over public documents.
 
+    Test that the ``_access.*`` field is not searched over.
+    """
     # Create records
     control_numbers = [
-        create_record(appctx, base_client, 'The First Suggestion'),
-        create_record(appctx, base_client, 'Documentation site title'),
-        create_record(appctx, base_client, 'CERN Search Documentation'),
-        create_record(appctx, base_client, 'Invenio docs site'),
-        create_record(appctx, base_client, 'The final suggester')
+        __create_record(client, 'The First Suggestion'),
+        __create_record(client, 'Documentation site title'),
+        __create_record(client, 'CERN Search Documentation'),
+        __create_record(client, 'Invenio docs site'),
+        __create_record(client, 'The final suggester')
     ]
 
-    time.sleep(3)
+    time.sleep(2)
 
     query = {
         "q": 'suggest:the f'
     }
 
     # 'the f' should return 1st and 5th record
-    resp = base_client.get('/records/', query_string=query, headers=get_headers())
+    resp = client.get('/records/', query_string=query, headers=get_headers())
 
-    assert resp.status_code == 200
+    assert resp.status_code == HTTPStatus.OK
 
     resp_hits = resp.json['hits']
     assert resp_hits.get('total') == 2
 
     # 'doc' should return 2nd, 3rd and 4th record
     query['q'] = 'suggest:doc'
-    resp = base_client.get('/records/', query_string=query, headers=get_headers())
+    resp = client.get('/records/', query_string=query, headers=get_headers())
 
-    assert resp.status_code == 200
+    assert resp.status_code == HTTPStatus.OK
 
     resp_hits = resp.json['hits']
     assert resp_hits.get('total') == 3
 
     # 'f sugg' should return 1st and 5th record
     query['q'] = 'suggest:f sugg'
-    resp = base_client.get('/records/', query_string=query, headers=get_headers())
+    resp = client.get('/records/', query_string=query, headers=get_headers())
 
-    assert resp.status_code == 200
+    assert resp.status_code == HTTPStatus.OK
 
     resp_hits = resp.json['hits']
     assert resp_hits.get('total') == 2
@@ -91,6 +92,6 @@ def test_suggester(appctx, base_client):
     # delete records
 
     for control_number in control_numbers:
-        resp = base_client.delete('/record/{control_number}'.format(control_number=control_number), headers=get_headers())
+        resp = client.delete('/record/{control_number}'.format(control_number=control_number), headers=get_headers())
 
-        assert resp.status_code == 204
+        assert resp.status_code == HTTPStatus.NO_CONTENT

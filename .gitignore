@@ -40,3 +40,7 @@ builds/
 
 # Others
 .DS_Store
+
+
+# Pip source folder
+src

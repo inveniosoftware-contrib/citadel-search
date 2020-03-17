@@ -7,6 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Pytest configuration.
+
 See https://pytest-invenio.readthedocs.io/ for documentation on which test
 fixtures are available.
 """
@@ -18,13 +19,6 @@ from invenio_app.factory import create_ui
 
 
 @pytest.fixture(scope='module')
-def create_app(instance_path):
+def create_app():
+    """Application factory fixture."""
     return create_ui
-
-
-@pytest.fixture(scope='module')
-def app_config(app_config):
-    app_config['SERVER_NAME'] = 'localhost'
-    app_config['LOGGING_CONSOLE_LEVEL'] = 'DEBUG'
-
-    return app_config
