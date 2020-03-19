@@ -6,7 +6,7 @@ Version 1.0.0-beta (released 2020-03-17)
 
 Changes:
 
-- [SEARCH-1] File indexing via Tika + remore support for OCR extraction via ES pipelines
+- [SEARCH-1] File indexing via Tika + remove support for OCR extraction via ES pipelines
 - [#94] Fix rate limit configuration
 - [#91] CI: refactor to dev, test and prod usecase
 - [#85] EDMS: file v5
