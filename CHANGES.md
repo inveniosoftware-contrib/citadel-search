@@ -1,6 +1,11 @@
 Changes
 =======
 
+Version 1.0.1-beta (released 2020-03-19)
+
+Changes:
+- [SEARCH-42] Bump invenio-records to 1.2.2 - security vulnerability
+
 Version 1.0.0-beta (released 2020-03-17)
 
 
