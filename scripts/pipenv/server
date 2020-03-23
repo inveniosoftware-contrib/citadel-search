@@ -14,7 +14,7 @@ readonly TLS_DIR="$SCRIPT_PATH/../../nginx/tls"
 export FLASK_ENV=development
 
 # Start Worker
-pipenv run celery worker -A invenio_app.celery -l INFO --autoscale=1000,500 --without-gossip --without-mingle --pool=gevent & pid_celery=$!
+pipenv run celery worker -A invenio_app.celery -l DEBUG --autoscale=10,1 & pid_celery=$!
 
 # Start Server
 invenio run \

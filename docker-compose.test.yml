@@ -159,7 +159,7 @@ services:
       - default
 
   tika:
-    image: apache/tika:1.23
+    image: apache/tika:1.24
     ports:
       - "9998:9998"
     networks:

@@ -48,7 +48,7 @@ services:
     command: [
       "/bin/bash",
       "-c",
-      "celery worker -A ${WORKER_APP} --loglevel=${CELERY_LOG_LEVEL} --autoscale=1000,500 --without-gossip --without-mingle --pool=gevent"
+      "celery worker -A ${WORKER_APP} -l DEBUG --autoscale=10,1"
     ]
     healthcheck:
       test: ["CMD", "celery inspect ping -A ${WORKER_APP} -d celery@$$(hostname)"]
@@ -154,7 +154,7 @@ services:
       - default
 
   tika:
-    image: logicalspark/docker-tikaserver:1.23
+    image: apache/tika:1.24
     ports:
       - "9998:9998"
     networks:
