@@ -1,6 +1,11 @@
 Changes
 =======
 
+Version 1.0.2-beta (released 2020-03-23)
+
+Changes:
+- [SEARCH-47] Bump tika to 1.24 
+
 Version 1.0.1-beta (released 2020-03-19)
 
 Changes:
