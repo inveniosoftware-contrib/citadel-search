@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 100
   },
   "mappings": {
-    "archive_v0.0.1": {
+    "archive_v1.0.0": {
       "dynamic": "strict",
       "numeric_detection": true,
       "properties": {
@@ -57,24 +57,36 @@
                 "french": {
                   "type": "text",
                   "analyzer": "french"
+                },
+                "exact_match": {
+                  "type": "keyword"
+                },
+                "whitespace": {
+                  "type": "text",
+                  "analyzer": "whitespace"
                 }
               }
             }
           }
         },
         "group": {
-          "type": "keyword",
           "enabled": false
         },
         "date": {
           "type": "date",
           "format": "dd-MM-yyyy HH:mm"
         },
+        "$schema": {
+          "enabled": false
+        },
         "control_number": {
           "type": "keyword"
         },
-        "$schema": {
-          "enabled": false
+        "_created": {
+          "type": "date"
+        },
+        "_updated": {
+          "type": "date"
         }
       }
     }
