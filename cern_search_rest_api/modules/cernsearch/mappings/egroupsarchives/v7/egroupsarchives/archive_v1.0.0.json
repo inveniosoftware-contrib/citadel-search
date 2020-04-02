@@ -56,13 +56,6 @@
                 "french": {
                   "type": "text",
                   "analyzer": "french"
-                },
-                "exact_match": {
-                  "type": "keyword"
-                },
-                "whitespace": {
-                  "type": "text",
-                  "analyzer": "whitespace"
                 }
               }
             }
