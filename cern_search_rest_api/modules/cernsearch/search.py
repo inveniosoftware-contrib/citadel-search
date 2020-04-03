@@ -81,10 +81,19 @@ def search_factory(self, search, query_parser=None):
     def _csas_query_parser(qstr=None):
         """Default parser that uses the Q() from elasticsearch_dsl."""
         if qstr:
-            return Q('query_string', query=qstr, default_field='_data.*')
+            return Q(
+                'query_string',
+                query=qstr,
+                default_field='_data.*',
+                rewrite="scoring_boolean"  # calculates score for wildcards queries
+            )
         return Q()
 
-    return default_search_factory(self, search, _csas_query_parser)
+    search, urlkwargs = default_search_factory(self, search, _csas_query_parser)  # type: RecordCERNSearch, MultiDict
+
+    search = search.params(search_type="dfs_query_then_fetch")  # search across all shards
+
+    return search, urlkwargs
 
 
 csas_search_factory = search_factory
