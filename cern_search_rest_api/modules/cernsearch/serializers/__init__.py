@@ -6,19 +6,20 @@
 #
 # CERN Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+"""Serializers for records and search results."""
 
 from __future__ import absolute_import, print_function
 
 from cern_search_rest_api.modules.cernsearch.marshmallow import CSASRecordSchemaV1, CSASRecordSearchSchemaJSONV1
-from invenio_records_rest.serializers.json import JSONSerializer
+from cern_search_rest_api.modules.cernsearch.serializers.json import CernJSONSerializer
 from invenio_records_rest.serializers.response import record_responsify, search_responsify
 
 # Serializers
 # ===========
 #: JSON serializer definition.
 
-json_v1 = JSONSerializer(CSASRecordSchemaV1, replace_refs=True)
-json_v1_records = JSONSerializer(CSASRecordSearchSchemaJSONV1)
+json_v1 = CernJSONSerializer(CSASRecordSchemaV1, replace_refs=True)
+json_v1_records = CernJSONSerializer(CSASRecordSearchSchemaJSONV1)
 
 # Records-REST serializers
 # ========================

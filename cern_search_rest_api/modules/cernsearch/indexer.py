@@ -10,6 +10,7 @@
 from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
 from flask import current_app
 from invenio_files_rest.storage import FileStorage
+from invenio_indexer.api import RecordIndexer
 
 READ_MODE_BINARY = 'rb'
 ATTACHMENT_KEY = '_attachment'
@@ -17,9 +18,18 @@ FILE_KEY = '_file'
 DATA_KEY = '_data'
 
 
+class CernSearchRecordIndexer(RecordIndexer):
+    """Record Indexer."""
+
+    record_cls = CernSearchRecord
+
+
 def index_file_content(sender, json=None, record: CernSearchRecord = None, index=None, doc_type=None,
                        arguments=None, **kwargs):
     """Index file content in search."""
+    if not record.files_content:
+        return
+
     for file_obj in record.files_content:
         current_app.logger.debug(f"Index file content {file_obj.obj.basename} in {record.id}")
 

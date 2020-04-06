@@ -14,6 +14,8 @@ import ast
 import copy
 import os
 
+from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
+from cern_search_rest_api.modules.cernsearch.indexer import CernSearchRecordIndexer
 from cern_search_rest_api.modules.cernsearch.permissions import (record_create_permission_factory,
                                                                  record_delete_permission_factory,
                                                                  record_list_permission_factory,
@@ -103,7 +105,8 @@ RECORDS_REST_ENDPOINTS = dict(
         item_route='/record/<{0}:pid_value>'.format(_Record_PID),
         list_route='/records/',
         links_factory_imp='invenio_records_rest.links:default_links_factory',
-        record_class='cern_search_rest_api.modules.cernsearch.api:CernSearchRecord',
+        record_class=CernSearchRecord,
+        indexer_class=CernSearchRecordIndexer,
         record_serializers={
             'application/json': ('cern_search_rest_api.modules.cernsearch.serializers'
                                  ':json_v1_response'),

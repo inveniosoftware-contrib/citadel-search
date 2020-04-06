@@ -4,8 +4,9 @@
 # This file is part of CERN Search.
 # Copyright (C) 2018-2019 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
+"""Search utilities."""
 
 from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
 from elasticsearch_dsl import Q
@@ -13,6 +14,7 @@ from flask import current_app, request
 from invenio_records_rest.query import default_search_factory
 from invenio_search import RecordsSearch
 from invenio_search.api import DefaultFilter
+from werkzeug.datastructures import MultiDict
 
 
 """
@@ -62,6 +64,7 @@ def cern_search_filter():
 
 
 def get_egroups():
+    """Get egroups from access param, config or authenticated user."""
     egroups = request.args.get('access', None)
     # If access rights are sent or is a search query
     if egroups or (request.path == '/records/' and request.method == 'GET'):
@@ -76,10 +79,26 @@ def get_egroups():
     return get_user_provides()
 
 
-def search_factory(self, search, query_parser=None):
+class RecordCERNSearch(RecordsSearch):
+    """CERN search class with Elasticsearch DSL."""
+
+    class Meta:
+        """Configuration for ``Search`` and ``FacetedSearch`` classes."""
+
+        doc_types = None
+        default_filter = DefaultFilter(cern_search_filter)
+
+
+def search_factory(self, search: RecordCERNSearch, query_parser=None):
+    """Parse query using elasticsearch DSL query.
+
+    :param self: REST view.
+    :param search: Elastic search DSL search instance.
+    :returns: Tuple with search instance and URL arguments.
+    """
 
     def _csas_query_parser(qstr=None):
-        """Default parser that uses the Q() from elasticsearch_dsl."""
+        """Parse with Q() from elasticsearch_dsl."""
         if qstr:
             return Q(
                 'query_string',
@@ -93,15 +112,15 @@ def search_factory(self, search, query_parser=None):
 
     search = search.params(search_type="dfs_query_then_fetch")  # search across all shards
 
+    highlights = request.args.getlist('highlight', None)
+    if highlights:
+        search = search.highlight(*highlights)
+
+    explain = request.args.get('explain', None)
+    if explain:
+        search = search.extra(explain=explain)
+
     return search, urlkwargs
 
 
 csas_search_factory = search_factory
-
-
-class RecordCERNSearch(RecordsSearch):
-    """CERN search class."""
-
-    class Meta:
-        doc_types = None
-        default_filter = DefaultFilter(cern_search_filter)

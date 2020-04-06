@@ -86,6 +86,22 @@ def test_testclient(app, client, user):
     assert description is not None
     assert description == 'This contains CernSearch and should appear'
 
+    # Test query params
+    resp = client.get(
+        '/records/',
+        headers=get_headers(),
+        query_string={'q': 'CernSearch', 'explain': 'true', 'highlight': '*'}
+    )
+    assert resp.status_code == HTTPStatus.OK
+
+    resp_hits = resp.json['hits']
+    explanation = resp_hits['hits'][0].get('explanation')
+    print(resp_hits['hits'][0])
+    assert explanation
+
+    highlight = resp_hits['hits'][0].get('highlight')
+    assert highlight
+
     # Clean the instance. Delete record
     resp = client.delete(
         '/record/{control_number}'.format(control_number=control_number_one),
