@@ -1,18 +1,57 @@
 Changes
 =======
+**Version 1.0.7-beta (released 2020-04-07)**
 
-Version 1.0.2-beta (released 2020-03-23)
+Changes:
+- [SEARCH-69] Multifields type search parameter
+
+
+----
+
+**Version 1.0.6-beta (released 2020-04-06)**
+
+Changes:
+- [egroupsarchives] Update archive_v1.0.0.json
+
+----
+
+**Version 1.0.5-beta (released 2020-04-06)**
+
+Changes:
+- [SEARCH-66] Add highlight and explain params to search api
+
+----
+
+**Version 1.0.4-beta (released 2020-04-03)**
+
+Changes:
+- [SEARCH-60] Egroups Archives mapping fix
+- [SEARCH-68] Improve score calculations
+
+----
+
+**Version 1.0.3-beta (released 2020-04-02)**
+
+Changes:
+- [SEARCH-60] Add egroups archives schemas
+
+----
+
+**Version 1.0.2-beta (released 2020-03-23)**
 
 Changes:
 - [SEARCH-47] Bump tika to 1.24 
 
-Version 1.0.1-beta (released 2020-03-19)
+----
+
+**Version 1.0.1-beta (released 2020-03-19)**
 
 Changes:
 - [SEARCH-42] Bump invenio-records to 1.2.2 - security vulnerability
 
-Version 1.0.0-beta (released 2020-03-17)
+----
 
+**Version 1.0.0-beta (released 2020-03-17)**
 
 Changes:
 
@@ -34,7 +73,10 @@ Changes:
 - [WEBSERVICES] mappings: add suggest field for search-as-you-type
 - [TEST] mappings: add suggest schema
 
-Version 0.7.0 (released 2019-05-31)
+
+----
+
+**Version 0.7.0 (released 2019-05-31)**
 
 Features:
 
@@ -49,7 +91,7 @@ Features:
 
 ----
 
-Version 0.6.0 (released 2018-01-17)
+**Version 0.6.0 (released 2018-01-17)**
 
 Features:
 
@@ -65,7 +107,7 @@ Fixes:
 
 ----
 
-Version 0.5.3 (released 2018-11-13)
+**Version 0.5.3 (released 2018-11-13)**
 
 Features:
 
