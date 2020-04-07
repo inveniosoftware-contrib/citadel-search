@@ -99,12 +99,16 @@ def search_factory(self, search: RecordCERNSearch, query_parser=None):
 
     def _csas_query_parser(qstr=None):
         """Parse with Q() from elasticsearch_dsl."""
+        default_multifields_type = "best_fields"
+        multifields_type = request.args.get('type', default_multifields_type)
+
         if qstr:
             return Q(
                 'query_string',
                 query=qstr,
                 default_field='_data.*',
-                rewrite="scoring_boolean"  # calculates score for wildcards queries
+                rewrite="scoring_boolean",  # calculates score for wildcards queries
+                type=multifields_type
             )
         return Q()
 
