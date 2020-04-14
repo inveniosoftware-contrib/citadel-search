@@ -70,7 +70,8 @@ setup(
             'cern-search = cern_search_rest_api.modules.cernsearch.ext:CERNSearch'
         ],
         'invenio_base.blueprints': [
-            'health_check = cern_search_rest_api.modules.cernsearch.views:build_health_blueprint'
+            'health_check = cern_search_rest_api.modules.cernsearch.views:build_health_blueprint',
+            'cern_oauth = invenio_oauthclient.contrib.cern:cern_oauth_blueprint'
         ],
         'invenio_celery.tasks': [
             'cern-search = cern_search_rest_api.modules.cernsearch.tasks'

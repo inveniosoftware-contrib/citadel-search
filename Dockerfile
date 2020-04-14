@@ -24,9 +24,6 @@ RUN pip install -e .
 RUN touch /${WORKING_DIR}/src/uwsgi.pid
 RUN chmod 666 /${WORKING_DIR}/src/uwsgi.pid
 
-# Patch auth
-RUN sh /${WORKING_DIR}/src/scripts/patch/oauth_patch.sh
-
 # Install UI
 USER invenio
 
