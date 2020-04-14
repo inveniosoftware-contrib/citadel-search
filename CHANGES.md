@@ -1,5 +1,14 @@
 Changes
 =======
+
+**Version 1.0.8-beta (released 2020-04-14)**
+
+Changes:
+- [SEARCH-70] Add field to egroups archives
+
+----
+
+
 **Version 1.0.7-beta (released 2020-04-07)**
 
 Changes:
