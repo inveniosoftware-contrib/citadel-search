@@ -7,7 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 # Use CentOS7:
-FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:c1bddb6006266dfa83319a44c3ca7d219e117792
+FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:4d7429703a469213bcf645360efc8260500c01c4
 ARG build_env
 
 # CERN Search installation
