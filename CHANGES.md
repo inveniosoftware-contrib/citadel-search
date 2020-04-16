@@ -1,6 +1,13 @@
 Changes
 =======
 
+**Version 1.0.9-beta (released 2020-04-16)**
+
+Changes:
+- [SEARCH-71] egroupsarchives: make group searchable
+
+----
+
 **Version 1.0.8-beta (released 2020-04-14)**
 
 Changes:
