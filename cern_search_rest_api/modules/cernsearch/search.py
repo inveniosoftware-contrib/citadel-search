@@ -117,7 +117,8 @@ def search_factory(self, search: RecordCERNSearch, query_parser=None):
 
     highlights = request.args.getlist('highlight', None)
     if highlights:
-        search = search.highlight(*highlights)
+        fragment_size = request.args.getlist('fragment_size', 100)
+        search = search.highlight(*highlights, fragment_size=fragment_size)
 
     explain = request.args.get('explain', None)
     if explain:
