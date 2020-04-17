@@ -90,7 +90,13 @@ def test_testclient(app, client, user):
     resp = client.get(
         '/records/',
         headers=get_headers(),
-        query_string={'q': 'CernSearch', 'explain': 'true', 'highlight': '*', 'type': 'cross_fields'}
+        query_string={
+            'q': 'CernSearch',
+            'explain': 'true',
+            'highlight': '*',
+            'type': 'cross_fields',
+            'fragment_size': 0
+        }
     )
     assert resp.status_code == HTTPStatus.OK
 
