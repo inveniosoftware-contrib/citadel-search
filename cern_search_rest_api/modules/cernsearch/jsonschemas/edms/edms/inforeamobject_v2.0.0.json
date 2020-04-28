@@ -1,0 +1,78 @@
+{
+  "title": "EDMS Object Type InforEAMObject schema v2.0.0",
+  "id": "http://0.0.0.0:5000/schemas/edms/inforeamobject_v2.0.0.json",
+  "$schema": "http://0.0.0.0:5000/schemas/edms/inforeamobject_v2.0.0.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "_data": {
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string"
+        },
+        "other_id": {
+          "type": "string"
+        },
+        "class": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "manufacturer": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        }
+      }
+    },
+    "object_type": {
+      "type": "string"
+    },
+    "creation_date": {
+      "type": "string"
+    },
+    "modification_date": {
+      "type": "string"
+    },
+    "control_number": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}
