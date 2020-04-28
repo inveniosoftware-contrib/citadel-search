@@ -1,7 +1,8 @@
 {
   "settings": {
     "index.percolator.map_unmapped_fields_as_string": true,
-    "index.mapping.total_fields.limit": 3000
+    "index.mapping.total_fields.limit": 3000,
+    "index.query.default_field" : ["_data.*"]
   },
   "mappings": {
     "file_v0.0.4": {

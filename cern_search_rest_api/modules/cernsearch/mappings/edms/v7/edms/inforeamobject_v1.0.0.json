@@ -1,0 +1,94 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_text": true,
+    "index.mapping.total_fields.limit": 500,
+    "index.query.default_field" : ["_data.*"]
+  },
+  "mappings": {
+    "numeric_detection": true,
+    "properties": {
+      "_access": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "keyword"
+          },
+          "read": {
+            "type": "keyword"
+          },
+          "update": {
+            "type": "keyword"
+          },
+          "delete": {
+            "type": "keyword"
+          }
+        }
+      },
+      "_data": {
+        "type": "object",
+        "properties": {
+          "code": {
+            "type": "keyword",
+            "boost": 20
+          },
+          "other_id": {
+            "type": "keyword",
+            "boost": 20
+          },
+          "class": {
+            "type": "keyword",
+            "boost": 10
+          },
+          "description": {
+            "type": "text",
+            "boost": 4,
+            "fields": {
+              "english": {
+                "type": "text",
+                "boost": 4,
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "boost": 4,
+                "analyzer": "french"
+              }
+            }
+          },
+          "status": {
+            "type": "keyword"
+          },
+          "manufacturer": {
+            "type": "keyword"
+          },
+          "location": {
+            "type": "keyword"
+          }
+        }
+      },
+      "object_type": {
+        "type": "keyword"
+      },
+      "creation_date": {
+        "type": "date",
+        "format": "yyyy-MM-dd'T'HH:mm:ss"
+      },
+      "modification_date": {
+        "type": "date",
+        "format": "yyyy-MM-dd'T'HH:mm:ss"
+      },
+      "_updated": {
+        "type": "date"
+      },
+      "_created": {
+        "type": "date"
+      },
+      "control_number": {
+        "type": "keyword"
+      },
+      "$schema": {
+        "enabled": false
+      }
+    }
+  }
+}

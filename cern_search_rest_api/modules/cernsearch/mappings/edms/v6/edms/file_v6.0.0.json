@@ -32,7 +32,8 @@
               "type": "object",
               "properties": {
                 "_content": {
-                  "type": "text"
+                  "type": "text",
+                  "boost": 20
                 }
               }
             },

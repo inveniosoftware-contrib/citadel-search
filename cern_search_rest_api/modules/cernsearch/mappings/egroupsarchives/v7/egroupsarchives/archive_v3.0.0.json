@@ -1,7 +1,8 @@
 {
   "settings": {
     "index.percolator.map_unmapped_fields_as_text": true,
-    "index.mapping.total_fields.limit": 100
+    "index.mapping.total_fields.limit": 100,
+    "index.query.default_field" : ["_data.*"]
   },
   "mappings": {
       "dynamic": "strict",
@@ -62,11 +63,14 @@
           }
         },
         "group": {
-          "enabled": false
+          "type": "keyword"
         },
         "date": {
           "type": "date",
           "format": "dd-MM-yyyy HH:mm"
+        },
+        "mailid": {
+          "enabled": false
         },
         "$schema": {
           "enabled": false
