@@ -1,6 +1,13 @@
 Changes
 =======
 
+**Version 1.1.1-beta (released 2020-04-28)**
+
+Changes:
+- [SEARCH-72] Fix too_many_clauses error
+
+----
+
 **Version 1.1.0-beta (released 2020-04-28)**
 
 Changes:
