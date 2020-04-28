@@ -29,7 +29,17 @@ endif
 
 build-env:
 	docker-compose -f $(DOCKER_FILE) up -d --remove-orphans
-.PHONY: env
+.PHONY: build-env
+
+es-setup:
+	curl -XPUT "http://localhost:9200/_settings" -H 'Content-Type: application/json' -d' \
+	{\
+        "index": {\
+            "search.slowlog.level": "trace",\
+            "search.slowlog.threshold.query.trace": "0ms"\
+	    }\
+	}'
+.PHONY: es-setup
 
 logs:
 	docker-compose -f $(DOCKER_FILE) logs -f
@@ -38,7 +48,7 @@ logs:
 populate-instance:
 	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
 		"sh /opt/invenio/src/scripts/populate-instance.sh"
-.PHONY: load-fixtures
+.PHONY: populate-instance
 
 load-fixtures:
 	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
@@ -52,7 +62,7 @@ destroy-env:
 
 stop-env:
 	docker-compose -f $(DOCKER_FILE) down --volumes
-.PHONY: destroy-env
+.PHONY: stop-env
 
 reload-env: destroy-env env
 .PHONY: reload-env
@@ -63,9 +73,9 @@ shell-env:
 
 shell-worker:
 	docker-compose -f $(DOCKER_FILE) exec $(WORKER_NAME) /bin/bash
-.PHONY: shell-env
+.PHONY: shell-worker
 
-env: generate-certificates build-env populate-instance load-fixtures shell-env
+env: generate-certificates build-env populate-instance es-setup load-fixtures shell-env
 .PHONY: env
 
 generate-certificates:
@@ -75,13 +85,13 @@ generate-certificates:
 pytest:
 	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
 	"pytest tests -vv;"
-.PHONY: test
+.PHONY: pytest
 
 ci-test: build-env pytest
 .PHONY: ci-test
 
 test: stop-env build-env pytest
-.PHONY: local-test
+.PHONY: test
 
 lint:
 	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
@@ -157,11 +167,11 @@ reload-local-env: destroy-local-env local-env
 local-test:
 	@echo running tests...;
 	pipenv run pytest tests -v;
-.PHONY: test
+.PHONY: local-test
 
 local-lint:
 	@echo running isort...;
 	pipenv run isort -rc -c -df;
 	@echo running flake8...;
 	pipenv run flake8 --max-complexity 10 --ignore E501,D401
-.PHONY: lint
+.PHONY: local-lint
