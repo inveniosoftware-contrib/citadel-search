@@ -1,10 +1,10 @@
 {
   "settings": {
     "index.percolator.map_unmapped_fields_as_string": true,
-    "index.mapping.total_fields.limit": 35
+    "index.mapping.total_fields.limit": 50
   },
   "mappings": {
-    "attachments_v1.0.0": {
+    "contributions_v1.0.0": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "indico@cern.ch"
@@ -36,17 +36,22 @@
         "event_id": {
           "type": "keyword"
         },
-        "contribution_id": {
-          "type": "keyword"
-        },
-        "subcontribution_id": {
-          "type": "keyword"
-        },
         "creation_date": {
           "type": "date",
           "format": "YYYY-MM-DDZHH:MM"
         },
-        "filename": {
+        "start_date": {
+          "type": "date",
+          "format": "YYYY-MM-DDZHH:MM"
+        },
+        "end_date": {
+          "type": "date",
+          "format": "YYYY-MM-DDZHH:MM"
+        },
+        "location": {
+          "type": "text"
+        },
+        "title": {
           "type": "text",
           "fields": {
             "english": {
@@ -59,7 +64,7 @@
             }
           }
         },
-        "content": {
+        "description": {
           "type": "text",
           "fields": {
             "english": {
@@ -69,6 +74,25 @@
             "french": {
               "type": "text",
               "analyzer": "french"
+            }
+          }
+        },
+        "list_of_persons": {
+          "type": "nested",
+          "properties": {
+            "name": {
+              "type": "text",
+              "fields": {
+                "keyword": {
+                  "type": "keyword"
+                }
+              }
+            },
+            "affiliation": {
+              "type": "text"
+            },
+            "role": {
+              "type": "keyword"
             }
           }
         },

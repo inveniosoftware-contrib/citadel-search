@@ -4,7 +4,7 @@
     "index.mapping.total_fields.limit": 50
   },
   "mappings": {
-    "events_v1.0.0": {
+    "subcontributions_v1.0.0": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "indico@cern.ch"
@@ -33,7 +33,10 @@
         "category_path": {
           "type": "keyword"
         },
-        "event_type": {
+        "event_id": {
+          "type": "keyword"
+        },
+        "contribution_id": {
           "type": "keyword"
         },
         "creation_date": {
@@ -77,23 +80,25 @@
             }
           }
         },
-        "speakers_chairs": {
+        "list_of_persons": {
           "type": "nested",
           "properties": {
             "name": {
               "type": "text",
               "fields": {
-                  "keyword": {
-                    "type": "keyword"
-                  }
+                "keyword": {
+                  "type": "keyword"
                 }
+              }
             },
             "affiliation": {
               "type": "text"
+            },
+            "role": {
+              "type": "keyword"
             }
           }
         },
-
         "custom_pid": {
           "type": "keyword"
         },

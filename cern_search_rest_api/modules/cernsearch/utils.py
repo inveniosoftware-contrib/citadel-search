@@ -9,7 +9,6 @@
 
 """Helper methods for CERN Search records."""
 
-from elasticsearch import VERSION as ES_VERSION
 from flask import current_app, g
 from invenio_indexer.utils import default_record_to_index, schema_to_index
 from invenio_search import current_search, current_search_client
@@ -62,9 +61,6 @@ def default_record_to_mapping(record):
         doc_type = next(iter(mapping))
         current_app.logger.debug('Using mapping for {idx}'.format(idx=index))
         current_app.logger.debug('Mapping {mapping}'.format(mapping=mapping))
-
-        if ES_VERSION[0] >= 7:
-            return mapping[doc_type]['mappings']
 
         return mapping[doc_type]['mappings'][doc]
 

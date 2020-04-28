@@ -1,10 +1,10 @@
 {
   "settings": {
     "index.percolator.map_unmapped_fields_as_string": true,
-    "index.mapping.total_fields.limit": 30
+    "index.mapping.total_fields.limit": 35
   },
   "mappings": {
-    "notes_v1.0.0": {
+    "attachments_v1.0.0": {
       "numeric_detection": true,
       "_meta": {
         "_owner": "indico@cern.ch"
@@ -45,6 +45,19 @@
         "creation_date": {
           "type": "date",
           "format": "YYYY-MM-DDZHH:MM"
+        },
+        "filename": {
+          "type": "text",
+          "fields": {
+            "english": {
+              "type": "text",
+              "analyzer": "english"
+            },
+            "french": {
+              "type": "text",
+              "analyzer": "french"
+            }
+          }
         },
         "content": {
           "type": "text",

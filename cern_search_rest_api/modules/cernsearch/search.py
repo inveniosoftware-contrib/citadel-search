@@ -106,6 +106,7 @@ def search_factory(self, search: RecordCERNSearch, query_parser=None):
             return Q(
                 'query_string',
                 query=qstr,
+                default_field='_data.*',
                 rewrite="scoring_boolean",  # calculates score for wildcards queries
                 type=multifields_type
             )

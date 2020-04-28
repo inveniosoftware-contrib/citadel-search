@@ -133,7 +133,7 @@ RECORDS_REST_ENDPOINTS = dict(
 )
 
 RECORDS_REST_FACETS = {
-    'webservices': {
+    'cernsearchqa-webservices': {
         'aggs': {
             'collection': {
                 'terms': {'field': 'collection'}
@@ -154,7 +154,7 @@ RECORDS_REST_FACETS = {
 }
 
 RECORDS_REST_SORT_OPTIONS = {
-    'webservices': {
+    'cernsearchqa-webservices': {
         'bestmatch': {
             'fields': ['-_score'],
             'title': 'Best match',
@@ -166,7 +166,7 @@ RECORDS_REST_SORT_OPTIONS = {
             'default_order': 'asc',
         }
     },
-    'edms': {
+    'cernsearchqa-edms': {
         'bestmatch': {
             'fields': ['-_score'],
             'title': 'Best match',
