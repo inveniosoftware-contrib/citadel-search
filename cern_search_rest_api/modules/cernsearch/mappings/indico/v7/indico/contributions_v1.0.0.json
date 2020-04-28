@@ -1,0 +1,104 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_text": true,
+    "index.mapping.total_fields.limit": 50,
+    "index.query.default_field" : ["_data.*"]
+  },
+  "mappings": {
+    "numeric_detection": true,
+    "properties": {
+      "_access": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "keyword"
+          },
+          "read": {
+            "type": "keyword"
+          },
+          "update": {
+            "type": "keyword"
+          },
+          "delete": {
+            "type": "keyword"
+          }
+        }
+      },
+      "id": {
+        "type": "keyword"
+      },
+      "category_path": {
+        "type": "keyword"
+      },
+      "event_id": {
+        "type": "keyword"
+      },
+      "creation_date": {
+        "type": "date",
+        "format": "YYYY-MM-DDZHH:MM"
+      },
+      "start_date": {
+        "type": "date",
+        "format": "YYYY-MM-DDZHH:MM"
+      },
+      "end_date": {
+        "type": "date",
+        "format": "YYYY-MM-DDZHH:MM"
+      },
+      "location": {
+        "type": "text"
+      },
+      "title": {
+        "type": "text",
+        "fields": {
+          "english": {
+            "type": "text",
+            "analyzer": "english"
+          },
+          "french": {
+            "type": "text",
+            "analyzer": "french"
+          }
+        }
+      },
+      "description": {
+        "type": "text",
+        "fields": {
+          "english": {
+            "type": "text",
+            "analyzer": "english"
+          },
+          "french": {
+            "type": "text",
+            "analyzer": "french"
+          }
+        }
+      },
+      "list_of_persons": {
+        "type": "nested",
+        "properties": {
+          "name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "affiliation": {
+            "type": "text"
+          },
+          "role": {
+            "type": "keyword"
+          }
+        }
+      },
+      "custom_pid": {
+        "type": "keyword"
+      },
+      "$schema": {
+        "type": "keyword"
+      }
+    }
+  }
+}
