@@ -1,0 +1,107 @@
+{
+  "title": "EDMS Object Type Item schema v2.0.0",
+  "id": "http://0.0.0.0:5000/schemas/edms/item_v2.0.0.json",
+  "$schema": "http://0.0.0.0:5000/schemas/edms/item_v2.0.0.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "_data": {
+      "type": "object",
+      "properties": {
+        "item_id": {
+          "type": "string"
+        },
+        "version": {
+          "type": "string"
+        },
+        "item_id_version": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "equipment_code": {
+          "type": "string"
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "context_id": {
+              "type": "string"
+            }
+          }
+        }
+      }
+    },
+    "cid": {
+      "type": "integer"
+    },
+    "owner": {
+      "type": "string"
+    },
+    "group": {
+      "type": "string"
+    },
+    "object_type": {
+      "type": "string"
+    },
+    "status": {
+      "type": "string"
+    },
+    "latest_version": {
+      "type": "boolean"
+    },
+    "obsolete": {
+      "type": "boolean"
+    },
+    "release_procedure": {
+      "type": "string"
+    },
+    "creation_date": {
+      "type": "string"
+    },
+    "modification_date": {
+      "type": "string"
+    },
+    "control_number": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}
