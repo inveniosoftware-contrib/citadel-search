@@ -108,8 +108,7 @@
         "type": "date"
       },
       "control_number": {
-        "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "type": "keyword"
       },
       "$schema": {
         "enabled": false
