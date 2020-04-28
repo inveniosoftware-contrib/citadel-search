@@ -1,0 +1,158 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_text": true,
+    "index.mapping.total_fields.limit": 500,
+    "index.query.default_field": [
+      "_data.*"
+    ],
+    "analysis": {
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "filter": [
+            "lowercase"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "numeric_detection": true,
+    "properties": {
+      "_access": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "keyword"
+          },
+          "read": {
+            "type": "keyword"
+          },
+          "update": {
+            "type": "keyword"
+          },
+          "delete": {
+            "type": "keyword"
+          }
+        }
+      },
+      "_data": {
+        "type": "object",
+        "properties": {
+          "project_id": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer",
+            "boost": 2
+          },
+          "name": {
+            "type": "text",
+            "boost": 1.5,
+            "fields": {
+              "english": {
+                "type": "text",
+                "boost": 1.5,
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "boost": 1.5,
+                "analyzer": "french"
+              },
+              "exact_match": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer",
+                "boost": 1.5
+              }
+            }
+          },
+          "description": {
+            "type": "text",
+            "boost": 1.25,
+            "fields": {
+              "english": {
+                "type": "text",
+                "boost": 1.25,
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "boost": 1.25,
+                "analyzer": "french"
+              }
+            }
+          },
+          "context": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              },
+              "context_id": {
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
+              }
+            }
+          },
+          "responsible": {
+            "type": "text",
+            "boost": 1.25,
+            "fields": {
+              "english": {
+                "type": "text",
+                "boost": 1.25,
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "boost": 1.25,
+                "analyzer": "french"
+              }
+            }
+          },
+          "equipment_code": {
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer",
+            "boost": 1.6
+          }
+        }
+      },
+      "cid": {
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
+      },
+      "owner": {
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
+      },
+      "group": {
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
+      },
+      "object_type": {
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
+      },
+      "creation_date": {
+        "type": "date",
+        "format": "yyyy-MM-dd'T'HH:mm:ss"
+      },
+      "modification_date": {
+        "type": "date",
+        "format": "yyyy-MM-dd'T'HH:mm:ss"
+      },
+      "_updated": {
+        "type": "date"
+      },
+      "_created": {
+        "type": "date"
+      },
+      "control_number": {
+        "type": "keyword"
+      },
+      "$schema": {
+        "enabled": false
+      }
+    }
+  }
+}
