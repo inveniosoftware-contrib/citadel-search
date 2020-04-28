@@ -1,6 +1,13 @@
 Changes
 =======
 
+**Version 1.1.0-beta (released 2020-04-28)**
+
+Changes:
+- [SEARCH-67] Migrate to ES v7
+
+----
+
 **Version 1.0.9-beta (released 2020-04-16)**
 
 Changes:
