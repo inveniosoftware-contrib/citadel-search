@@ -46,6 +46,7 @@ invenio-files-processor = {extras = ["tika"],git = "https://github.com/carantune
 Werkzeug = ">=0.15,<1.0.0"
 pip = "*"
 eventlet = "*"
+wtforms = "<2.3.0"
 
 [requires]
 python_version = "3.6"
