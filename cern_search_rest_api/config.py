@@ -143,12 +143,20 @@ RECORDS_REST_FACETS = {
             },
             'authors': {
                 'terms': {'field': '_data.authors.exact_match'}
-            }
+            },
+            'sites': {
+                'terms': {'field': '_data.site.exact_match'}
+            },
+            'file_extension': {
+                'terms': {'field': 'fileextension'}
+            },
         },
         'post_filters': {
             'collection': terms_filter("collection"),
             'type_format': terms_filter("type_format"),
-            'authors': terms_filter("_data.authors.exact_match")
+            'authors': terms_filter("_data.authors.exact_match"),
+            'sites': terms_filter("_data.site.exact_match"),
+            'file_extension': terms_filter("fileextension")
         }
     }
 }
