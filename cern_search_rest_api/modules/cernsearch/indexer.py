@@ -16,6 +16,8 @@ from invenio_files_rest.storage import FileStorage
 from invenio_indexer.api import RecordIndexer
 
 READ_MODE_BINARY = 'rb'
+READ_WRITE_MODE_BINARY = 'rb+'
+
 CONTENT_KEY = 'content'
 FILE_KEY = 'file'
 DATA_KEY = '_data'
@@ -42,28 +44,44 @@ def index_file_content(sender, json=None, record: CernSearchRecord = None, index
         current_app.logger.debug(f"Index file content {file_obj.obj.basename} in {record.id}")
 
         storage = file_obj.obj.file.storage()  # type: FileStorage
-        fp = storage.open(mode=READ_MODE_BINARY)
 
-        try:
-            file_content = json_lib.load(fp)
-            json[DATA_KEY][CONTENT_KEY] = file_content['content']
-            json[FILE_KEY] = file_obj.obj.basename
+        file_content = bc_file_content(storage)
+        json[DATA_KEY][CONTENT_KEY] = file_content['content']
+        json[FILE_KEY] = file_obj.obj.basename
 
-            if current_app.config.get('PROCESS_FILE_META'):
-                metadata = extract_metadata_from_processor(file_content['metadata'])
+        if current_app.config.get('PROCESS_FILE_META'):
+            metadata = extract_metadata_from_processor(file_content['metadata'])
 
-                if metadata.get('authors'):
-                    json[DATA_KEY][AUTHORS_KEY] = metadata.get('authors')
-                if metadata.get('content_type'):
-                    json[COLLECTION_KEY] = metadata['content_type']
-                if metadata.get('title'):
-                    json[DATA_KEY][NAME_KEY] = metadata['title']
-                if metadata.get('keywords'):
-                    json[DATA_KEY][KEYWORDS_KEY] = metadata['keywords']
-                if metadata.get('creation_date'):
-                    json[CREATION_KEY] = metadata['creation_date']
-        finally:
-            fp.close()
+            if metadata.get('authors'):
+                json[DATA_KEY][AUTHORS_KEY] = metadata.get('authors')
+            if metadata.get('content_type'):
+                json[COLLECTION_KEY] = metadata['content_type']
+            if metadata.get('title'):
+                json[DATA_KEY][NAME_KEY] = metadata['title']
+            if metadata.get('keywords'):
+                json[DATA_KEY][KEYWORDS_KEY] = metadata['keywords']
+            if metadata.get('creation_date'):
+                json[CREATION_KEY] = metadata['creation_date']
 
         # Index first or none
         break
+
+
+def bc_file_content(storage):
+    """Get file content: backward compatible with files without metadata.
+
+    Except clause can be removed after:
+    https://its.cern.ch/jira/browse/SEARCH-84
+    """
+    try:
+        with storage.open(mode=READ_MODE_BINARY) as fp:
+            return json_lib.load(fp)
+    except ValueError:
+        with storage.open(mode=READ_WRITE_MODE_BINARY) as fp:
+            file_content = fp.read().decode()
+            file_content = {'content': file_content}
+
+            fp.seek(0)
+            fp.write(json_lib.dumps(file_content).encode())
+
+            return file_content

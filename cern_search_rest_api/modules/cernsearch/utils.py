@@ -83,7 +83,10 @@ def extract_metadata_from_processor(metadata):
     if metadata.get('title'):
         extracted['title'] = metadata['title']
     if metadata.get('Keywords'):
-        extracted['keywords'] = metadata['Keywords'].split(",")
+        keywords = metadata['Keywords']
+        if not isinstance(keywords, list):
+            keywords = keywords.split(",")
+        extracted['keywords'] = keywords
     if metadata.get('Creation-Date'):
         extracted['creation_date'] = metadata['Creation-Date']
 
