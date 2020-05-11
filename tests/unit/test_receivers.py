@@ -46,17 +46,18 @@ def test_file_processed_listener(
     record = CernSearchRecord.get_record(record_with_file.id)
     record_from_object_version_mock.return_value = record
     file = record_with_file.files['hello.txt']
+    data = dict(content='    A simple frase.     With some empty space.   ')
     file_processed_listener(
         app=base_app,
         processor_id='some-processor',
         file=file.obj,
-        data=dict(content='    A simple frase.     With some empty space.   ')
+        data=data
     )
 
     record_from_object_version_mock.assert_called_once_with(file.obj)
     persist_file_content_mock.assert_called_once_with(
         record,
-        'A simple frase. With some empty space.',
+        data,
         file.obj.basename
     )
     record_indexer_mock.assert_called_once()

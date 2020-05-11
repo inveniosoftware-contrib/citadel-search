@@ -31,14 +31,8 @@
           "title": {
             "type": "keyword"
           },
-          "_attachment": {
-            "dynamic": true,
-            "type": "object",
-            "properties": {
-              "_content": {
-                "type": "text"
-              }
-            }
+          "content": {
+            "type": "text"
           }
         }
       },
@@ -48,10 +42,10 @@
       "_bucket_content": {
         "type": "keyword"
       },
-      "_file": {
+      "file": {
         "type": "keyword"
       },
-      "_url": {
+      "url": {
         "type": "keyword"
       },
       "_updated": {

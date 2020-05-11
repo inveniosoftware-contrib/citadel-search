@@ -28,7 +28,7 @@ def test_file_ops(app, appctx, db, client, user, location):
         "_data": {
             "title": "Test default search field",
         },
-        "_url": "my-domain.com/my-file",
+        "url": "my-domain.com/my-file",
         "$schema": get_schemas_endpoint("test/file_v0.0.4.json")
     }
 
@@ -72,7 +72,7 @@ def test_file_ops(app, appctx, db, client, user, location):
         res_json = get_json(res, code=HTTPStatus.OK)
         assert bucket == res_json['metadata']['_bucket']
         assert bucket_content == res_json['metadata']['_bucket_content']
-        assert body['_url'] == res_json['metadata']['_url']
+        assert body['url'] == res_json['metadata']['url']
 
         # Get file content
         res = client.get(url, headers=headers)
@@ -90,8 +90,8 @@ def test_file_ops(app, appctx, db, client, user, location):
         res_hits = res.json['hits']
 
         assert res_hits.get('total') == 1
-        assert case['name'] == res_hits['hits'][0]['metadata']['_file']
-        assert case['content'].decode() == res_hits['hits'][0]['metadata']['_data']['_attachment']['_content']
+        assert case['name'] == res_hits['hits'][0]['metadata']['file']
+        assert case['content'].decode() in res_hits['hits'][0]['metadata']['_data']['content']
 
     file_url = f"/record/{control_number}/files/{second_file}"
 
@@ -128,13 +128,13 @@ def test_file_ops(app, appctx, db, client, user, location):
     assert_file(res, third_file_content, HTTPStatus.OK)
 
     # Update records mantains file content
-    body['_url'] = "my-domain-changed.com/cdn/my-file"
+    body['url'] = "my-domain-changed.com/cdn/my-file"
 
     res = client.put(f'/record/{control_number}', headers=get_headers(), data=json.dumps(body))
     res_json = get_json(res, code=HTTPStatus.OK)
     assert bucket == res_json['metadata']['_bucket']
     assert bucket_content == res_json['metadata']['_bucket_content']
-    assert body['_url'] == res_json['metadata']['_url']
+    assert body['url'] == res_json['metadata']['url']
 
     res = client.get(file_url, headers=headers)
     assert_file(res, third_file_content, HTTPStatus.OK)
