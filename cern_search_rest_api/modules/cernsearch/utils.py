@@ -8,6 +8,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Helper methods for CERN Search records."""
+import re
 
 from elasticsearch import VERSION as ES_VERSION
 from flask import current_app, g
@@ -69,3 +70,43 @@ def default_record_to_mapping(record):
         return mapping[doc_type]['mappings'][doc]
 
     return None
+
+
+def extract_metadata_from_processor(metadata):
+    """Prepare metadata from processor."""
+    extracted = {}
+
+    if metadata.get('Author'):
+        extracted['authors'] = clean_metadata_authors(metadata['Author'])
+    if metadata.get('Content-Type'):
+        extracted['content_type'] = metadata['Content-Type']
+    if metadata.get('title'):
+        extracted['title'] = metadata['title']
+    if metadata.get('Keywords'):
+        extracted['keywords'] = metadata['Keywords'].split(",")
+    if metadata.get('Creation-Date'):
+        extracted['creation_date'] = metadata['Creation-Date']
+
+    return extracted
+
+
+def clean_metadata_authors(authors):
+    """Prepare list of authors."""
+    if not isinstance(authors, list):
+        authors = clean_region(authors)
+        authors = clean_newlines(authors)
+        authors = authors.split(",")
+
+    authors = [re.sub('^(and )', '', author).strip(' ') for author in authors]
+
+    return authors
+
+
+def clean_newlines(text):
+    """Remove newlines from text."""
+    return re.sub(r'\s+', " ", text)
+
+
+def clean_region(text):
+    """Remove region from text, eg. Author, A. [Geneva]."""
+    return re.sub(r'\[.*\]', "", text)

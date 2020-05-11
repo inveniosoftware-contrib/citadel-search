@@ -182,6 +182,19 @@
         "type": "date",
         "format": "strict_date_optional_time||epoch_millis"
       },
+      "creation_date": {
+        "type": "date",
+        "format": "strict_date_optional_time||epoch_millis"
+      },
+      "_bucket": {
+        "enabled": false
+      },
+      "_bucket_content": {
+        "type": "keyword"
+      },
+      "file": {
+        "type": "keyword"
+      },
       "url": {
         "type": "text",
         "analyzer": "url_analyzer",

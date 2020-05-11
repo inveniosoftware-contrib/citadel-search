@@ -147,16 +147,12 @@ RECORDS_REST_FACETS = {
             'sites': {
                 'terms': {'field': '_data.site.exact_match'}
             },
-            'file_extension': {
-                'terms': {'field': 'fileextension'}
-            },
         },
         'post_filters': {
             'collection': terms_filter("collection"),
             'type_format': terms_filter("type_format"),
             'authors': terms_filter("_data.authors.exact_match"),
-            'sites': terms_filter("_data.site.exact_match"),
-            'file_extension': terms_filter("fileextension")
+            'sites': terms_filter("_data.site.exact_match")
         }
     }
 }
@@ -262,3 +258,6 @@ SEARCH_CLIENT_CONFIG = dict(
     # allow up to 25 connections to each node
     maxsize=int(os.getenv("ELASTICSEARCH_MAX_SIZE", 5)),
 )
+
+# FILE
+PROCESS_FILE_META = ast.literal_eval(os.getenv("CERN_SEARCH_PROCESS_FILE_META", 'False'))

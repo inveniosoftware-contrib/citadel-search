@@ -10,19 +10,21 @@
 import json as json_lib
 
 from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
+from cern_search_rest_api.modules.cernsearch.utils import extract_metadata_from_processor
 from flask import current_app
 from invenio_files_rest.storage import FileStorage
 from invenio_indexer.api import RecordIndexer
 
 READ_MODE_BINARY = 'rb'
-ATTACHMENT_KEY = '_attachment'
-FILE_KEY = '_file'
+CONTENT_KEY = 'content'
+FILE_KEY = 'file'
 DATA_KEY = '_data'
 AUTHORS_KEY = 'authors'
-FILE_EXT_KEY = 'fileextension'
+COLLECTION_KEY = 'collection'
 NAME_KEY = 'name'
 KEYWORDS_KEY = 'keywords'
 CREATION_KEY = 'creation_date'
+
 
 class CernSearchRecordIndexer(RecordIndexer):
     """Record Indexer."""
@@ -44,21 +46,22 @@ def index_file_content(sender, json=None, record: CernSearchRecord = None, index
 
         try:
             file_content = json_lib.load(fp)
-            json[DATA_KEY][ATTACHMENT_KEY] = dict(_content=file_content['content'])
+            json[DATA_KEY][CONTENT_KEY] = file_content['content']
             json[FILE_KEY] = file_obj.obj.basename
 
-            if(True):
-                metadata = file_content['metadata']
-                if metadata.get('Author'):
-                    json[DATA_KEY][AUTHORS_KEY] = metadata['Author']
-                if metadata.get('Content-Type'):
-                    json[FILE_EXT_KEY] = metadata['Content-Type']
+            if current_app.config.get('PROCESS_FILE_META'):
+                metadata = extract_metadata_from_processor(file_content['metadata'])
+
+                if metadata.get('authors'):
+                    json[DATA_KEY][AUTHORS_KEY] = metadata.get('authors')
+                if metadata.get('content_type'):
+                    json[COLLECTION_KEY] = metadata['content_type']
                 if metadata.get('title'):
                     json[DATA_KEY][NAME_KEY] = metadata['title']
-                if metadata.get('Keywords'):
-                    json[DATA_KEY][KEYWORDS_KEY] = metadata['Keywords']
-                if metadata.get('Creation-Date'):
-                    json[CREATION_KEY] = metadata['Creation-Date']
+                if metadata.get('keywords'):
+                    json[DATA_KEY][KEYWORDS_KEY] = metadata['keywords']
+                if metadata.get('creation_date'):
+                    json[CREATION_KEY] = metadata['creation_date']
         finally:
             fp.close()
 
