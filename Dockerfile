@@ -27,10 +27,15 @@ RUN chmod 666 /${WORKING_DIR}/src/uwsgi.pid
 # Patch auth
 RUN sh /${WORKING_DIR}/src/scripts/patch/oauth_patch.sh
 
+ENV LOGS_DIR=/var/log
+RUN mkdir -p ${LOGS_DIR}
+RUN chown -R invenio:root ${LOGS_DIR}
+
+# Tika default logs dir
+ENV TIKA_LOG_PATH=${LOGS_DIR}
+
 # Install UI
 USER invenio
-
-
 RUN invenio collect -v
 RUN invenio webpack buildall
 # Move static files to instance folder

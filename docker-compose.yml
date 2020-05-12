@@ -22,7 +22,6 @@ services:
       interval: 30s
       timeout: 10s
       retries: 5
-      start_period: 30s
 
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:7.1.1
@@ -43,21 +42,19 @@ services:
 
   postgres:
     image: centos/postgresql-95-centos7
-    environment:
-      - POSTGRESQL_USER
-      - POSTGRESQL_PASSWORD
-      - POSTGRESQL_DATABASE
     volumes:
       - pgsql-data:/var/lib/pgsql/data
     networks:
       - default
     ports:
       - 5432:5432
+    env_file:
+      - .pipenv.env
 
   rabbitmq:
     image: rabbitmq:3.8.2-management
     env_file:
-      - .env
+      - .pipenv.env
     restart: "always"
     ports:
       - "15672:15672"
@@ -69,7 +66,6 @@ services:
       interval: 60s
       timeout: 10s
       retries: 3
-      start_period: 20s
 
   tika:
     image: apache/tika:1.24
