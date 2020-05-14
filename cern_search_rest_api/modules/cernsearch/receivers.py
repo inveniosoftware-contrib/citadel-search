@@ -11,10 +11,10 @@ from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
 from cern_search_rest_api.modules.cernsearch.files import (delete_all_record_files, delete_file_instance,
                                                            delete_previous_record_file_if_exists, delete_record_file,
                                                            persist_file_content, record_from_object_version)
+from cern_search_rest_api.modules.cernsearch.indexer import CernSearchRecordIndexer
 from cern_search_rest_api.modules.cernsearch.tasks import process_file_async
 from flask import current_app
 from invenio_files_rest.models import ObjectVersion
-from invenio_indexer.api import RecordIndexer
 
 
 def file_uploaded_listener(obj: ObjectVersion = None):
@@ -38,7 +38,7 @@ def file_processed_listener(app, processor_id, file: ObjectVersion, data):
     record = record_from_object_version(file)
 
     persist_file_content(record, file_content, file.basename)
-    RecordIndexer().index(record)
+    CernSearchRecordIndexer().index(record)
     # delete file from filesystem only after indexing successfully
     delete_file_instance(file)
 
@@ -49,7 +49,7 @@ def file_deleted_listener(obj: ObjectVersion = None):
 
     delete_record_file(obj)
     record = record_from_object_version(obj)
-    RecordIndexer().index(record)
+    CernSearchRecordIndexer().index(record)
 
 
 def record_deleted_listener(sender, record: CernSearchRecord, *args, **kwargs):

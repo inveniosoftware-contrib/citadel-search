@@ -31,7 +31,7 @@ def test_file_uploaded_listener(
 
 
 @patch('cern_search_rest_api.modules.cernsearch.receivers.delete_file_instance')
-@patch('cern_search_rest_api.modules.cernsearch.receivers.RecordIndexer')
+@patch('cern_search_rest_api.modules.cernsearch.receivers.CernSearchRecordIndexer')
 @patch('cern_search_rest_api.modules.cernsearch.receivers.persist_file_content')
 @patch('cern_search_rest_api.modules.cernsearch.receivers.record_from_object_version')
 def test_file_processed_listener(
@@ -63,7 +63,7 @@ def test_file_processed_listener(
     delete_file_mock.assert_called_once_with(file.obj)
 
 
-@patch('cern_search_rest_api.modules.cernsearch.receivers.RecordIndexer')
+@patch('cern_search_rest_api.modules.cernsearch.receivers.CernSearchRecordIndexer')
 @patch('cern_search_rest_api.modules.cernsearch.receivers.delete_record_file')
 @patch('cern_search_rest_api.modules.cernsearch.receivers.record_from_object_version')
 def test_file_deleted_listener(

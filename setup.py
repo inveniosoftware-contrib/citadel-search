@@ -46,6 +46,9 @@ setup(
     include_package_data=True,
     platforms='any',
     entry_points={
+        'console_scripts': [
+            'cern_search_rest_api = invenio_app.cli:cli',
+        ],
         'invenio_config.module': [
             'cern_search_rest_api = cern_search_rest_api.config'
         ],
@@ -74,7 +77,10 @@ setup(
         ],
         'invenio_celery.tasks': [
             'cern-search = cern_search_rest_api.modules.cernsearch.tasks'
-        ]
+        ],
+        'flask.commands': [
+            'utils = cern_search_rest_api.modules.cernsearch.cli:utils'
+        ],
     },
     classifiers=[
         'Environment :: Web Environment',
