@@ -1,6 +1,16 @@
 Changes
 =======
 
+**Version 1.2-beta (released 2020-05-14)**
+
+Changes:
+- [SEARCH-85] Fix reindex cli
+    - Instead of `invenio index reindex -t recid` now should use `invenio utils reindex -t recid`
+    - Instead of `invenio index run` now should use `invenio utils runindex`
+- [NI] fix indico jonschemas
+
+---- 
+
 **Version 1.1.2-beta (released 2020-05-14)**
 
 Changes:
