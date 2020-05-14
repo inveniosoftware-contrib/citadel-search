@@ -1,6 +1,14 @@
 Changes
 =======
 
+**Version 1.1.2-beta (released 2020-05-14)**
+
+Changes:
+- Update full compose
+- [SEARCH-67] Remove binary mappings
+
+---- 
+
 **Version 1.1.1-beta (released 2020-04-28)**
 
 Changes:
