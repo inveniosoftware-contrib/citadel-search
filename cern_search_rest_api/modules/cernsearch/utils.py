@@ -86,6 +86,9 @@ def extract_metadata_from_processor(metadata):
         keywords = metadata['Keywords']
         if not isinstance(keywords, list):
             keywords = keywords.split(",")
+
+        # strip
+        keywords = [keyword.strip(' ') for keyword in keywords]
         extracted['keywords'] = keywords
     if metadata.get('Creation-Date'):
         extracted['creation_date'] = metadata['Creation-Date']
@@ -98,11 +101,24 @@ def clean_metadata_authors(authors):
     if not isinstance(authors, list):
         authors = clean_region(authors)
         authors = clean_newlines(authors)
-        authors = authors.split(",")
+        authors = re.split("[,;]", authors)
 
-    authors = [re.sub('^(and )', '', author).strip(' ') for author in authors]
+    authors = [author for author in map(clean_author, authors) if filter_author(author)]
 
     return authors
+
+
+def clean_author(author):
+    """Clean author name."""
+    # remove "and " from name eg "and J. Doe"
+    # strip
+    return re.sub('^(and )', '', author).strip(' ')
+
+
+def filter_author(author):
+    """Filter valid author."""
+    # remove one words, ie "Geneva"
+    return " " in author
 
 
 def clean_newlines(text):
