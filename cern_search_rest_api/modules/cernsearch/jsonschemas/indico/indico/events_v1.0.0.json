@@ -1,7 +1,7 @@
 {
-  "title": "Indico Contributions schema v1.0.0",
-  "id": "http://localhost:5000/schemas/indico/contributions_v1.0.0.json",
-  "$schema": "http://localhost:5000/schemas/indico/contributions_v1.0.0.json",
+  "title": "Indico Event schema v1.0.0",
+  "id": "http://localhost:5000/schemas/indico/events_v1.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/events_v1.0.0.json",
   "type": "object",
   "properties": {
     "_access": {
@@ -35,62 +35,55 @@
     },
     "id": {
       "type": "string",
-      "description": "Contributions id."
+      "description": "Event id."
     },
     "category_path": {
       "type": "array",
       "items": {
         "type": "string"
       },
-      "description": "Contributions category path (ordered array)."
+      "description": "Event category path (ordered array)."
     },
-    "event_id": {
+    "event_type": {
       "type": "string",
-      "description": "Event id."
+      "description": "Event type."
     },
     "creation_date": {
       "type": "string",
-      "description": "Contributions creation date."
+      "description": "Event creation date."
     },
     "start_date": {
       "type": "string",
-      "description": "Contributions start date."
+      "description": "Event start date."
     },
     "end_date": {
       "type": "string",
-      "description": "Contributions end date."
+      "description": "Event end date."
     },
     "location": {
       "type": "string",
-      "description": "Contributions location."
+      "description": "Event location."
     },
     "title": {
       "type": "string",
-      "description": "Contributions title."
+      "description": "Event title."
     },
     "description": {
       "type": "string",
-      "description": "Contributions description."
+      "description": "Event description."
     },
-    "list_of_persons": {
+    "speakers_chairs": {
       "type": "array",
       "items": {
         "type": "object",
         "properties": {
           "name": {
             "type": "string",
-            "description": "Contributions person's name."
+            "description": "Event speaker/chair name."
           },
           "affiliation": {
             "type": "string",
-            "description": "Contributions person's affiliation."
-          },
-          "role": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Contributions person's role(s)."
+            "description": "Event speaker/chair affiliation."
           }
         }
       }
