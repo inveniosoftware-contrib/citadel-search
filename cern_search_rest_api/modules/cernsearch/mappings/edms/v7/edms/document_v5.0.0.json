@@ -2,7 +2,19 @@
   "settings": {
     "index.percolator.map_unmapped_fields_as_text": true,
     "index.mapping.total_fields.limit": 500,
-    "index.query.default_field" : ["_data.*"]
+    "index.query.default_field": [
+      "_data.*"
+    ],
+    "analysis": {
+      "normalizer": {
+        "lowercase_normalizer": {
+          "type": "custom",
+          "filter": [
+            "lowercase"
+          ]
+        }
+      }
+    }
   },
   "mappings": {
     "dynamic": "strict",
@@ -30,66 +42,72 @@
         "properties": {
           "document_id": {
             "type": "keyword",
-            "boost": 20
+            "normalizer": "lowercase_normalizer",
+            "boost": 2
           },
           "document_id_version": {
             "type": "keyword",
-            "boost": 20
+            "normalizer": "lowercase_normalizer",
+            "boost": 2
           },
           "cern_id": {
             "type": "keyword",
-            "boost": 20
+            "normalizer": "lowercase_normalizer",
+            "boost": 2
           },
           "cern_id_version": {
             "type": "keyword",
-            "boost": 20
+            "normalizer": "lowercase_normalizer",
+            "boost": 2
           },
           "external_reference": {
             "type": "text",
-            "boost": 8,
+            "boost": 1.5,
             "fields": {
               "exact_match": {
                 "type": "keyword",
-                "boost": 8
+                "normalizer": "lowercase_normalizer",
+                "boost": 1.5
               }
             }
           },
           "version": {
             "type": "keyword",
-            "boost": 1
+            "normalizer": "lowercase_normalizer"
           },
           "title": {
             "type": "text",
-            "boost": 8,
+            "boost": 1.5,
             "fields": {
               "english": {
                 "type": "text",
-                "boost": 8,
+                "boost": 1.5,
                 "analyzer": "english"
               },
               "french": {
                 "type": "text",
-                "boost": 8,
+                "boost": 1.5,
                 "analyzer": "french"
               },
               "exact_match": {
                 "type": "keyword",
-                "boost": 8
+                "normalizer": "lowercase_normalizer",
+                "boost": 1.5
               }
             }
           },
           "description": {
             "type": "text",
-            "boost": 4,
+            "boost": 1.25,
             "fields": {
               "english": {
                 "type": "text",
-                "boost": 4,
+                "boost": 1.25,
                 "analyzer": "english"
               },
               "french": {
                 "type": "text",
-                "boost": 4,
+                "boost": 1.25,
                 "analyzer": "french"
               }
             }
@@ -99,93 +117,109 @@
             "properties": {
               "full_name": {
                 "type": "text",
-                "boost": 2
+                "boost": 1.2
               },
               "email": {
                 "type": "text",
-                "boost": 2
+                "boost": 1.2
               }
             }
           },
           "keywords": {
             "type": "text",
-            "boost": 6,
+            "boost": 1.4,
             "fields": {
               "english": {
                 "type": "text",
                 "analyzer": "english",
-                "boost": 6
+                "boost": 1.4
               },
               "french": {
                 "type": "text",
                 "analyzer": "french",
-                "boost": 6
+                "boost": 1.4
               },
               "exact_match": {
                 "type": "keyword",
-                "boost": 6
+                "normalizer": "lowercase_normalizer",
+                "boost": 1.4
               }
             }
           },
           "equipment_code": {
             "type": "keyword",
-            "boost": 6
+            "normalizer": "lowercase_normalizer",
+            "boost": 1.4
           }
         }
       },
       "cid": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
       },
       "owner": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
       },
       "group": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
       },
       "object_type": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
       },
       "parents": {
         "type": "object",
         "properties": {
           "parent_type": {
-            "type": "keyword"
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
           },
           "parent_id": {
-            "type": "keyword"
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
           }
         }
       },
       "status": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
       },
       "latest_version": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
       },
       "obsolete": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
       },
       "context": {
         "type": "object",
         "properties": {
           "name": {
-            "type": "keyword"
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
           },
           "context_id": {
-            "type": "keyword"
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
           }
         }
       },
       "document_type": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
       },
       "release_procedure": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
       },
       "object_properties": {
         "properties": {
           "name": {
-            "type": "keyword"
+            "type": "keyword",
+            "normalizer": "lowercase_normalizer"
           },
           "value": {
             "type": "text",
@@ -199,14 +233,16 @@
                 "analyzer": "french"
               },
               "exact_match": {
-                "type": "keyword"
+                "type": "keyword",
+                "normalizer": "lowercase_normalizer"
               }
             }
           }
         }
       },
       "attributes": {
-        "type": "keyword"
+        "type": "keyword",
+        "normalizer": "lowercase_normalizer"
       },
       "creation_date": {
         "type": "date",
