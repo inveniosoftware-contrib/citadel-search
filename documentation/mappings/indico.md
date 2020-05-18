@@ -27,8 +27,8 @@ The first version of the _Events_ mapping stores the information about an Indico
    * __title__: Title of the event. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analyzis helps improve query relevance.
    * __description__: Description of the event. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
    * __speakers_chairs__: Speakers/charimans of the event. Stored as a nested object (This field cannot be flatten since the searches are done for a specific person of a specific organization.) with two fields:
-	- __name__: Name of the speaker/chairman. Stored both as keyword and text, for exact match and full-text search.
-	- __affiliation__: Affiliation of the speaker/chairman. Stored as text for full-text search.
+      * __name__: Name of the speaker/chairman. Stored both as keyword and text, for exact match and full-text search.
+      * __affiliation__: Affiliation of the speaker/chairman. Stored as text for full-text search.
    * __url__: URL to the event. 
 * __creation_date__: Creation date of the event. Stored as date with 'YYYY-MM-DDZHH:MM' format.
 * __start_date__: Starting date of the event. Stored as date with 'YYYY-MM-DDZHH:MM' format.
@@ -56,9 +56,9 @@ The first version of the _Contributions_ mapping stores the information about an
    * __title__: Title of the contribution. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analyzis helps improve query relevance.
    * __description__: Description of the contribution. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
    * __list_of_persons__: List of persons of the contribution. Stored as a nested object (This field cannot be flatten since the searches are done for a specific person of a specific organization or role) with two fields:
-	- __name__: Name of the person. Stored both as keyword and text, for exact match and full-text search.
-	- __affiliation__: Affiliation of the person. Stored as text for full-text search.
-	- __role__: Role(s) of the person. Stored as keyword for exact match.
+      * __name__: Name of the person. Stored both as keyword and text, for exact match and full-text search.
+      * __affiliation__: Affiliation of the person. Stored as text for full-text search.
+      * __role__: Role(s) of the person. Stored as keyword for exact match.
    * __url__: URL to the contribution. 
 * __creation_date__: Creation date of the contribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
 * __start_date__: Starting date of the contribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
@@ -87,9 +87,9 @@ The first version of the _Subcontributions_ mapping stores the information about
    * __title__: Title of the subcontribution. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analyzis helps improve query relevance.
    * __description__: Description of the subcontribution. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
    * __list_of_persons__: List of persons of the subcontribution. Stored as a nested object (This field cannot be flatten since the searches are done for a specific person of a specific organization or role) with two fields:
-	- __name__: Name of the person. Stored both as keyword and text, for exact match and full-text search.
-	- __affiliation__: Affiliation of the person. Stored as text for full-text search.
-	- __role__: Role(s) of the person. Stored as keyword for exact match.
+      * __name__: Name of the person. Stored both as keyword and text, for exact match and full-text search.
+      * __affiliation__: Affiliation of the person. Stored as text for full-text search.
+      * __role__: Role(s) of the person. Stored as keyword for exact match.
    * __url__: URL to the subcontribution. 
 * __creation_date__: Creation date of the subcontribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
 * __start_date__: Starting date of the subcontribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
