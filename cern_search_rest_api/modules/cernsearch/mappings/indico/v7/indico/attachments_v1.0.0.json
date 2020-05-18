@@ -2,7 +2,7 @@
   "settings": {
     "index.percolator.map_unmapped_fields_as_text": true,
     "index.mapping.total_fields.limit": 500,
-    "index.query.default_field" : ["_data.*"]
+    "index.query.default_field" : ["_data.*"],
     "index.highlight.max_analyzed_offset": 10000000,
     "analysis": {
       "tokenizer": {
