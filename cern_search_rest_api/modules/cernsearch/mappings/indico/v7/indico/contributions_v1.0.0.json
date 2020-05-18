@@ -1,8 +1,54 @@
 {
   "settings": {
     "index.percolator.map_unmapped_fields_as_text": true,
-    "index.mapping.total_fields.limit": 50,
-    "index.query.default_field" : ["_data.*"]
+    "index.mapping.total_fields.limit": 500,
+    "index.query.default_field" : ["_data.*"],
+    "index.highlight.max_analyzed_offset": 10000000,
+    "analysis": {
+      "tokenizer": {
+        "url_tokenizer": {
+          "type": "pattern",
+          "pattern": "\\.|(\\:\\/\\/)|\\/"
+        },
+        "autocomplete": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 20,
+          "token_chars": [
+            "letter"
+          ]
+        }
+      },
+      "filter":{
+        "url_stop": {
+          "type": "stop",
+          "stopwords": ["http", "https", "ftp", "www", "web", "cern", "ch", "fnal", "bnl", "gov"]
+        }
+      },
+      "analyzer": {
+        "url_analyzer": {
+          "type": "custom",
+          "tokenizer": "url_tokenizer",
+          "filter": ["url_stop"]
+        },
+        "autocomplete": {
+          "tokenizer": "autocomplete",
+          "filter": [
+            "lowercase"
+          ]
+        },
+        "autocomplete_search": {
+          "tokenizer": "lowercase"
+        }
+      },
+      "normalizer": {
+        "case_insensitive_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["lowercase", "asciifolding"]
+        }
+      }
+    }
   },
   "mappings": {
     "numeric_detection": true,
@@ -24,20 +70,92 @@
           }
         }
       },
-      "id": {
-        "type": "keyword"
-      },
-      "category_path": {
-        "type": "keyword"
-      },
-      "event_id": {
-        "type": "keyword"
-      },
+      "_data": {
+        "type": "object",
+        "properties": {
+		  "id": {
+			"type": "keyword"
+		  },
+		  "category_path": {
+			"type": "keyword"
+		  },
+		  "event_id": {
+			"type": "keyword"
+		  },
+		  "location": {
+			"type": "text",
+			"fields": {
+			  "english": {
+				"type": "text",
+				"analyzer": "english"
+			  },
+			  "french": {
+				"type": "text",
+				"analyzer": "french"
+			  }
+			}
+		  },
+		  "title": {
+			"type": "text",
+			"fields": {
+			  "english": {
+				"type": "text",
+				"analyzer": "english"
+			  },
+			  "french": {
+				"type": "text",
+				"analyzer": "french"
+			  }
+			}
+		  },
+		  "description": {
+			"type": "text",
+			"fields": {
+			  "english": {
+				"type": "text",
+				"analyzer": "english"
+			  },
+			  "french": {
+				"type": "text",
+				"analyzer": "french"
+			  }
+			}
+		  },
+          "list_of_persons": {
+            "type": "nested",
+            "properties": {
+              "name": {
+                "type": "text",
+                "fields": {
+                  "keyword": {
+                    "type": "keyword"
+                  }
+                }
+              },
+              "affiliation": {
+                "type": "text"
+              },
+              "role": {
+                "type": "keyword"
+              }
+            }
+          },
+		  "url": {
+			"type": "text",
+			"analyzer": "url_analyzer",
+			"fields": {
+			"exact_match": {
+			  "type": "keyword"
+			  }
+			}
+		  }
+        }
+	  },
       "creation_date": {
         "type": "date",
         "format": "YYYY-MM-DDZHH:MM"
       },
-      "start_date": {
+     "start_date": {
         "type": "date",
         "format": "YYYY-MM-DDZHH:MM"
       },
@@ -45,55 +163,13 @@
         "type": "date",
         "format": "YYYY-MM-DDZHH:MM"
       },
-      "location": {
-        "type": "text"
+      "_updated": {
+        "type": "date"
       },
-      "title": {
-        "type": "text",
-        "fields": {
-          "english": {
-            "type": "text",
-            "analyzer": "english"
-          },
-          "french": {
-            "type": "text",
-            "analyzer": "french"
-          }
-        }
+      "_created": {
+        "type": "date"
       },
-      "description": {
-        "type": "text",
-        "fields": {
-          "english": {
-            "type": "text",
-            "analyzer": "english"
-          },
-          "french": {
-            "type": "text",
-            "analyzer": "french"
-          }
-        }
-      },
-      "list_of_persons": {
-        "type": "nested",
-        "properties": {
-          "name": {
-            "type": "text",
-            "fields": {
-              "keyword": {
-                "type": "keyword"
-              }
-            }
-          },
-          "affiliation": {
-            "type": "text"
-          },
-          "role": {
-            "type": "keyword"
-          }
-        }
-      },
-      "custom_pid": {
+      "control_number": {
         "type": "keyword"
       },
       "$schema": {
