@@ -1,0 +1,122 @@
+{
+  "title": "Indico Contributions schema v2.0.0",
+  "id": "http://localhost:5000/schemas/indico/contributions_v2.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/contributions_v2.0.0.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "_data": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Contributions id."
+        },
+        "category_path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Contributions category path (ordered array)."
+        },
+        "event_id": {
+          "type": "string",
+          "description": "Event id."
+        },
+        "location": {
+          "type": "string",
+          "description": "Contributions location."
+        },
+        "title": {
+          "type": "string",
+          "description": "Contributions title."
+        },
+        "description": {
+          "type": "string",
+          "description": "Contributions description."
+        },
+        "list_of_persons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Contributions person's name."
+              },
+              "affiliation": {
+                "type": "string",
+                "description": "Contributions person's affiliation."
+              },
+              "role": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Contributions person's role(s)."
+              }
+            }
+          }
+        },
+        "url": {
+          "type": "string",
+          "description": "Full path Contribution URL"
+        }
+      }
+    },
+    "creation_date": {
+      "type": "string",
+      "description": "Contributions creation date."
+    },
+    "start_date": {
+      "type": "string",
+      "description": "Contributions start date."
+    },
+    "end_date": {
+      "type": "string",
+      "description": "Contributions end date."
+    },
+    "_updated": {
+      "type": "string",
+      "description": "Internal last updated datetime of the record"
+    },
+    "_created": {
+      "type": "string",
+      "description": "Internal creation datetime of the record"
+    },
+    "control_number": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}
