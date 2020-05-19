@@ -73,9 +73,9 @@
       "_data": {
         "type": "object",
         "properties": {
-					"id": {
-						"type": "keyword"
-					},
+          "id": {
+            "type": "keyword"
+          },
           "category_path": {
           	"type": "keyword"
           },
