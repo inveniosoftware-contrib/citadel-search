@@ -74,13 +74,13 @@
         "type": "object",
         "properties": {
           "id": {
-          "type": "keyword"
+            "type": "keyword"
           },
           "category_path": {
-          "type": "keyword"
+            "type": "keyword"
           },
           "event_type": {
-          "type": "keyword"
+            "type": "keyword"
           },
           "location": {
             "type": "text",
@@ -96,17 +96,17 @@
             }
           },
           "title": {
-          "type": "text",
-          "fields": {
-            "english": {
-              "type": "text",
-              "analyzer": "english"
-            },
-            "french": {
-              "type": "text",
-              "analyzer": "french"
+            "type": "text",
+            "fields": {
+              "english": {
+                "type": "text",
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "analyzer": "french"
+              }
             }
-          }
           },
           "description": {
             "type": "text",
@@ -138,8 +138,8 @@
             }
           },
           "url": {
-          "type": "text",
-          "analyzer": "url_analyzer",
+            "type": "text",
+            "analyzer": "url_analyzer",
             "fields": {
               "exact_match": {
                 "type": "keyword"
