@@ -77,40 +77,40 @@
             "type": "keyword"
           },
           "category_path": {
-          	"type": "keyword"
+            "type": "keyword"
           },
           "event_id": {
-          	"type": "keyword"
+            "type": "keyword"
           },
           "contribution_id": {
-          	"type": "keyword"
+            "type": "keyword"
           },
           "subcontribution_id": {
-          	"type": "keyword"
+            "type": "keyword"
           },
           "filename": {
-          	"type": "text",
-          	"fields": {
-            	"english": {
-              	"type": "text",
-              	"analyzer": "english"
-            	},
-            	"french": {
-              	"type": "text",
-              	"analyzer": "french"
-           	 }
-          	}
+            "type": "text",
+            "fields": {
+              "english": {
+                "type": "text",
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "analyzer": "french"
+              }
+            }
           },
           "content": {
             "type": "text",
             "fields": {
               "english": {
-              	"type": "text",
-              	"analyzer": "english"
+                "type": "text",
+                "analyzer": "english"
               },
               "french": {
-              	"type": "text",
-              	"analyzer": "french"
+                "type": "text",
+                "analyzer": "french"
               }
             }
           },
