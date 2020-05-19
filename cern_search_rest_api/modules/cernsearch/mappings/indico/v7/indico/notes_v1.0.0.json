@@ -73,45 +73,45 @@
       "_data": {
         "type": "object",
         "properties": {
-		  "id": {
-			"type": "keyword"
-		  },
-		  "category_path": {
-			"type": "keyword"
-		  },
-		  "event_id": {
-			"type": "keyword"
-		  },
-		  "contribution_id": {
-			"type": "keyword"
-		  },
-		  "subcontribution_id": {
-			"type": "keyword"
-		  },
-		  "content": {
-			"type": "text",
-			"fields": {
-			  "english": {
-				"type": "text",
-				"analyzer": "english"
-			  },
-			  "french": {
-				"type": "text",
-				"analyzer": "french"
-			  }
-			}
-		  },
-		  "url": {
-			"type": "text",
-			"analyzer": "url_analyzer",
-			"fields": {
-			"exact_match": {
-			  "type": "keyword"
-			  }
-			}
-		  }
+          "id": {
+            "type": "keyword"
+          },
+          "category_path": {
+            "type": "keyword"
+          },
+          "event_id": {
+            "type": "keyword"
+          },
+          "contribution_id": {
+            "type": "keyword"
+          },
+          "subcontribution_id": {
+            "type": "keyword"
+          },
+          "content": {
+            "type": "text",
+            "fields": {
+              "english": {
+                "type": "text",
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "analyzer": "french"
+              }
+            }
+          },
+          "url": {
+            "type": "text",
+            "analyzer": "url_analyzer",
+            "fields": {
+              "exact_match": {
+                "type": "keyword"
+              }
+            }
+          }
         }
-	  },
+      },
       "creation_date": {
         "type": "date",
         "format": "YYYY-MM-DDZHH:MM"
