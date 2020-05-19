@@ -1,7 +1,7 @@
 {
-  "title": "Indico Subontributions schema v1.0.0",
-  "id": "http://localhost:5000/schemas/indico/subcontributions_v1.0.0.json",
-  "$schema": "http://localhost:5000/schemas/indico/subcontributions_v1.0.0.json",
+  "title": "Indico Subontributions schema v2.0.0",
+  "id": "http://localhost:5000/schemas/indico/subcontributions_v2.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/subcontributions_v2.0.0.json",
   "type": "object",
   "properties": {
     "_access": {
@@ -33,24 +33,68 @@
         }
       }
     },
-    "id": {
-      "type": "string",
-      "description": "Subontributions id."
-    },
-    "category_path": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Subontributions category path (ordered array)."
-    },
-    "event_id": {
-      "type": "string",
-      "description": "Event id."
-    },
-    "contribution_id": {
-      "type": "string",
-      "description": "Contribution id."
+    "_data": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Subontributions id."
+        },
+        "category_path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Subontributions category path (ordered array)."
+        },
+        "event_id": {
+          "type": "string",
+          "description": "Event id."
+        },
+        "contribution_id": {
+          "type": "string",
+          "description": "Contribution id."
+        },
+        "location": {
+          "type": "string",
+          "description": "Subontributions location."
+        },
+        "title": {
+          "type": "string",
+          "description": "Subontributions title."
+        },
+        "description": {
+          "type": "string",
+          "description": "Subontributions description."
+        },
+        "list_of_persons": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Subontributions person's name."
+              },
+              "affiliation": {
+                "type": "string",
+                "description": "Subontributions person's affiliation."
+              },
+              "role": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Subontributions person's role(s)."
+              }
+            }
+          }
+        },
+        "url": {
+          "type": "string",
+          "description": "Full path Subcontribution URL"
+        }
+      }
     },
     "creation_date": {
       "type": "string",
@@ -64,42 +108,15 @@
       "type": "string",
       "description": "Subontributions end date."
     },
-    "location": {
+    "_updated": {
       "type": "string",
-      "description": "Subontributions location."
+      "description": "Internal last updated datetime of the record"
     },
-    "title": {
+    "_created": {
       "type": "string",
-      "description": "Subontributions title."
+      "description": "Internal creation datetime of the record"
     },
-    "description": {
-      "type": "string",
-      "description": "Subontributions description."
-    },
-    "list_of_persons": {
-      "type": "array",
-      "items": {
-        "type": "object",
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "Subontributions person's name."
-          },
-          "affiliation": {
-            "type": "string",
-            "description": "Subontributions person's affiliation."
-          },
-          "role": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "Subontributions person's role(s)."
-          }
-        }
-      }
-    },
-    "custom_pid": {
+    "control_number": {
       "type": "string"
     },
     "$schema": {
