@@ -1,7 +1,7 @@
 {
-  "title": "Indico Subontributions schema v2.0.0",
-  "id": "http://localhost:5000/schemas/indico/subcontributions_v2.0.0.json",
-  "$schema": "http://localhost:5000/schemas/indico/subcontributions_v2.0.0.json",
+  "title": "Indico Subontributions schema v1.0.0",
+  "id": "http://localhost:5000/schemas/indico/subcontributions_v1.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/subcontributions_v1.0.0.json",
   "type": "object",
   "properties": {
     "_access": {
