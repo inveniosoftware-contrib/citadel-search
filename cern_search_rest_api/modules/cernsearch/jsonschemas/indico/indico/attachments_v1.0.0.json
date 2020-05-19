@@ -1,7 +1,7 @@
 {
-  "title": "Indico Attachments schema v2.0.0",
-  "id": "http://localhost:5000/schemas/indico/attachments_v2.0.0.json",
-  "$schema": "http://localhost:5000/schemas/indico/attachments_v2.0.0.json",
+  "title": "Indico Attachments schema v1.0.0",
+  "id": "http://localhost:5000/schemas/indico/attachments_v1.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/attachments_v1.0.0.json",
   "type": "object",
   "properties": {
     "_access": {
