@@ -73,57 +73,57 @@
       "_data": {
         "type": "object",
         "properties": {
-		  "id": {
-			"type": "keyword"
-		  },
-		  "category_path": {
-			"type": "keyword"
-		  },
-		  "event_id": {
-			"type": "keyword"
-		  },
-		  "contribution_id": {
-			"type": "keyword"
-		  },
-		  "location": {
-			"type": "text",
-			"fields": {
-			  "english": {
-				"type": "text",
-				"analyzer": "english"
-			  },
-			  "french": {
-				"type": "text",
-				"analyzer": "french"
-			  }
-			}
-		  },
-		  "title": {
-			"type": "text",
-			"fields": {
-			  "english": {
-				"type": "text",
-				"analyzer": "english"
-			  },
-			  "french": {
-				"type": "text",
-				"analyzer": "french"
-			  }
-			}
-		  },
-		  "description": {
-			"type": "text",
-			"fields": {
-			  "english": {
-				"type": "text",
-				"analyzer": "english"
-			  },
-			  "french": {
-				"type": "text",
-				"analyzer": "french"
-			  }
-			}
-		  },
+          "id": {
+            "type": "keyword"
+          },
+          "category_path": {
+            "type": "keyword"
+          },
+          "event_id": {
+            "type": "keyword"
+          },
+          "contribution_id": {
+            "type": "keyword"
+          },
+          "location": {
+            "type": "text",
+            "fields": {
+              "english": {
+                "type": "text",
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "analyzer": "french"
+              }
+            }
+          },
+          "title": {
+            "type": "text",
+            "fields": {
+              "english": {
+                "type": "text",
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "analyzer": "french"
+              }
+            }
+          },
+          "description": {
+          "type": "text",
+          "fields": {
+              "english": {
+                "type": "text",
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "analyzer": "french"
+              }
+            }
+          },
           "list_of_persons": {
             "type": "nested",
             "properties": {
@@ -143,17 +143,17 @@
               }
             }
           },
-		  "url": {
-			"type": "text",
-			"analyzer": "url_analyzer",
-			"fields": {
-			"exact_match": {
-			  "type": "keyword"
-			  }
-			}
-		  }
+          "url": {
+            "type": "text",
+            "analyzer": "url_analyzer",
+            "fields": {
+              "exact_match": {
+                "type": "keyword"
+              }
+            }
+          }
         }
-	  },
+      },
       "creation_date": {
         "type": "date",
         "format": "YYYY-MM-DDZHH:MM"
