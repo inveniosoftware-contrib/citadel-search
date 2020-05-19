@@ -1,0 +1,93 @@
+{
+  "title": "Indico Notes schema v2.0.0",
+  "id": "http://localhost:5000/schemas/indico/notes_v2.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/notes_v2.0.0.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete":{
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "_data": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Notes id."
+        },
+        "category_path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Notes category path (ordered array)."
+        },
+        "event_id": {
+          "type": "string",
+          "description": "Notes id."
+        },
+        "contribution_id": {
+          "type": "string",
+          "description": "Notes id.",
+          "required": false
+        },
+        "subcontribution_id": {
+          "type": "string",
+          "description": "Notes id.",
+          "required": false
+        },
+        "content": {
+          "type": "string",
+          "description": "Attachments content."
+        },
+        "url": {
+          "type": "string",
+          "description": "Full path Note URL"
+        }
+      }
+    },
+    "creation_date": {
+      "type": "string",
+      "description": "Attachments creation date."
+    },
+    "_updated": {
+      "type": "string",
+      "description": "Internal last updated datetime of the record"
+    },
+    "_created": {
+      "type": "string",
+      "description": "Internal creation datetime of the record"
+    },
+    "control_number": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}
