@@ -1,7 +1,7 @@
 {
-  "title": "Indico Attachments schema v1.0.0",
-  "id": "http://localhost:5000/schemas/indico/attachments_v1.0.0.json",
-  "$schema": "http://localhost:5000/schemas/indico/attachments_v1.0.0.json",
+  "title": "Indico Attachments schema v2.0.0",
+  "id": "http://localhost:5000/schemas/indico/attachments_v2.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/attachments_v2.0.0.json",
   "type": "object",
   "properties": {
     "_access": {
@@ -33,44 +33,61 @@
         }
       }
     },
-    "id": {
-      "type": "string",
-      "description": "Attachments id."
-    },
-    "category_path": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Attachments category path (ordered array)."
-    },
-    "event_id": {
-      "type": "string",
-      "description": "Event id."
-    },
-    "contribution_id": {
-      "type": "string",
-      "description": "Contribution id.",
-      "required": false
-    },
-    "subcontribution_id": {
-      "type": "string",
-      "description": "Event id.",
-      "required": false
-    },
+    "_data": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Attachments id."
+        },
+        "category_path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+            },
+          "description": "Attachments category path (ordered array)."
+        },
+        "event_id": {
+          "type": "string",
+          "description": "Event id."
+        },
+        "contribution_id": {
+          "type": "string",
+          "description": "Contribution id.",
+          "required": false
+        },
+        "subcontribution_id": {
+          "type": "string",
+          "description": "Event id.",
+          "required": false
+        },
+        "filename": {
+          "type": "string",
+          "description": "Attachments filename."
+        },
+        "content": {
+          "type": "string",
+          "description": "Attachments content."
+        },
+        "url": {
+          "type": "string",
+          "description": "Full path Attachment URL"
+        }
+      }
+	},
     "creation_date": {
       "type": "string",
       "description": "Attachments creation date."
     },
-    "filename": {
+    "_updated": {
       "type": "string",
-      "description": "Attachments filename."
+      "description": "Internal last updated datetime of the record"
     },
-    "content": {
+    "_created": {
       "type": "string",
-      "description": "Attachments content."
+      "description": "Internal creation datetime of the record"
     },
-    "custom_pid": {
+    "control_number": {
       "type": "string"
     },
     "$schema": {
