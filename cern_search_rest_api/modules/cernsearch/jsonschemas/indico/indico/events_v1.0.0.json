@@ -84,7 +84,7 @@
           "description": "Full path Event URL"
         }
       }
-    }
+    },
     "creation_date": {
       "type": "string",
       "description": "Event creation date."
