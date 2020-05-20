@@ -79,17 +79,6 @@
       "type": "string",
       "description": "Attachments creation date."
     },
-    "_updated": {
-      "type": "string",
-      "description": "Internal last updated datetime of the record"
-    },
-    "_created": {
-      "type": "string",
-      "description": "Internal creation datetime of the record"
-    },
-    "control_number": {
-      "type": "string"
-    },
     "$schema": {
       "type": "string"
     }
