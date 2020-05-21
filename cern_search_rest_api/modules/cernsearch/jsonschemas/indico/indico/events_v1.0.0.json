@@ -66,18 +66,9 @@
         "speakers_chairs": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Event speaker/chair name."
-              },
-              "affiliation": {
-                "type": "string",
-                "description": "Event speaker/chair affiliation."
-              }
-            }
-          }
+            "type": "string",
+          },
+          "description": "Event speaker/chair name, affiliation."
         },
         "url": {
           "type": "string",

@@ -38,14 +38,14 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "Subontributions id."
+          "description": "Subcontributions id."
         },
         "category_path": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "Subontributions category path (ordered array)."
+          "description": "Subcontributions category path (ordered array)."
         },
         "event_id": {
           "type": "string",
@@ -57,56 +57,40 @@
         },
         "location": {
           "type": "string",
-          "description": "Subontributions location."
+          "description": "Subcontributions location."
         },
         "title": {
           "type": "string",
-          "description": "Subontributions title."
+          "description": "Subcontributions title."
         },
         "description": {
           "type": "string",
-          "description": "Subontributions description."
+          "description": "Subcontributions description."
         },
         "list_of_persons": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Subontributions person's name."
-              },
-              "affiliation": {
-                "type": "string",
-                "description": "Subontributions person's affiliation."
-              },
-              "role": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "Subontributions person's role(s)."
-              }
-            }
-          }
+            "type": "string",
+          },
+          "description": "Subcontributions person's name, affiliation, role."
         },
         "url": {
           "type": "string",
-          "description": "Full path Subcontribution URL"
+          "description": "Full path Subcontributions URL"
         }
       }
     },
     "creation_date": {
       "type": "string",
-      "description": "Subontributions creation date."
+      "description": "Subcontributions creation date."
     },
     "start_date": {
       "type": "string",
-      "description": "Subontributions start date."
+      "description": "Subcontributions start date."
     },
     "end_date": {
       "type": "string",
-      "description": "Subontributions end date."
+      "description": "Subcontributions end date."
     },
     "$schema": {
       "type": "string"

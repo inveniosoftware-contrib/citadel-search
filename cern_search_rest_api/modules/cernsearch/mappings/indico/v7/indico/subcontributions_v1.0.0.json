@@ -125,21 +125,15 @@
             }
           },
           "list_of_persons": {
-            "type": "nested",
-            "properties": {
-              "name": {
+            "type": "text",
+            "fields": {
+              "english": {
                 "type": "text",
-                "fields": {
-                  "keyword": {
-                    "type": "keyword"
-                  }
-                }
+                "analyzer": "english"
               },
-              "affiliation": {
-                "type": "text"
-              },
-              "role": {
-                "type": "keyword"
+              "french": {
+                "type": "text",
+                "analyzer": "french"
               }
             }
           },

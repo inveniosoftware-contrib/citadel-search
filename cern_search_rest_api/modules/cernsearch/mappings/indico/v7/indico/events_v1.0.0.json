@@ -122,18 +122,15 @@
             }
           },
           "speakers_chairs": {
-            "type": "nested",
-            "properties": {
-              "name": {
+            "type": "text",
+            "fields": {
+              "english": {
                 "type": "text",
-                "fields": {
-                  "keyword": {
-                    "type": "keyword"
-                  }
-                }
+                "analyzer": "english"
               },
-              "affiliation": {
-                "type": "text"
+              "french": {
+                "type": "text",
+                "analyzer": "french"
               }
             }
           },

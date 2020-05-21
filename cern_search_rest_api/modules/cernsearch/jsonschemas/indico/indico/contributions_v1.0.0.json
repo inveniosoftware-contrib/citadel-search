@@ -66,25 +66,9 @@
         "list_of_persons": {
           "type": "array",
           "items": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Contributions person's name."
-              },
-              "affiliation": {
-                "type": "string",
-                "description": "Contributions person's affiliation."
-              },
-              "role": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                },
-                "description": "Contributions person's role(s)."
-              }
-            }
-          }
+            "type": "string",
+          },
+          "description": "Contributions person's name, affiliation, role."
         },
         "url": {
           "type": "string",
