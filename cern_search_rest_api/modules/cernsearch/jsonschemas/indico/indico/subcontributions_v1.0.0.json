@@ -72,7 +72,7 @@
           "items": {
             "type": "string",
           },
-          "description": "Subcontributions person's name, affiliation, role."
+          "description": "Subcontributions person's name, affiliation."
         },
         "url": {
           "type": "string",

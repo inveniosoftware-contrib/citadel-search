@@ -68,7 +68,7 @@
           "items": {
             "type": "string",
           },
-          "description": "Contributions person's name, affiliation, role."
+          "description": "Contributions person's name, affiliation."
         },
         "url": {
           "type": "string",
