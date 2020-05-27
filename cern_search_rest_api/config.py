@@ -145,7 +145,7 @@ RECORDS_REST_FACETS = {
                 'terms': {'field': '_data.authors.exact_match'}
             }
         },
-        'post_filters': {
+        'filters': {
             'collection': terms_filter("collection"),
             'type_format': terms_filter("type_format"),
             'authors': terms_filter("_data.authors.exact_match")
