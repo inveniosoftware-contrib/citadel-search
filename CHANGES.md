@@ -1,6 +1,21 @@
 Changes
 =======
 
+**Version 1.2.1-beta (released 2020-05-28)**
+
+Changes:
+- [SEARCH-79] EDMS: schemas improvements
+- [NI] Add options to reindex cli
+    - add option to reindex by id: `invenio utils reindex -i <id>`
+    - option to set chunk size: `invenio utils runindex -s 10`
+    - option to reindex by doc type: `invenio utils runindex -d doc_v0.0.2`
+- [SEARCH-88] Filters improvements - apply to aggregations
+- [SEARCH-88] Permissions improvements
+    - Make public records available without login
+    - Only view admin accounts can use the access query param
+
+---- 
+
 **Version 1.2-beta (released 2020-05-14)**
 
 Changes:
