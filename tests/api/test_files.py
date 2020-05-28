@@ -21,6 +21,7 @@ def test_file_ops(app, appctx, db, client, user, location):
 
     body = {
         "_access": {
+            "read": ["CernSearch-Administrators@cern.ch"],
             "owner": ["CernSearch-Administrators@cern.ch"],
             "update": ["CernSearch-Administrators@cern.ch"],
             "delete": ["CernSearch-Administrators@cern.ch"]
@@ -84,7 +85,11 @@ def test_file_ops(app, appctx, db, client, user, location):
         import time
         time.sleep(2)
 
-        res = client.get(f'/records/?q={quote_plus(case["content"])}', headers=get_headers())
+        res = client.get(
+            '/records/',
+            query_string={'q': quote_plus(case["content"]), 'access': 'CernSearch-Administrators'},
+            headers=get_headers()
+        )
         assert res.status_code == HTTPStatus.OK
 
         res_hits = res.json['hits']

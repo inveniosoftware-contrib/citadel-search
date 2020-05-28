@@ -164,11 +164,9 @@ def has_owner_permission(user, record=None):
 
 def has_list_permission(user, record=None):
     """Check if user is authenticated and has create access."""
-    if user:
-        log_action(user, 'LIST')
-        return user.is_authenticated
-    else:
-        return False
+    # permissions are handled in the ES QUERY
+    log_action(user, 'LIST')
+    return True
 
 
 def has_update_permission(user, record):
@@ -196,16 +194,16 @@ def has_update_permission(user, record):
 def has_read_record_permission(user, record):
     """Check if user is authenticated and has read access. This implies reading one document."""
     log_action(user, 'READ')
+
+    # Allow based in the '_access' key
+    read_access = get_access_set(record['_access'], 'read')
+    update_access = get_access_set(record['_access'], 'update')
+    delete_access = get_access_set(record['_access'], 'delete')
+    owner_access = get_access_set(record['_access'], 'owner')
+    if not read_access:
+        return True
+
     if user.is_authenticated:
-        # Allow based in the '_access' key
-        read_access = get_access_set(record['_access'], 'read')
-        update_access = get_access_set(record['_access'], 'update')
-        delete_access = get_access_set(record['_access'], 'delete')
-        owner_access = get_access_set(record['_access'], 'owner')
-
-        if not read_access:
-            return True
-
         # The user is owner of the collection/schema
         # The user belongs to any access group, meaning the list is disjoint
         # Then grant access
@@ -272,13 +270,9 @@ def has_admin_view_permission(user):
     """Check if has admin permission."""
     admin_access_groups = current_app.config['ADMIN_VIEW_ACCESS_GROUPS']
     if user.is_authenticated and admin_access_groups:
-        # Allow based in the '_access' key
-        user_provides = get_user_provides()
-        # set.isdisjoint() is faster than set.intersection()
-        admin_access_groups = admin_access_groups.split(',')
-        if user_provides and not set(user_provides).isdisjoint(set(admin_access_groups)):
-            current_app.logger.debug('User has admin view access')
-            return True
+        admin_access = admin_access_groups.split(',')
+
+        return _user_granted(admin_access)
     return False
 
 

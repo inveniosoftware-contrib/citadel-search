@@ -15,15 +15,16 @@ from cern_search_rest_api.modules.cernsearch.permissions import (has_delete_perm
 
 def test_has_list_permission(appctx, anonymous_user, authenticated_user):
     """Test list records (search) permission."""
-    assert not has_list_permission(anonymous_user)
+    assert has_list_permission(anonymous_user)
     assert has_list_permission(authenticated_user)
 
 
 def test_has_read_record_permission(appctx, mocker, anonymous_user, authenticated_user,
                                     private_access_record, public_access_record):
     """Test read record permission."""
-    # Anonymous user cannot read
-    assert not has_read_record_permission(anonymous_user, public_access_record)
+    # Anonymous usertest_file_ops
+    assert has_read_record_permission(anonymous_user, public_access_record)
+    assert not has_read_record_permission(anonymous_user, private_access_record)
 
     # User with no rights over private record and public record
     patched_g = mocker.patch('cern_search_rest_api.modules.cernsearch.utils.g')

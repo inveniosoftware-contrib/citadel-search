@@ -7,10 +7,11 @@
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 """Search utilities."""
-
+from cern_search_rest_api.modules.cernsearch.permissions import has_admin_view_permission
 from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
 from elasticsearch_dsl import Q
 from flask import current_app, request
+from flask_login import current_user
 from invenio_records_rest.query import default_search_factory
 from invenio_search import RecordsSearch
 from invenio_search.api import DefaultFilter
@@ -66,8 +67,8 @@ def cern_search_filter():
 def get_egroups():
     """Get egroups from access param, config or authenticated user."""
     egroups = request.args.get('access', None)
-    # If access rights are sent or is a search query
-    if egroups or (request.path == '/records/' and request.method == 'GET'):
+    # If access rights are sent and is admin_view_account
+    if egroups and has_admin_view_permission(current_user):
         try:
             if current_app.config['SEARCH_USE_EGROUPS']:
                 return ['{0}@cern.ch'.format(egroup) for egroup in egroups.split(',')]
@@ -75,6 +76,7 @@ def get_egroups():
                 return egroups.split(',')
         except AttributeError:
             return None
+
     # Else use user's token ACLs
     return get_user_provides()
 
