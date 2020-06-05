@@ -145,17 +145,13 @@
           }
         }
       },
-      "creation_date": {
-        "type": "date",
-        "format": "YYYY-MM-DDZHH:MM"
-      },
      "start_date": {
         "type": "date",
-        "format": "YYYY-MM-DDZHH:MM"
+        "format": "strict_date_optional_time"
       },
       "end_date": {
         "type": "date",
-        "format": "YYYY-MM-DDZHH:MM"
+        "format": "strict_date_optional_time"
       },
       "_updated": {
         "type": "date"

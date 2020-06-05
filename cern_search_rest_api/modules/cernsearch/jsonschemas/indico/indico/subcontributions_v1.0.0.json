@@ -80,18 +80,6 @@
         }
       }
     },
-    "creation_date": {
-      "type": "string",
-      "description": "Subcontributions creation date."
-    },
-    "start_date": {
-      "type": "string",
-      "description": "Subcontributions start date."
-    },
-    "end_date": {
-      "type": "string",
-      "description": "Subcontributions end date."
-    },
     "$schema": {
       "type": "string"
     }

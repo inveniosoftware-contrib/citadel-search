@@ -127,7 +127,7 @@
       },
       "creation_date": {
         "type": "date",
-        "format": "yyyy-MM-ddZHH:mm"
+        "format": "strict_date_optional_time"
       },
       "_updated": {
         "type": "date"

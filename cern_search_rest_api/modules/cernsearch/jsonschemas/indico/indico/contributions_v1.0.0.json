@@ -76,10 +76,6 @@
         }
       }
     },
-    "creation_date": {
-      "type": "string",
-      "description": "Contributions creation date."
-    },
     "start_date": {
       "type": "string",
       "description": "Contributions start date."

@@ -12,6 +12,10 @@ Rollover will be based on event ID. Conditions: Num documents is uniformly distr
 
 Q: IDs are only numeric?
 
+## Date format
+
+strict_date_optional_time (yyyy-MM-dd'T'HH:mm:ss.SSSZ  or yyyy-MM-dd)
+
 ### Events
 
 --- v1.1.0 ---
@@ -30,9 +34,9 @@ The first version of the _Events_ mapping stores the information about an Indico
       * __name__: Name of the speaker/chairman. Stored both as keyword and text, for exact match and full-text search.
       * __affiliation__: Affiliation of the speaker/chairman. Stored as text for full-text search.
    * __url__: URL to the event. 
-* __creation_date__: Creation date of the event. Stored as date with 'YYYY-MM-DDZHH:MM' format.
-* __start_date__: Starting date of the event. Stored as date with 'YYYY-MM-DDZHH:MM' format.
-* __end_date__: Ending date of the event. Stored as date with 'YYYY-MM-DDZHH:MM' format.
+* __creation_date__: Creation date of the event. Stored as date with 'strict_date_optional_time' format.
+* __start_date__: Starting date of the event. Stored as date with 'strict_date_optional_time' format.
+* __end_date__: Ending date of the event. Stored as date with 'strict_date_optional_time' format.
 
 - jsonschema path: 'citadel-search/cern_search_rest_api/modules/cernsearch/jsonschemas/indico/indico/events_v1.1.0.json'
 - mapping path: 'citadel-search/cern_search_rest_api/modules/cernsearch/mappings/indico/v7/indico/events_v1.1.0.json'
@@ -60,9 +64,8 @@ The first version of the _Contributions_ mapping stores the information about an
       * __affiliation__: Affiliation of the person. Stored as text for full-text search.
       * __role__: Role(s) of the person. Stored as keyword for exact match.
    * __url__: URL to the contribution. 
-* __creation_date__: Creation date of the contribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
-* __start_date__: Starting date of the contribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
-* __end_date__: Ending date of the contribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
+* __start_date__: Starting date of the contribution. Stored as date with 'strict_date_optional_time' format.
+* __end_date__: Ending date of the contribution. Stored as date with 'strict_date_optional_time' format.
 
 - jsonschema path: 'citadel-search/cern_search_rest_api/modules/cernsearch/jsonschemas/indico/indico/contributions_v1.1.0.json'
 - mapping path: 'citadel-search/cern_search_rest_api/modules/cernsearch/mappings/indico/v7/indico/contributions_v1.1.0.json'
@@ -91,9 +94,6 @@ The first version of the _Subcontributions_ mapping stores the information about
       * __affiliation__: Affiliation of the person. Stored as text for full-text search.
       * __role__: Role(s) of the person. Stored as keyword for exact match.
    * __url__: URL to the subcontribution. 
-* __creation_date__: Creation date of the subcontribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
-* __start_date__: Starting date of the subcontribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
-* __end_date__: Ending date of the subcontribution. Stored as date with 'YYYY-MM-DDZHH:MM' format.
 
 - jsonschema path: 'citadel-search/cern_search_rest_api/modules/cernsearch/jsonschemas/indico/indico/subcontributions_v1.1.0.json'
 - mapping path: 'citadel-search/cern_search_rest_api/modules/cernsearch/mappings/indico/v7/indico/subcontributions_v1.1.0.json'
@@ -117,7 +117,7 @@ The first version of the _Attachment_ mapping stores the information about an In
    * __filename__: Filename of the attachment. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analyzis helps improve query relevance.
    * __content__: Content of the attachment. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
    * __url__: URL to the attachement. This is for retrieval purposes only and no search is required.
-* __creation_date__: Creation date of the attachment. Stored as date with 'YYYY-MM-DDZHH:MM' format.
+* __creation_date__: Creation date of the attachment. Stored as date with 'strict_date_optional_time' format.
 
 - jsonschema path: 'citadel-search/cern_search_rest_api/modules/cernsearch/jsonschemas/indico/indico/attachments_v1.1.0.json'
 - mapping path: 'citadel-search/cern_search_rest_api/modules/cernsearch/mappings/indico/v7/indico/attachments_v1.1.0.json'
@@ -140,7 +140,7 @@ The first version of the _Notes_ mapping stores the information about an Indico 
    * __subcontribution_id__: ID of the subcontribution to which the note belongs to. Stored as keyword for exact match queries.
    * __content__: Content of the note. Stored as text for full-text search. The ``title`` field is analyzed with the ``standard`` analyzer, ``title.english`` with the ``english`` one and the corresponding is done for ``title.french``. This three times analysis helps improve query relevance.
    * __url__: URL to the note. This is for retrieval purposes only and no search is required.
-* __creation_date__: Creation date of the note. Stored as date with 'YYYY-MM-DDZHH:MM' format.
+* __creation_date__: Creation date of the note. Stored as date with 'strict_date_optional_time' format.
 
 - jsonschema path: 'citadel-search/cern_search_rest_api/modules/cernsearch/jsonschemas/indico/indico/notes_v1.1.0.json'
 - mapping path: 'citadel-search/cern_search_rest_api/modules/cernsearch/mappings/indico/v7/indico/notes_v1.1.0.json'
