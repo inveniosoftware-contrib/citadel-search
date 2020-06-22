@@ -9,7 +9,9 @@ variables:
   RESOURCE: cern-search-rest-api
   ### OpenShift namespace and server values
   NAMESPACE: cern-search-master
+  NAMESPACE_DEV: test-cern-search-master
   OPENSHIFT_SERVER: https://openshift.cern.ch
+  OPENSHIFT_SERVER_DEV: https://openshift-dev.cern.ch
 
 ### By default, there are 6 stages that we may use:
 ### Feel free to adapt this to your specific case.
@@ -147,8 +149,8 @@ build_test_version_manual:
     BUILD_ARG: build_env=dev
     TO: ${CI_REGISTRY_IMAGE}:$CI_COMMIT_REF_SLUG
 
-# If a new tag is pushed it needs to be referenced into the ImageStream
-tag_image_test:
+### Create tag in OpenShift.
+tag_image_merge_request_prod:
   extends: .tag_image
   only:
     refs:
@@ -161,8 +163,24 @@ tag_image_test:
     TAG: $CI_COMMIT_REF_SLUG
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
 
+### Create tag in OpenShift DEV.
+tag_image_merge_request_dev:
+  extends: .tag_image
+  only:
+    refs:
+      - merge_requests
+  environment:
+    name: branch/$CI_COMMIT_REF_SLUG
+  when: manual
+  variables:
+    CI_REGISTRY_TAG: $CI_COMMIT_REF_SLUG
+    TAG: $CI_COMMIT_REF_SLUG
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
+    NAMESPACE: ${NAMESPACE_DEV}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
+
 # Import image into OpenShift.
-import_image_test:
+import_image_merge_request_prod:
   extends: .import_image
   only:
     refs:
@@ -174,6 +192,21 @@ import_image_test:
     TAG: $CI_COMMIT_REF_SLUG
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
 
+# Import image into OpenShift DEV.
+import_image_merge_request_dev:
+  extends: .import_image
+  only:
+    refs:
+      - merge_requests
+  environment:
+    name: branch/$CI_COMMIT_REF_SLUG
+  when: manual
+  variables:
+    TAG: $CI_COMMIT_REF_SLUG
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
+    NAMESPACE: ${NAMESPACE_DEV}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
+
 ######################################################
 ##################### Dev branch #####################
 build_dev_version:
@@ -184,7 +217,7 @@ build_dev_version:
     BUILD_ARG: build_env=dev
 
 ### Import image into OpenShift.
-import_image_dev_test:
+import_image_dev_branch_prod:
   extends: .import_image
   only:
     - dev
@@ -194,6 +227,18 @@ import_image_dev_test:
     TAG: latest
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
 
+### Import image into OpenShift DEV
+import_image_dev_branch_dev:
+  extends: .import_image
+  only:
+    - dev
+  environment:
+    name: staging
+  variables:
+    TAG: latest
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
+    NAMESPACE: ${NAMESPACE_DEV}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
 
 ######################################################
 ####################### Tags ########################
@@ -204,6 +249,7 @@ build_tagged_version:
   variables:
     TO: ${CI_REGISTRY_IMAGE}:${CI_COMMIT_TAG}
 
+### Create tag in OpenShift.
 tag_image_prod:
   extends: .tag_image
   environment:
@@ -213,6 +259,19 @@ tag_image_prod:
     TAG: ${CI_COMMIT_TAG}
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
 
+### Create tag in OpenShift DEV.
+tag_image_dev:
+  extends: .tag_image
+  environment:
+    name:  production
+  variables:
+    CI_REGISTRY_TAG: ${CI_COMMIT_TAG}
+    TAG: ${CI_COMMIT_TAG}
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
+    NAMESPACE: ${NAMESPACE_DEV}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
+
+### Import image into OpenShift.
 import_tagged_image_prod:
   extends: .import_image
   environment:
@@ -223,6 +282,20 @@ import_tagged_image_prod:
     TAG: ${CI_COMMIT_TAG}
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
 
+### Import image into OpenShift DEV.
+import_tagged_image_dev:
+  extends: .import_image
+  environment:
+    name:  production
+  only:
+  - tags
+  variables:
+    TAG: ${CI_COMMIT_TAG}
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
+    NAMESPACE: ${NAMESPACE_DEV}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
+
+### Deploy stable into OpenShift.
 deploy_production:
   extends: .tag_image
   stage: deploy
@@ -233,3 +306,17 @@ deploy_production:
     CI_REGISTRY_TAG: ${CI_COMMIT_TAG}
     TAG: stable
     TOKEN: ${SERVICE_ACCOUNT_TOKEN_PROD}
+
+### Deploy stable into OpenShift DEV.
+deploy_dev:
+  extends: .tag_image
+  stage: deploy
+  environment:
+    name:  production
+  when: manual
+  variables:
+    CI_REGISTRY_TAG: ${CI_COMMIT_TAG}
+    TAG: stable
+    TOKEN: ${SERVICE_ACCOUNT_TOKEN_DEV}
+    NAMESPACE: ${NAMESPACE_DEV}
+    OPENSHIFT_SERVER: ${OPENSHIFT_SERVER_DEV}
