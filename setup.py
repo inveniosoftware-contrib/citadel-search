@@ -57,14 +57,16 @@ setup(
             'indico = cern_search_rest_api.modules.cernsearch.mappings.indico',
             'webservices = cern_search_rest_api.modules.cernsearch.mappings.webservices',
             'edms = cern_search_rest_api.modules.cernsearch.mappings.edms',
-            'egroupsarchives = cern_search_rest_api.modules.cernsearch.mappings.egroupsarchives'
+            'egroupsarchives = cern_search_rest_api.modules.cernsearch.mappings.egroupsarchives',
+            'codimd = cern_search_rest_api.modules.cernsearch.mappings.codimd'
         ],
         'invenio_jsonschemas.schemas': [
             'test = cern_search_rest_api.modules.cernsearch.jsonschemas.test',
             'indico = cern_search_rest_api.modules.cernsearch.jsonschemas.indico',
             'webservices = cern_search_rest_api.modules.cernsearch.jsonschemas.webservices',
             'edms = cern_search_rest_api.modules.cernsearch.jsonschemas.edms',
-            'egroupsarchives = cern_search_rest_api.modules.cernsearch.jsonschemas.egroupsarchives'
+            'egroupsarchives = cern_search_rest_api.modules.cernsearch.jsonschemas.egroupsarchives',
+            'codimd = cern_search_rest_api.modules.cernsearch.jsonschemas.codimd'
         ],
         'invenio_base.apps': [
             'cern-search = cern_search_rest_api.modules.cernsearch.ext:CERNSearch'

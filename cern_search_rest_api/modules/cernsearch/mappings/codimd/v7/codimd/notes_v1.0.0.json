@@ -1,0 +1,73 @@
+{
+  "settings": {
+    "index.percolator.map_unmapped_fields_as_text": true,
+    "index.mapping.total_fields.limit": 100,
+    "index.query.default_field": [
+      "_data.*"
+    ]
+  },
+  "mappings": {
+    "dynamic": "strict",
+    "numeric_detection": true,
+    "properties": {
+      "_access": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "keyword"
+          },
+          "read": {
+            "type": "keyword"
+          },
+          "update": {
+            "type": "keyword"
+          },
+          "delete": {
+            "type": "keyword"
+          }
+        }
+      },
+      "_data": {
+        "type": "object",
+        "properties": {
+          "owner": {
+            "type": "text",
+            "boost": 1.1,
+            "fields": {
+              "exact_match": {
+                "type": "keyword",
+                "boost": 1.1
+              }
+            }
+          },
+          "title": {
+            "type": "text",
+            "boost": 1.1
+          },
+          "body": {
+            "type": "text"
+          }
+        }
+      },
+      "noteid": {
+        "type": "keyword"
+      },
+      "date": {
+        "type": "date",
+        "format": "dd-MM-yyyy HH:mm"
+      },
+      "$schema": {
+        "enabled": false
+      },
+      "control_number": {
+        "type": "keyword"
+      },
+      "_created": {
+        "type": "date"
+      },
+      "_updated": {
+        "type": "date"
+      }
+    }
+  }
+}
