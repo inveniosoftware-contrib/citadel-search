@@ -166,7 +166,7 @@
     "control_number": {
       "type": "string"
     },
-    "_url": {
+    "url": {
       "type": "string"
     },
     "$schema": {

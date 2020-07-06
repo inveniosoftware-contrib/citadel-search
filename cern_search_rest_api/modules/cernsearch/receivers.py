@@ -59,4 +59,4 @@ def record_deleted_listener(sender, record: CernSearchRecord, *args, **kwargs):
 
 
 def __extract_content(data: dict):
-    return " ".join(data['content'].split())
+    return data

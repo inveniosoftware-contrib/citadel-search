@@ -1,0 +1,94 @@
+{
+  "title": "Webservice File schema v3.0.0",
+  "id": "http://0.0.0.0:5000/schemas/webservices/file_v1.0.0.json",
+  "$schema": "http://0.0.0.0:5000/schemas/webservices/file_v1.0.0.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "_data": {
+      "type": "object",
+      "properties": {
+        "site": {
+          "type": "string",
+          "description": "Base website URL"
+        },
+        "origin": {
+          "type": "string",
+          "description": "Website origin. Meaning FL or ATT, or SRC if its equals than url"
+        }
+      }
+    },
+    "suggest": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "promoted": {
+      "type": "boolean"
+    },
+    "promoted_keywords": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    },
+    "image_source": {
+      "type": "string"
+    },
+    "analytics_relevance": {
+      "type": "number",
+      "description": "Matomo analytics based relevance of the site"
+    },
+    "last_updated": {
+      "type": "string",
+      "description": "Datetime of when the web page content was last updated"
+    },
+    "url": {
+      "type": "string",
+      "description": "Full path website URL"
+    },
+    "_updated": {
+      "type": "string",
+      "description": "Internal last updated datetime of the record"
+    },
+    "_created": {
+      "type": "string",
+      "description": "Internal creation datetime of the record"
+    },
+    "control_number": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}

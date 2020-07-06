@@ -7,6 +7,7 @@
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 """Search utilities."""
+from cern_search_rest_api.modules.cernsearch.facets import saas_facets_factory
 from cern_search_rest_api.modules.cernsearch.permissions import has_admin_view_permission
 from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
 from elasticsearch_dsl import Q
@@ -115,11 +116,14 @@ def search_factory(self, search: RecordCERNSearch, query_parser=None):
 
     search, urlkwargs = default_search_factory(self, search, _csas_query_parser)  # type: RecordCERNSearch, MultiDict
 
+    search_index = getattr(search, '_original_index', search._index)[0]
+    search, urlkwargs = saas_facets_factory(search, search_index)
+
     search = search.params(search_type="dfs_query_then_fetch")  # search across all shards
 
     highlights = request.args.getlist('highlight', None)
     if highlights:
-        search = search.highlight(*highlights)
+        search = search.highlight_options(encoder='html').highlight(*highlights)
 
     explain = request.args.get('explain', None)
     if explain:

@@ -7,7 +7,7 @@
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 """File utilities."""
-
+import json
 from io import BytesIO
 
 from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
@@ -31,12 +31,14 @@ def record_from_object_version(obj: ObjectVersion):
     return record
 
 
-def persist_file_content(record: CernSearchRecord, file_content: str, filename: str):
+def persist_file_content(record: CernSearchRecord, file_content: dict, filename: str):
     """Persist file's extracted content in bucket on filesystem and database."""
     current_app.logger.debug(f"Persist file: {filename} in record {record.id}")
 
+    file_content.pop("attachments", None)
+
     bucket_content = record.files_content.bucket
-    ObjectVersion.create(bucket_content, filename, stream=BytesIO(file_content.encode()))
+    ObjectVersion.create(bucket_content, filename, stream=BytesIO(json.dumps(file_content).encode()))
     db.session.commit()
 
 

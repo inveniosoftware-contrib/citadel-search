@@ -69,3 +69,12 @@ def default_record_to_mapping(record):
         return mapping[doc_type]['mappings'][doc]
 
     return None
+
+
+def reverse_dict_list(org):
+    """Reverses dict {a: [b,c]} to {b:a, c:a}."""
+    newdict = {}
+    for key, value in org.items():
+        for string in value:
+            newdict[string] = key
+    return newdict

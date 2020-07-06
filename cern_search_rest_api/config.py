@@ -15,12 +15,14 @@ import copy
 import os
 
 from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
+from cern_search_rest_api.modules.cernsearch.facets import match_filter, regex_aggregation
 from cern_search_rest_api.modules.cernsearch.indexer import CernSearchRecordIndexer
 from cern_search_rest_api.modules.cernsearch.permissions import (record_create_permission_factory,
                                                                  record_delete_permission_factory,
                                                                  record_list_permission_factory,
                                                                  record_read_permission_factory,
                                                                  record_update_permission_factory)
+from elasticsearch_dsl import A
 from flask import request
 from invenio_oauthclient.contrib import cern
 from invenio_records_rest import config as irr_config
@@ -129,8 +131,27 @@ RECORDS_REST_ENDPOINTS = dict(
         create_permission_factory_imp=record_create_permission_factory,
         update_permission_factory_imp=record_update_permission_factory,
         delete_permission_factory_imp=record_delete_permission_factory,
+        suggesters={
+            'phrase': {
+                'completion': {
+                    'field': 'suggest_keywords',
+                }
+            },
+        },
     )
 )
+
+
+def aggs_filter(field):
+    """Create a term filter.
+
+    :param field: Field name.
+    :returns: Function that returns the Terms query.
+    """
+    def inner(values):
+        return A('terms', field=field, include=f'.*{values[0]}.*')
+    return inner
+
 
 RECORDS_REST_FACETS = {
     'webservices': {
@@ -141,14 +162,22 @@ RECORDS_REST_FACETS = {
             'type_format': {
                 'terms': {'field': 'type_format'}
             },
-            'authors': {
-                'terms': {'field': '_data.authors.exact_match'}
-            }
+            'author': regex_aggregation('_data.authors.exact_match', 'authors_suggest'),
+            'site': regex_aggregation('_data.site.exact_match', 'sites_suggest'),
+            'keyword': regex_aggregation('_data.keywords.exact_match', 'keywords_suggest')
         },
         'filters': {
             'collection': terms_filter("collection"),
             'type_format': terms_filter("type_format"),
-            'authors': terms_filter("_data.authors.exact_match")
+            'author': terms_filter("_data.authors.exact_match"),
+            'site': terms_filter("_data.site.exact_match"),
+            'keyword': terms_filter("_data.keywords.exact_match"),
+        },
+        'matches': {
+            'author_match': match_filter("_data.authors"),
+            'keyword_match': match_filter("_data.keywords"),
+            'site_match': match_filter("_data.site"),
+            'name_match': match_filter("_data.name"),
         }
     }
 }
@@ -254,3 +283,6 @@ SEARCH_CLIENT_CONFIG = dict(
     # allow up to 25 connections to each node
     maxsize=int(os.getenv("ELASTICSEARCH_MAX_SIZE", 5)),
 )
+
+# FILE
+PROCESS_FILE_META = ast.literal_eval(os.getenv("CERN_SEARCH_PROCESS_FILE_META", 'False'))

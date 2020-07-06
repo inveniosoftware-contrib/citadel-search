@@ -7,6 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Tests for tasks."""
+import json
 from io import BytesIO
 from unittest import mock
 
@@ -135,6 +136,6 @@ def test_record_update_file(appctx, db, record_with_file_processed, obj_name, co
     fp = storage.open(mode=READ_MODE_BINARY)
 
     try:
-        assert content == fp.read()
+        assert content.decode() in json.load(fp)['content']
     finally:
         fp.close()

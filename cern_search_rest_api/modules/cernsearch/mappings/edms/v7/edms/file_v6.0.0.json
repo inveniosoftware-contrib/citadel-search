@@ -39,15 +39,9 @@
       "_data": {
         "type": "object",
         "properties": {
-          "_attachment": {
-            "dynamic": true,
-            "type": "object",
-            "properties": {
-              "_content": {
-                "type": "text",
-                "boost": 2
-              }
-            }
+          "content": {
+            "type": "text",
+            "boost": 2
           },
           "file_name": {
             "type": "text",
@@ -293,10 +287,10 @@
       "_bucket_content": {
         "type": "keyword"
       },
-      "_file": {
+      "file": {
         "type": "keyword"
       },
-      "_url": {
+      "url": {
         "type": "keyword"
       },
       "control_number": {

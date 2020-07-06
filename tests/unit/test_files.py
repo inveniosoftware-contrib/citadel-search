@@ -22,7 +22,7 @@ def test_persist_file_content(
         record_with_file
 ):
     """Test process file calls."""
-    persist_file_content(record=record_with_file, file_content="some content", filename='test.pdf')
+    persist_file_content(record=record_with_file, file_content={"content": "some content"}, filename='test.pdf')
 
     object_version_create_mock.assert_called_once_with(
         record_with_file.files_content.bucket,
