@@ -1,6 +1,21 @@
 Changes
 =======
 
+**Version 1.3.0-beta (released 2020-07-06)**
+
+Changes:
+- [SEARCH-96] JACoW filters and metadata
+    - Support file metadata extraction and indexing
+         - authors, keywords, creation date, content type and title
+    - Webservices filters and facets:
+         - aggs: authors, sites, keywords
+         - filters: author, site, keyword
+         - matches: author_match, keyword_match, site_match
+- [SEARCH-92] Add codimd schemas
+- [NI] Add openshift-dev CI
+
+---- 
+
 **Version 1.2.1-beta (released 2020-05-28)**
 
 Changes:
