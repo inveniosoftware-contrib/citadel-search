@@ -7,20 +7,19 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 # Use CentOS7:
-FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:bfdd86117598a031f427328c9d276f7f1b782520
+FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:5bc6cce36b006c68e706191bf94854262c6a0351
 ARG build_env
-
-# Switch to base once issues with pipenv are fixed
-RUN yum update -y && \
-    yum install -y mailcap
 
 # CERN Search installation
 WORKDIR /${WORKING_DIR}/src
 ADD . /${WORKING_DIR}/src
 
 RUN pip freeze
+
 # If env is development, install development dependencies
 RUN if [ "$build_env" != "prod" ]; then pipenv install --system --ignore-pipfile --deploy --dev; fi
+
+RUN pip freeze
 
 # Install CSaS
 RUN pip install -e .
