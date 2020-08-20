@@ -1,6 +1,13 @@
 Changes
 =======
 
+**Version 1.3.2-beta (released 2020-08-20)**
+
+Changes:
+- [NI] Add sentry-sdk dependency
+
+---- 
+
 **Version 1.3.1-beta (released 2020-08-18)**
 
 Changes:
