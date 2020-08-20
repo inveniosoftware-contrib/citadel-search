@@ -28,7 +28,7 @@ invenio-files-processor = {extras = ["tika"],git = "https://github.com/carantune
 invenio-files-rest = ">=1.2.0,<1.3.0"
 invenio-indexer = ">=1.1.1,<1.2.0"
 invenio-jsonschemas = ">=1.1.0,<1.2.0"
-invenio-logging = ">=1.3.0,<1.4.0"
+invenio-logging = {extras = ["sentry-sdk"],version = ">=1.3.0,<1.4.0"}
 invenio-oauth2server = ">=1.2.0,<1.3.0"
 invenio-oauthclient = ">=1.3.0,<1.4.0"
 invenio-records = {extras = ["postgresql"],version = ">=1.3.1,<1.4.0"}
