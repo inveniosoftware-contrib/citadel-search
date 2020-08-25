@@ -6,11 +6,21 @@
       "_data.*"
     ],
     "analysis": {
+      "analyzer": {
+        "case_accent_analyzer": {
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      },
       "normalizer": {
-        "lowercase_normalizer": {
+        "case_accent_normalizer": {
           "type": "custom",
           "filter": [
-            "lowercase"
+            "lowercase",
+            "asciifolding"
           ]
         }
       }
@@ -41,57 +51,57 @@
         "properties": {
           "code": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer",
-            "boost": 2
+            "normalizer": "case_accent_normalizer",
+            "boost": 1.5
           },
           "other_id": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer",
-            "boost": 2
+            "normalizer": "case_accent_normalizer",
+            "boost": 1.4
           },
           "class": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer",
-            "boost": 1.6
+            "normalizer": "case_accent_normalizer",
+            "boost": 2
           },
           "description": {
             "type": "text",
-            "boost": 1.5,
+            "analyzer": "case_accent_analyzer",
             "fields": {
               "english": {
                 "type": "text",
-                "boost": 1.5,
                 "analyzer": "english"
               },
               "french": {
                 "type": "text",
-                "boost": 1.5,
                 "analyzer": "french"
               },
               "exact_match": {
                 "type": "keyword",
-                "boost": 1.5,
-                "normalizer": "lowercase_normalizer"
+                "normalizer": "case_accent_normalizer"
               }
             }
           },
           "status": {
+            "boost": 1.7,
             "type": "keyword",
-            "normalizer": "lowercase_normalizer"
+            "normalizer": "case_accent_normalizer"
           },
           "manufacturer": {
+            "boost": 1.9,
             "type": "keyword",
-            "normalizer": "lowercase_normalizer"
+            "normalizer": "case_accent_normalizer"
           },
           "location": {
+            "boost": 1.8,
             "type": "keyword",
-            "normalizer": "lowercase_normalizer"
+            "normalizer": "case_accent_normalizer"
           }
         }
       },
       "object_type": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "creation_date": {
         "type": "date",

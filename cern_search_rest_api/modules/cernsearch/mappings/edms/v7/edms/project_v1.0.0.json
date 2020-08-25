@@ -6,11 +6,21 @@
       "_data.*"
     ],
     "analysis": {
+      "analyzer": {
+        "case_accent_analyzer": {
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      },
       "normalizer": {
-        "lowercase_normalizer": {
+        "case_accent_normalizer": {
           "type": "custom",
           "filter": [
-            "lowercase"
+            "lowercase",
+            "asciifolding"
           ]
         }
       }
@@ -41,11 +51,12 @@
         "properties": {
           "project_id": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer",
+            "normalizer": "case_accent_normalizer",
             "boost": 2
           },
           "name": {
             "type": "text",
+            "analyzer": "case_accent_analyzer",
             "boost": 1.5,
             "fields": {
               "english": {
@@ -60,13 +71,14 @@
               },
               "exact_match": {
                 "type": "keyword",
-                "normalizer": "lowercase_normalizer",
+                "normalizer": "case_accent_normalizer",
                 "boost": 1.5
               }
             }
           },
           "description": {
             "type": "text",
+            "analyzer": "case_accent_analyzer",
             "boost": 1.25,
             "fields": {
               "english": {
@@ -86,16 +98,17 @@
             "properties": {
               "name": {
                 "type": "keyword",
-                "normalizer": "lowercase_normalizer"
+                "normalizer": "case_accent_normalizer"
               },
               "context_id": {
                 "type": "keyword",
-                "normalizer": "lowercase_normalizer"
+                "normalizer": "case_accent_normalizer"
               }
             }
           },
           "responsible": {
             "type": "text",
+            "analyzer": "case_accent_analyzer",
             "boost": 1.25,
             "fields": {
               "english": {
@@ -112,26 +125,26 @@
           },
           "equipment_code": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer",
+            "normalizer": "case_accent_normalizer",
             "boost": 1.6
           }
         }
       },
       "cid": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "owner": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "group": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "object_type": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "creation_date": {
         "type": "date",

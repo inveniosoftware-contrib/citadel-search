@@ -6,11 +6,21 @@
       "_data.*"
     ],
     "analysis": {
+      "analyzer": {
+        "case_accent_analyzer": {
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      },
       "normalizer": {
-        "lowercase_normalizer": {
+        "case_accent_normalizer": {
           "type": "custom",
           "filter": [
-            "lowercase"
+            "lowercase",
+            "asciifolding"
           ]
         }
       }
@@ -41,92 +51,96 @@
         "properties": {
           "content": {
             "type": "text",
-            "boost": 2
+            "analyzer": "case_accent_analyzer"
           },
           "file_name": {
             "type": "text",
-            "boost": 2,
+            "analyzer": "case_accent_analyzer",
+            "boost": 1.5,
             "fields": {
               "english": {
                 "type": "text",
                 "analyzer": "english",
-                "boost": 2
+                "boost": 1.5
               },
               "french": {
                 "type": "text",
                 "analyzer": "french",
-                "boost": 2
+                "boost": 1.5
               }
             }
           },
           "document_id": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer",
-            "boost": 2
+            "normalizer": "case_accent_normalizer",
+            "boost": 1.9
           },
           "document_id_version": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer",
-            "boost": 2
+            "normalizer": "case_accent_normalizer",
+            "boost": 1.9
           },
           "cern_id": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer",
-            "boost": 2
+            "normalizer": "case_accent_normalizer",
+            "boost": 1.9
           },
           "cern_id_version": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer",
-            "boost": 2
+            "normalizer": "case_accent_normalizer",
+            "boost": 1.9
           },
           "external_reference": {
             "type": "text",
-            "boost": 1.5,
+            "boost": 1.4,
+            "analyzer": "case_accent_analyzer",
             "fields": {
               "exact_match": {
                 "type": "keyword",
-                "normalizer": "lowercase_normalizer",
-                "boost": 1.5
+                "normalizer": "case_accent_normalizer",
+                "boost": 1.4
               }
             }
           },
           "version": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer"
+            "normalizer": "case_accent_normalizer"
           },
           "title": {
             "type": "text",
-            "boost": 1.5,
+            "analyzer": "case_accent_analyzer",
+            "boost": 1.4,
             "fields": {
               "english": {
                 "type": "text",
-                "boost": 1.5,
+                "boost": 1.4,
                 "analyzer": "english"
               },
               "french": {
                 "type": "text",
-                "boost": 1.5,
+                "boost": 1.4,
                 "analyzer": "french"
               },
               "exact_match": {
                 "type": "keyword",
-                "normalizer": "lowercase_normalizer",
-                "boost": 1.5
+                "normalizer": "case_accent_normalizer",
+                "boost": 1.4
               }
             }
           },
           "description": {
             "type": "text",
-            "boost": 1.25,
+            "analyzer": "case_accent_analyzer",
+            "boost": 1.2,
             "fields": {
               "english": {
                 "type": "text",
-                "boost": 1.25,
+                "boost": 1.2,
                 "analyzer": "english"
               },
               "french": {
                 "type": "text",
-                "boost": 1.25,
+                "boost": 1.2,
                 "analyzer": "french"
               }
             }
@@ -136,116 +150,120 @@
             "properties": {
               "full_name": {
                 "type": "text",
-                "boost": 1.2
+                "analyzer": "case_accent_analyzer",
+                "boost": 1.15
               },
               "email": {
                 "type": "text",
-                "boost": 1.2
+                "analyzer": "case_accent_analyzer",
+                "boost": 1.15
               }
             }
           },
           "keywords": {
             "type": "text",
-            "boost": 1.4,
+            "analyzer": "case_accent_analyzer",
+            "boost": 1.3,
             "fields": {
               "english": {
                 "type": "text",
                 "analyzer": "english",
-                "boost": 1.4
+                "boost": 1.3
               },
               "french": {
                 "type": "text",
                 "analyzer": "french",
-                "boost": 1.4
+                "boost": 1.3
               },
               "exact_match": {
                 "type": "keyword",
-                "boost": 1.4,
-                "normalizer": "lowercase_normalizer"
+                "boost": 1.3,
+                "normalizer": "case_accent_normalizer"
               }
             }
           },
           "equipment_code": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer",
-            "boost": 1.4
+            "normalizer": "case_accent_normalizer",
+            "boost": 1.3
           }
         }
       },
       "file_cid": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "cid": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "owner": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "group": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "object_type": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "parents": {
         "type": "object",
         "properties": {
           "parent_type": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer"
+            "normalizer": "case_accent_normalizer"
           },
           "parent_id": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer"
+            "normalizer": "case_accent_normalizer"
           }
         }
       },
       "status": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "latest_version": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "obsolete": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "context": {
         "type": "object",
         "properties": {
           "name": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer"
+            "normalizer": "case_accent_normalizer"
           },
           "context_id": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer"
+            "normalizer": "case_accent_normalizer"
           }
         }
       },
       "document_type": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "release_procedure": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "object_properties": {
         "properties": {
           "name": {
             "type": "keyword",
-            "normalizer": "lowercase_normalizer"
+            "normalizer": "case_accent_normalizer"
           },
           "value": {
             "type": "text",
+            "analyzer": "case_accent_analyzer",
             "fields": {
               "english": {
                 "type": "text",
@@ -257,7 +275,7 @@
               },
               "exact_match": {
                 "type": "keyword",
-                "normalizer": "lowercase_normalizer"
+                "normalizer": "case_accent_normalizer"
               }
             }
           }
@@ -265,7 +283,7 @@
       },
       "attributes": {
         "type": "keyword",
-        "normalizer": "lowercase_normalizer"
+        "normalizer": "case_accent_normalizer"
       },
       "creation_date": {
         "type": "date",
