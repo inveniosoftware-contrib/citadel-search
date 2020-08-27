@@ -32,7 +32,10 @@ def utils():
     '--delayed', '-d', is_flag=True, help='Run indexing in background.')
 @click.option(
     '--chunk_size', '-s', default=500, type=int,
-    help='Chunks size.')
+    help='Number of docs in one chunk sent to es (default: 500)')
+@click.option(
+    '--max_chunk_bytes', '-b', default=int(99.9 * 1024 * 1024), type=int,
+    help='The maximum size of the request in bytes (default: 100MB).')
 @click.option(
     '--concurrency', '-c', default=1, type=int,
     help='Number of concurrent indexing tasks to start.')
@@ -43,16 +46,24 @@ def utils():
     '--raise-on-error/--skip-errors', default=True,
     help='Controls if Elasticsearch bulk indexing errors raise an exception.')
 @with_appcontext
-def run(delayed, concurrency, chunk_size, version_type=None, queue=None,
-        raise_on_error=True):
+def run(
+        delayed,
+        chunk_size,
+        max_chunk_bytes,
+        concurrency,
+        queue=None,
+        version_type=None,
+        raise_on_error=True
+):
     """Run bulk record indexing."""
+    es_bulk_kwargs = {
+        'raise_on_error': raise_on_error,
+        'chunk_size': chunk_size,
+        'max_chunk_bytes': max_chunk_bytes
+    }
+
     if delayed:
-        celery_kwargs = {
-            'kwargs': {
-                'version_type': version_type,
-                'es_bulk_kwargs': {'raise_on_error': raise_on_error, 'chunk_size': chunk_size},
-            }
-        }
+        celery_kwargs = {'kwargs': {'version_type': version_type, 'es_bulk_kwargs': es_bulk_kwargs}}
         click.secho(
             'Starting {0} tasks for indexing records...'.format(concurrency),
             fg='green')
@@ -62,8 +73,7 @@ def run(delayed, concurrency, chunk_size, version_type=None, queue=None,
             process_bulk_queue.apply_async(**celery_kwargs)
     else:
         click.secho('Indexing records...', fg='green')
-        CernSearchRecordIndexer(version_type=version_type).process_bulk_queue(
-            es_bulk_kwargs={'raise_on_error': raise_on_error, 'chunk_size': chunk_size})
+        CernSearchRecordIndexer(version_type=version_type).process_bulk_queue(es_bulk_kwargs=es_bulk_kwargs)
 
 
 @utils.command('reindex')

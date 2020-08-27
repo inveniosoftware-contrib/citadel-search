@@ -27,6 +27,9 @@ COLLECTION_KEY = 'collection'
 NAME_KEY = 'name'
 KEYWORDS_KEY = 'keywords'
 CREATION_KEY = 'creation_date'
+# Hard limit on content on 99.9MB due to ES limitations
+# Ref: https://www.elastic.co/guide/en/elasticsearch/reference/7.1/general-recommendations.html#maximum-document-size
+CONTENT_HARD_LIMIT = int(99.9 * 1024 * 1024)
 
 
 class CernSearchRecordIndexer(RecordIndexer):
@@ -47,6 +50,10 @@ def index_file_content(sender, json=None, record: CernSearchRecord = None, index
         storage = file_obj.obj.file.storage()  # type: FileStorage
 
         file_content = bc_file_content(storage)
+        if len(str(file_content['content'])) > CONTENT_HARD_LIMIT:
+            current_app.logger.warning(f"Truncated file content: {file_obj.obj.basename} in {record.id}")
+            file_content['content'] = str(file_content['content'])[:CONTENT_HARD_LIMIT]
+
         json[DATA_KEY][CONTENT_KEY] = file_content['content']
         json[FILE_KEY] = file_obj.obj.basename
 
