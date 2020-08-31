@@ -1,20 +1,6 @@
 Changes
 =======
 
-**Version 1.3.2-beta (released 2020-08-20)**
-
-Changes:
-- [NI] Add sentry-sdk dependency
-
----- 
-
-**Version 1.3.1-beta (released 2020-08-18)**
-
-Changes:
-- [SEARCH-86] Upgrade to invenio 3.3
-
----- 
-
 **Version 1.3.0-beta (released 2020-07-06)**
 
 Changes:

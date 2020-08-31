@@ -1,0 +1,383 @@
+# -*- coding: utf-8 -*-
+#
+# This file is part of CERN Search.
+# Copyright (C) 2018-2019 CERN.
+#
+# CERN Search is free software; you can redistribute it and/or modify it
+# under the terms of the MIT License; see LICENSE file for more details.
+
+#####################################################################################
+#####                                DEPRECATED                                 #####
+##### Use gitlab.cern.ch/webservices/cern-search/cern-search-rest-api-openshift #####
+#####################################################################################
+
+apiVersion: v1
+kind: Template
+metadata:
+  name: cern-search-rest-api
+  annotations:
+    descriptino: "CERN Search RESTful API and necessary services OpenShift Template"
+labels:
+  template: "cern-search-rest-api"
+objects:
+
+##############################
+##### DEPLOYMENT CONFIGS #####
+##############################
+
+### CERN Search RESTful API
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-rest-api
+    name: cern-search-rest-api
+  spec:
+    replicas: 1
+    revisionHistoryLimit: 10
+    selector:
+      app: cern-search-rest-api
+      deploymentconfig: cern-search-rest-api
+    strategy:
+      activeDeadlineSeconds: 21600
+      resources: {}
+      rollingParams:
+        intervalSeconds: 1
+        maxSurge: 25%
+        maxUnavailable: 25%
+        timeoutSeconds: 600
+        updatePeriodSeconds: 1
+      type: Rolling
+    template:
+      metadata:
+        labels:
+          app: cern-search-rest-api
+          deploymentconfig: cern-search-rest-api
+      spec:
+        containers:
+        - command:
+            - /bin/sh
+            - '-c'
+            - /code/scripts/manage-user.sh && uwsgi --module ${UWSGI_WSGI_MODULE} --socket 0.0.0.0:${UWSGI_PORT} --master --processes ${UWSGI_PROCESSES} --threads ${UWSGI_THREADS} --stats /tmp/stats.socket
+          envFrom:
+            - configMapRef:
+                name: env-configmap
+          env:
+            - name: INVENIO_ACCOUNTS_SESSION_REDIS_URL
+              value: 'redis://$(REDIS_SERVICE_HOST):$(REDIS_SERVICE_PORT)/1'
+            - name: INVENIO_CACHE_REDIS_URL
+              value: 'redis://$(REDIS_SERVICE_HOST):$(REDIS_SERVICE_PORT)/0'
+            - name: INVENIO_SEARCH_ELASTIC_HOSTS
+              valueFrom:
+                secretKeyRef:
+                  name: es
+                  key: es_credentials
+            - name: INVENIO_SQLALCHEMY_DATABASE_URI
+              valueFrom:
+                secretKeyRef:
+                  name: srchdb
+                  key: dburi
+            - name: INVENIO_CERN_APP_CREDENTIALS
+              valueFrom:
+                secretKeyRef:
+                  name: oauth
+                  key: oauth_credentials
+            - name: INDEXER_SENTRY_DSN
+              valueFrom:
+                secretKeyRef:
+                  name: sentry
+                  key: dsn
+          image: gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api:latest
+          imagePullPolicy: Always
+          name: cern-search-rest-api
+          ports:
+          - containerPort: 5000
+            protocol: TCP
+          resources: {}
+          terminationMessagePath: /dev/termination-log
+          terminationMessagePolicy: File
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+    test: false
+    triggers:
+    - type: ConfigChange
+    - imageChangeParams:
+        automatic: true
+        containerNames:
+        - cern-search-rest-api
+        from:
+          kind: ImageStreamTag
+          name: cern-search-rest-api:latest
+          namespace: test-cern-search
+      type: ImageChange
+
+### Redis Server
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-rest-api
+    name: redis
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        labels:
+          app: cern-search-rest-api
+      spec:
+        containers:
+        - name: redis
+          image: redis
+          ports:
+          - containerPort: 6379
+            name: tcp
+          volumeMounts:
+            - name: data
+              mountPath: /data
+        volumes:
+          - name: data
+            emptyDir: {}
+    triggers:
+    - type: ConfigChange
+
+### Nginx proxy pass
+- kind: DeploymentConfig
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-rest-api
+    name: nginx
+  spec:
+    replicas: 1
+    template:
+      metadata:
+        name: nginx
+        labels:
+          app: cern-search-rest-api
+      spec:
+        containers:
+        - name: nginx
+          image: 'nginx:stable-alpine'
+          ports:
+          - containerPort: 8080
+            protocol: TCP
+          volumeMounts:
+            - mountPath: /etc/nginx/tls
+              name: nginx-tls
+              readOnly: true
+            - mountPath: /etc/nginx/conf.d
+              name: nginx-config
+            - mountPath: /var/cache/nginx
+              name: nginx-cache
+            - mountPath: /var/run
+              name: nginx-run
+        dnsPolicy: ClusterFirst
+        restartPolicy: Always
+        schedulerName: default-scheduler
+        securityContext: {}
+        terminationGracePeriodSeconds: 30
+        volumes:
+          - name: nginx-tls
+            secret:
+              defaultMode: 420
+              secretName: nginx-tls
+          - configMap:
+              defaultMode: 420
+              name: nginx-config
+            name: nginx-config
+          - emptyDir: {}
+            name: nginx-cache
+          - emptyDir: {}
+            name: nginx-run
+    triggers:
+      - type: ConfigChange
+
+##############################
+########## SERVICES ##########
+##############################
+# Service for the RESTful API
+- kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-rest-api
+    name: cern-search-rest-api
+  spec:
+    ports:
+    - name: 5000-tcp
+      port: 5000
+      protocol: TCP
+      targetPort: 5000
+    selector:
+      app: cern-search-rest-api
+      deploymentconfig: cern-search-rest-api
+    sessionAffinity: None
+    type: ClusterIP
+# Service for the Redis server
+- kind: Service
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-rest-api
+    name: redis
+  spec:
+    ports:
+    - name: 6379-tcp
+      port: 6379
+      protocol: TCP
+      targetPort: 6379
+    selector:
+      app: cern-search-rest-api
+      deploymentconfig: redis
+    sessionAffinity: None
+    type: ClusterIP
+# Service for the Nginx proxy
+- kind: Service
+  apiVersion: v1
+  metadata:
+    name: nginx
+    labels:
+      app: cern-search-rest-api
+    annotations:
+      service.alpha.openshift.io/serving-cert-secret-name: nginx-tls
+  spec:
+    ports:
+    - name: 'https'
+      port: 8080
+      targetPort: 8080
+    selector:
+      app: cern-search-rest-api
+      deplymentConfig: nginx
+    type: LoadBalancer
+
+##############################
+########### ROUTES ###########
+##############################
+- kind: Route
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-rest-api
+    name: nginx
+  spec:
+    port:
+      targetPort: https
+    tls:
+      destinationCACertificate:
+      insecureEdgeTerminationPolicy: Redirect
+      termination: reencrypt
+    to:
+      kind: Service
+      name: proxy
+      weight: 100
+    wildcardPolicy: None
+
+##############################
+######## IMAGE STREAM ########
+##############################
+- kind: ImageStream
+  apiVersion: v1
+  metadata:
+   labels:
+     app: cern-search-rest-api
+   name: cern-search-rest-api-image
+  spec:
+   dockerImageRepository: gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api
+
+##############################
+######### CONFIG MAP #########
+##############################
+
+- kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-rest-api
+    name: nginx-config
+  data:
+    nginx.conf: |
+
+      # Configuration for Nginx
+
+      server {
+          # Running port
+          listen 8080 ssl;
+          ssl_certificate /etc/nginx/tls/tls.crt;
+          ssl_certificate_key /etc/nginx/tls/tls.key;
+          rewrite ^/$ /account/settings/applications/;
+
+          # Proxying connections to application servers
+          location / {
+              include            uwsgi_params;
+              uwsgi_pass         cern-search-api:5000;
+
+              proxy_redirect     off;
+              proxy_set_header   Host $host;
+              proxy_set_header   X-Real-IP $remote_addr;
+              proxy_set_header   X-Forwarded-For $proxy_add_x_forwarded_for;
+              proxy_set_header   X-Forwarded-Host $server_name;
+          }
+      }
+
+
+- kind: ConfigMap
+  apiVersion: v1
+  metadata:
+    labels:
+      app: cern-search-rest-api
+    name: env-configmap
+  data:
+    # Invenio
+    INVENIO_INSTANCE_PATH: ${INSTANCE_PATH}
+    # Invenio Logging
+    INVENIO_LOGGING_SENTRY_LEVEL: ${LOGGING_LEVEL}
+    # App to allow hosts
+    INVENIO_APP_ALLOWED_HOSTS: ${ALLOWED_HOSTS}
+    # Invenio Theme
+    INVENIO_THEME_FRONTPAGE_TITLE: ${SITE_NAME}
+    INVENIO_THEME_SITENAME: ${SITE_NAME}
+    INVENIO_THEME_LOGO: ${LOGO_PATH}
+    INVENIO_THEME_LOGO_ADMIN: ${LOGO_PATH}
+    INVENIO_ADMIN_VIEW_ACCESS_GROUPS: ${ADMIN_UI_ACCESS_LIST}
+    INVENIO_ADMIN_ACCESS_GROUPS: ${ADMIN_UI_ACCESS_LIST}
+    # CERN Search
+    CERN_SEARCH_REMOTE_APP_RESOURCE: ${REMOTE_APP_RESOURCE}
+    CERN_SEARCH_DEFAULT_INDEX: ${DEFAULT_INDEX}
+    CERN_SEARCH_DEFAULT_DOC_TYPE: ${DEFAULT_DOC_TYPE}
+    CERN_SEARCH_INSTANCE: ${SEARCH_INSTANCE}
+    INVENIO_ADMIN_USER: ${ADMIN_USER}
+
+
+parameters:
+  - name: INSTANCE_PATH
+    description: "Invenio instance path for CERN Search application."
+    value: /usr/local/var/cernsearch/var/cernsearch-instance
+  - name: REMOTE_APP_RESOURCE
+    description: "the name of the server / project"
+    value: 'test-cern-search.cern.ch'
+  - name: DEFAULT_INDEX
+    value: 'cernsearch-test-test-doc_v0.0.1'
+  - name: DEFAULT_DOC_TYPE
+    value: 'test-doc_v0.0.1'
+  - name: SEARCH_INSTANCE
+    value: 'cernsearch-test'
+  - name: ADMIN_USER:
+    value: 'cernsearch@cern.ch'
+  - name: ALLOWED_HOSTS
+    description: "Invenio App allowed hosts. Without protocol (e.g. http) nor salsh ('/') at the end"
+    value: "['test-cern-search.web.cern.ch']"
+  - name: SITE_NAME
+    description: "CERN Search site name (E.g. EDMS, Indico, etc.)"
+    value: CERN Search
+  - name: LOGO_PATH
+    description: "CERN Search site logo (E.g.  /images/cernsearchicon.png)"
+    value: /images/cernsearchicon.png
+  - name: ADMIN_UI_ACCESS_LIST
+    description: "List of comma separated egroups that have access to the ADMIN UI (e.g. 'egroup_one,egroup_two')"
+    value: "CernSearch-Administrators@cern.ch"
+  - name: LOGGING_LEVEL
+    description: "Logging level of the application"
+    value: 'WARNING'

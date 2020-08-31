@@ -18,7 +18,7 @@ class CSASRecordSchemaV1(RecordMetadataSchemaJSONV1):
     """Record schema."""
 
     @validates_schema(pass_original=True)
-    def validate_record(self, data, original_data, **kwargs):
+    def validate_record(self, data, original_data):
         """Validate record."""
         if not original_data.get('_access'):
             raise ValidationError('Missing field _access')
