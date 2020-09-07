@@ -38,7 +38,7 @@ def cern_authorized_signup_handler(resp, remote, *args, **kwargs):
     # Store token in session
     # ----------------------
     # Set token in session - token object only returned if
-    # current_user.is_autenticated().
+    # current_user.is_authenticated().
     token = response_token_setter(remote, resp)
     handlers = current_oauthclient.signup_handlers[remote.name]
 

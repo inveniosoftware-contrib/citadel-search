@@ -17,6 +17,9 @@ secrets/
 
 *.key
 *.crt
+*.csr
+*.pem
+*.srl
 
 # Dump files
 

@@ -31,6 +31,10 @@ build-env:
 	docker-compose -f $(DOCKER_FILE) up -d --remove-orphans
 .PHONY: build-env
 
+rebuild-env:
+	docker-compose -f $(DOCKER_FILE) up -d --build --remove-orphans
+.PHONY: build-env
+
 es-setup:
 	curl -XPUT "http://localhost:9200/_settings" -H 'Content-Type: application/json' -d' \
 	{\
@@ -64,7 +68,7 @@ stop-env:
 	docker-compose -f $(DOCKER_FILE) down --volumes
 .PHONY: stop-env
 
-reload-env: destroy-env env
+reload-env: destroy-env generate-certificates rebuild-env populate-instance es-setup load-fixtures shell-env
 .PHONY: reload-env
 
 shell-env:
@@ -74,6 +78,9 @@ shell-env:
 shell-worker:
 	docker-compose -f $(DOCKER_FILE) exec $(WORKER_NAME) /bin/bash
 .PHONY: shell-worker
+
+env-staging: generate-certificates build-env populate-instance es-setup shell-env
+.PHONY: env-staging
 
 env: generate-certificates build-env populate-instance es-setup load-fixtures shell-env
 .PHONY: env

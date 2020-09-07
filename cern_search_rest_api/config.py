@@ -55,6 +55,20 @@ OAUTHCLIENT_REMOTE_APPS = dict(
     cern=CERN_REMOTE_APP,
 )
 
+# OAuth REST Client
+# ============
+
+OAUTH_REMOTE_APP = copy.deepcopy(cern.REMOTE_REST_APP)
+OAUTH_REMOTE_APP["params"].update(dict(request_token_params={
+    "resource": os.getenv('CERN_SEARCH_REMOTE_APP_RESOURCE', 'test-cern-search.cern.ch'),
+    "scope": "Name Email Bio Groups Group",
+}))
+OAUTH_REMOTE_APP["authorized_handler"] = \
+    'cern_search_rest_api.modules.cernsearch.handlers:cern_authorized_signup_handler'
+OAUTHCLIENT_REST_REMOTE_APPS = dict(
+    cern=OAUTH_REMOTE_APP,
+)
+
 # Accounts
 # ========
 # FIXME: Needs to be disable for role base auth in SSO. If not invenio_account/sessions:login_listener will crash

@@ -112,6 +112,7 @@ services:
     image: nginx:1.17.4-alpine
     ports:
       - "8080:8080"
+      - "443:443"
     depends_on:
       - cern-search-api
     volumes:
