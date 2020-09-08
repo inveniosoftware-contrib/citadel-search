@@ -1,6 +1,14 @@
 Changes
 =======
 
+**Version 1.4.0-beta (released 2020-09-08)**
+
+Changes:
+
+- [SEARCH-86] Bump to Invenio 3.3 
+- [NI] Generate certificate with a Certificate Authority
+
+----
 **Version 1.3.3-beta (released 2020-08-31)**
 
 Changes:
