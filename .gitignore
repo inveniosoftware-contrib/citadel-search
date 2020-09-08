@@ -29,6 +29,7 @@ secrets/
 
 env/
 *.ini
+.env*.dev
 
 # Debug and other logs
 
