@@ -33,45 +33,51 @@
         }
       }
     },
-    "id": {
-      "type": "string",
-      "description": "Attachments id."
-    },
-    "category_path": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Attachments category path (ordered array)."
-    },
-    "event_id": {
-      "type": "string",
-      "description": "Event id."
-    },
-    "contribution_id": {
-      "type": "string",
-      "description": "Contribution id.",
-      "required": false
-    },
-    "subcontribution_id": {
-      "type": "string",
-      "description": "Event id.",
-      "required": false
-    },
+    "_data": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Attachments id."
+        },
+        "category_path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+            },
+          "description": "Attachments category path (ordered array)."
+        },
+        "event_id": {
+          "type": "string",
+          "description": "Event id."
+        },
+        "contribution_id": {
+          "type": "string",
+          "description": "Contribution id.",
+          "required": false
+        },
+        "subcontribution_id": {
+          "type": "string",
+          "description": "Event id.",
+          "required": false
+        },
+        "filename": {
+          "type": "string",
+          "description": "Attachments filename."
+        },
+        "content": {
+          "type": "string",
+          "description": "Attachments content."
+        },
+        "url": {
+          "type": "string",
+          "description": "Full path Attachment URL"
+        }
+      }
+	},
     "creation_date": {
       "type": "string",
       "description": "Attachments creation date."
-    },
-    "filename": {
-      "type": "string",
-      "description": "Attachments filename."
-    },
-    "content": {
-      "type": "string",
-      "description": "Attachments content."
-    },
-    "custom_pid": {
-      "type": "string"
     },
     "$schema": {
       "type": "string"

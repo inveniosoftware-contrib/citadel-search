@@ -33,41 +33,47 @@
         }
       }
     },
-    "id": {
-      "type": "string",
-      "description": "Notes id."
-    },
-    "category_path": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Notes category path (ordered array)."
-    },
-    "event_id": {
-      "type": "string",
-      "description": "Notes id."
-    },
-    "contribution_id": {
-      "type": "string",
-      "description": "Notes id.",
-      "required": false
-    },
-    "subcontribution_id": {
-      "type": "string",
-      "description": "Notes id.",
-      "required": false
+    "_data": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Notes id."
+        },
+        "category_path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Notes category path (ordered array)."
+        },
+        "event_id": {
+          "type": "string",
+          "description": "Notes id."
+        },
+        "contribution_id": {
+          "type": "string",
+          "description": "Notes id.",
+          "required": false
+        },
+        "subcontribution_id": {
+          "type": "string",
+          "description": "Notes id.",
+          "required": false
+        },
+        "content": {
+          "type": "string",
+          "description": "Attachments content."
+        },
+        "url": {
+          "type": "string",
+          "description": "Full path Note URL"
+        }
+      }
     },
     "creation_date": {
       "type": "string",
       "description": "Attachments creation date."
-    },
-    "content": {
-      "type": "string",
-      "description": "Attachments content."
-    },
-    "custom_pid": {
-      "type": "string"
     },
     "$schema": {
       "type": "string"
