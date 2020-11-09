@@ -43,6 +43,7 @@ def user(db, app):
     db.session.commit()
 
     app.config['API_TOKEN'] = token.access_token
+    app.config['SEARCH_USE_EGROUPS'] = True
 
     yield user
 

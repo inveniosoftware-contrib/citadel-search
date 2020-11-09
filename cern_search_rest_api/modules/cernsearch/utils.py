@@ -11,6 +11,7 @@
 
 from elasticsearch import VERSION as ES_VERSION
 from flask import current_app, g
+from flask_login import current_user
 from invenio_indexer.utils import default_record_to_index, schema_to_index
 from invenio_search import current_search, current_search_client
 from invenio_search.utils import prefix_index
@@ -18,6 +19,9 @@ from invenio_search.utils import prefix_index
 
 def get_user_provides():
     """Extract the user's provides from g."""
+    current_app.logger.debug(f'Identity: {g.identity}')
+    current_app.logger.debug(f'Current User: {current_user}')
+
     return [need.value for need in g.identity.provides]
 
 
