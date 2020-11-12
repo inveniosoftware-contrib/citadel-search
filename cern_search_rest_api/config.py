@@ -15,7 +15,7 @@ import copy
 import os
 
 from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
-from cern_search_rest_api.modules.cernsearch.facets import match_filter, regex_aggregation
+from cern_search_rest_api.modules.cernsearch.facets import regex_aggregation, simple_query_string
 from cern_search_rest_api.modules.cernsearch.indexer import CernSearchRecordIndexer
 from cern_search_rest_api.modules.cernsearch.permissions import (record_create_permission_factory,
                                                                  record_delete_permission_factory,
@@ -188,10 +188,11 @@ RECORDS_REST_FACETS = {
             'keyword': terms_filter("_data.keywords.exact_match"),
         },
         'matches': {
-            'author_match': match_filter("_data.authors"),
-            'keyword_match': match_filter("_data.keywords"),
-            'site_match': match_filter("_data.site"),
-            'name_match': match_filter("_data.name"),
+            'author_match': simple_query_string("_data.authors"),
+            'keyword_match': simple_query_string("_data.keywords"),
+            'site_match': simple_query_string("_data.site"),
+            'name_match': simple_query_string("_data.name"),
+            'url_match': simple_query_string("url"),
         }
     }
 }

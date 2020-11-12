@@ -35,8 +35,15 @@
           ]
         }
       },
+      "char_filter": {
+        "strip_dot_pattern": {
+          "type": "pattern_replace",
+          "pattern": "\\.",
+          "replacement": " "
+        }
+      },
       "analyzer": {
-        "url_analyzer": {
+        "cern_url_analyzer": {
           "type": "custom",
           "tokenizer": "url_tokenizer",
           "filter": [
@@ -52,12 +59,39 @@
         },
         "autocomplete_search": {
           "tokenizer": "lowercase"
+        },
+        "case_insensitive_analyzer": {
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "url_analyzer": {
+          "tokenizer": "standard",
+          "char_filter": [
+            "strip_dot_pattern"
+          ],
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
         }
       },
       "normalizer": {
         "case_insensitive_normalizer": {
           "type": "custom",
           "char_filter": [],
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "url_normalizer": {
+          "type": "custom",
+          "char_filter": [
+            "strip_dot_pattern"
+          ],
           "filter": [
             "lowercase",
             "asciifolding"
@@ -108,7 +142,7 @@
           },
           "site": {
             "type": "text",
-            "analyzer": "url_analyzer",
+            "analyzer": "cern_url_analyzer",
             "fields": {
               "exact_match": {
                 "type": "keyword",
@@ -119,7 +153,7 @@
           },
           "origin": {
             "type": "text",
-            "analyzer": "url_analyzer",
+            "analyzer": "cern_url_analyzer",
             "fields": {
               "exact_match": {
                 "type": "keyword"
@@ -190,7 +224,7 @@
         "analyzer": "url_analyzer",
         "fields": {
           "exact_match": {
-            "normalizer": "case_insensitive_normalizer",
+            "normalizer": "url_normalizer",
             "type": "keyword"
           }
         }

@@ -33,7 +33,7 @@ build-env:
 
 rebuild-env:
 	docker-compose -f $(DOCKER_FILE) up -d --build --remove-orphans
-.PHONY: build-env
+.PHONY: rebuild-env
 
 es-setup:
 	curl -XPUT "http://localhost:9200/_settings" -H 'Content-Type: application/json' -d' \

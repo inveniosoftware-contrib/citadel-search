@@ -52,6 +52,79 @@ def match_filter(field):
     return inner
 
 
+def query_string(field):
+    """Create a query_string query.
+
+    :param field: Field name.
+    :returns: Function that returns the match query.
+    """
+
+    def inner(values):
+        return Q(
+            'query_string',
+            query=f"{field}:({' '.join(values)})",
+            rewrite="top_terms_1000",  # calculates score for wildcards queries
+        )
+
+    return inner
+
+
+def simple_query_string(field):
+    """Create a query_string query.
+
+    :param field: Field name.
+    :returns: Function that returns the match query.
+    """
+
+    def inner(values):
+        return Q(
+            'simple_query_string',
+            query=' '.join(values),
+            fields=[field]
+        )
+
+    return inner
+
+
+def match_phrase_filter(field):
+    """Create a match_phrase or match query. [WIP: missing checking if inside value there's a string]
+
+    :param field: Field name.
+    :returns: Function that returns the match query.
+    """
+
+    def inner(values):
+        current_app.logger.warning(f"match_phrase_filter: {values}")
+
+        matches = []
+        phrase_matches = []
+        for value in values:
+            current_app.logger.warning(f"value: {value}")
+
+            if not value.startswith("\""):
+                matches.append(value)
+
+                continue
+
+            if value.endswith("\"") and len(value) > 1:
+                phrase_matches.append(value)
+
+        query_match = Q("match", **{field: ' '.join(matches)})
+        query_match_phrase = Q("match_phrase", **{field: ' '.join(phrase_matches)})
+
+        current_app.logger.warning(**{field: ' '.join(matches)})
+
+        if matches and phrase_matches:
+            return Q('bool', must=[query_match, query_match_phrase])
+
+        if phrase_matches:
+            return query_match_phrase
+
+        return query_match
+
+    return inner
+
+
 def _create_match_dsl(urlkwargs, definitions):
     """Create a match DSL expression."""
     filters = []
