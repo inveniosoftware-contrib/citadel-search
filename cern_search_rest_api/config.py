@@ -96,6 +96,9 @@ SEARCH_MAPPINGS = [os.getenv('CERN_SEARCH_INSTANCE', 'test')]
 SEARCH_USE_EGROUPS = ast.literal_eval(os.getenv('CERN_SEARCH_USE_EGROUPS', 'True'))
 SEARCH_DOC_PIPELINES = ast.literal_eval(os.getenv('CERN_SEARCH_DOC_PIPELINES', '{}'))
 
+# Alias instance - don't allow updates, allow only search
+SEARCH_INSTANCE_IMMUTABLE = ast.literal_eval(os.getenv('CERN_SEARCH_INSTANCE_IMMUTABLE', 'False'))
+
 # Records REST configuration
 # ===========================
 

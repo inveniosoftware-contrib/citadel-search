@@ -17,6 +17,10 @@ from invenio_records_files.api import FileObject
 from invenio_records_files.models import RecordsBuckets
 
 
+def _is_instance_immutable():
+    return current_app.config['SEARCH_INSTANCE_IMMUTABLE']
+
+
 def record_permission_factory(record=None, action=None):
     """Record permission factory."""
     return RecordPermission.create(record, action)
@@ -149,6 +153,9 @@ def has_owner_permission(user, record=None):
     """Check if user is authenticated and has create access."""
     log_action(user, 'CREATE/OWNER')
 
+    if _is_instance_immutable():
+        return False
+
     # First authentication phase, decorator level
     if not record:
         return user.is_authenticated
@@ -172,6 +179,10 @@ def has_list_permission(user, record=None):
 def has_update_permission(user, record):
     """Check if user is authenticated and has update access."""
     log_action(user, 'UPDATE')
+
+    if _is_instance_immutable():
+        return False
+
     if user.is_authenticated:
         # Allow based in the '_access' key
         update_access = get_access_set(record['_access'], 'update')
@@ -194,6 +205,9 @@ def has_update_permission(user, record):
 def has_read_record_permission(user, record):
     """Check if user is authenticated and has read access. This implies reading one document."""
     log_action(user, 'READ')
+
+    if _is_instance_immutable():
+        return False
 
     # Allow based in the '_access' key
     read_access = get_access_set(record['_access'], 'read')
@@ -221,6 +235,10 @@ def has_read_record_permission(user, record):
 def has_delete_permission(user, record):
     """Check if user is authenticated and has delete access."""
     log_action(user, 'DELETE')
+
+    if _is_instance_immutable():
+        return False
+
     if user.is_authenticated:
         # Allow based in the '_access' key
         delete_access = get_access_set(record['_access'], 'delete')
