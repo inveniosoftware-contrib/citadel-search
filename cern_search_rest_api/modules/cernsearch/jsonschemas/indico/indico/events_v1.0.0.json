@@ -1,31 +1,31 @@
 {
   "title": "Indico Event schema v1.0.0",
-  "id": "http://<host:port>/schemas/indico/events_v1.0.0.json",
-  "$schema": "http://<host:port>/schemas/indico/events_v1.0.0.json",
+  "id": "http://localhost:5000/schemas/indico/events_v1.0.0.json",
+  "$schema": "http://localhost:5000/schemas/indico/events_v1.0.0.json",
   "type": "object",
   "properties": {
     "_access": {
       "type": "object",
       "properties": {
-        "owner": {
+        "owner":{
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "read": {
+        "read":{
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "update": {
+        "update":{
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "delete": {
+        "delete":{
           "type": "array",
           "items": {
             "type": "string"
@@ -33,48 +33,20 @@
         }
       }
     },
-    "_data": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "integer",
-          "description": "Event id."
-        },
-        "category_path": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Event category path (ordered array)."
-        },
-        "event_type": {
-          "type": "string",
-          "description": "Event type."
-        },
-        "location": {
-          "type": "string",
-          "description": "Event location."
-        },
-        "title": {
-          "type": "string",
-          "description": "Event title."
-        },
-        "description": {
-          "type": "string",
-          "description": "Event description."
-        },
-        "speakers_chairs": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Event speaker/chair name, affiliation."
-        },
-        "url": {
-          "type": "string",
-          "description": "Full path Event URL"
-        }
-      }
+    "id": {
+      "type": "string",
+      "description": "Event id."
+    },
+    "category_path": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      },
+      "description": "Event category path (ordered array)."
+    },
+    "event_type": {
+      "type": "string",
+      "description": "Event type."
     },
     "creation_date": {
       "type": "string",
@@ -87,6 +59,37 @@
     "end_date": {
       "type": "string",
       "description": "Event end date."
+    },
+    "location": {
+      "type": "string",
+      "description": "Event location."
+    },
+    "title": {
+      "type": "string",
+      "description": "Event title."
+    },
+    "description": {
+      "type": "string",
+      "description": "Event description."
+    },
+    "speakers_chairs": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Event speaker/chair name."
+          },
+          "affiliation": {
+            "type": "string",
+            "description": "Event speaker/chair affiliation."
+          }
+        }
+      }
+    },
+    "custom_pid": {
+      "type": "string"
     },
     "$schema": {
       "type": "string"

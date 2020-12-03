@@ -38,15 +38,15 @@
         },
         "creation_date": {
           "type": "date",
-          "format": "date_hour_minute"
+          "format": "YYYY-MM-DDZHH:MM"
         },
         "start_date": {
           "type": "date",
-          "format": "date_hour_minute"
+          "format": "YYYY-MM-DDZHH:MM"
         },
         "end_date": {
           "type": "date",
-          "format": "date_hour_minute"
+          "format": "YYYY-MM-DDZHH:MM"
         },
         "location": {
           "type": "text"

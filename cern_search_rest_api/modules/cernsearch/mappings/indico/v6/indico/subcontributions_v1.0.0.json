@@ -41,15 +41,15 @@
         },
         "creation_date": {
           "type": "date",
-          "format": "yyyy-MM-ddZHH:mm"
+          "format": "YYYY-MM-DDZHH:MM"
         },
         "start_date": {
           "type": "date",
-          "format": "yyyy-MM-ddZHH:mm"
+          "format": "YYYY-MM-DDZHH:MM"
         },
         "end_date": {
           "type": "date",
-          "format": "yyyy-MM-ddZHH:mm"
+          "format": "YYYY-MM-DDZHH:MM"
         },
         "location": {
           "type": "text"

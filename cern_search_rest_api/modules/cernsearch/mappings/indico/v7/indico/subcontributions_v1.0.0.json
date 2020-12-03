@@ -1,61 +1,8 @@
 {
   "settings": {
     "index.percolator.map_unmapped_fields_as_text": true,
-    "index.mapping.total_fields.limit": 500,
-    "index.query.default_field": ["_data.*"],
-    "index.highlight.max_analyzed_offset": 10000000,
-    "analysis": {
-      "tokenizer": {
-        "url_tokenizer": {
-          "type": "pattern",
-          "pattern": "\\.|(\\:\\/\\/)|\\/"
-        },
-        "autocomplete": {
-          "type": "edge_ngram",
-          "min_gram": 1,
-          "max_gram": 20,
-          "token_chars": ["letter"]
-        }
-      },
-      "filter": {
-        "url_stop": {
-          "type": "stop",
-          "stopwords": [
-            "http",
-            "https",
-            "ftp",
-            "www",
-            "web",
-            "cern",
-            "ch",
-            "fnal",
-            "bnl",
-            "gov"
-          ]
-        }
-      },
-      "analyzer": {
-        "url_analyzer": {
-          "type": "custom",
-          "tokenizer": "url_tokenizer",
-          "filter": ["url_stop"]
-        },
-        "autocomplete": {
-          "tokenizer": "autocomplete",
-          "filter": ["lowercase"]
-        },
-        "autocomplete_search": {
-          "tokenizer": "lowercase"
-        }
-      },
-      "normalizer": {
-        "case_insensitive_normalizer": {
-          "type": "custom",
-          "char_filter": [],
-          "filter": ["lowercase", "asciifolding"]
-        }
-      }
-    }
+    "index.mapping.total_fields.limit": 50,
+    "index.query.default_field" : ["_data.*"]
   },
   "mappings": {
     "numeric_detection": true,
@@ -77,91 +24,79 @@
           }
         }
       },
-      "_data": {
-        "type": "object",
-        "properties": {
-          "id": {
-            "type": "keyword"
-          },
-          "category_path": {
-            "type": "keyword"
-          },
-          "event_id": {
-            "type": "keyword"
-          },
-          "contribution_id": {
-            "type": "keyword"
-          },
-          "location": {
+      "id": {
+        "type": "keyword"
+      },
+      "category_path": {
+        "type": "keyword"
+      },
+      "event_id": {
+        "type": "keyword"
+      },
+      "contribution_id": {
+        "type": "keyword"
+      },
+      "creation_date": {
+        "type": "date",
+        "format": "YYYY-MM-DDZHH:MM"
+      },
+      "start_date": {
+        "type": "date",
+        "format": "YYYY-MM-DDZHH:MM"
+      },
+      "end_date": {
+        "type": "date",
+        "format": "YYYY-MM-DDZHH:MM"
+      },
+      "location": {
+        "type": "text"
+      },
+      "title": {
+        "type": "text",
+        "fields": {
+          "english": {
             "type": "text",
-            "fields": {
-              "english": {
-                "type": "text",
-                "analyzer": "english"
-              },
-              "french": {
-                "type": "text",
-                "analyzer": "french"
-              }
-            }
+            "analyzer": "english"
           },
-          "title": {
+          "french": {
             "type": "text",
-            "fields": {
-              "english": {
-                "type": "text",
-                "analyzer": "english"
-              },
-              "french": {
-                "type": "text",
-                "analyzer": "french"
-              }
-            }
-          },
-          "description": {
-            "type": "text",
-            "fields": {
-              "english": {
-                "type": "text",
-                "analyzer": "english"
-              },
-              "french": {
-                "type": "text",
-                "analyzer": "french"
-              }
-            }
-          },
-          "list_of_persons": {
-            "type": "text",
-            "fields": {
-              "english": {
-                "type": "text",
-                "analyzer": "english"
-              },
-              "french": {
-                "type": "text",
-                "analyzer": "french"
-              }
-            }
-          },
-          "url": {
-            "type": "text",
-            "analyzer": "url_analyzer",
-            "fields": {
-              "exact_match": {
-                "type": "keyword"
-              }
-            }
+            "analyzer": "french"
           }
         }
       },
-      "_updated": {
-        "type": "date"
+      "description": {
+        "type": "text",
+        "fields": {
+          "english": {
+            "type": "text",
+            "analyzer": "english"
+          },
+          "french": {
+            "type": "text",
+            "analyzer": "french"
+          }
+        }
       },
-      "_created": {
-        "type": "date"
+      "list_of_persons": {
+        "type": "nested",
+        "properties": {
+          "name": {
+            "type": "text",
+            "fields": {
+              "keyword": {
+                "type": "keyword"
+              }
+            }
+          },
+          "affiliation": {
+            "type": "text"
+          },
+          "role": {
+            "type": "keyword"
+          }
+        }
       },
-      "control_number": {
+      "custom_pid": {
         "type": "keyword"
       },
       "$schema": {
