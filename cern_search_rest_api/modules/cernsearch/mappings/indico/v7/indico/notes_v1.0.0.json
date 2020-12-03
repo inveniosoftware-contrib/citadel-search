@@ -1,8 +1,61 @@
 {
   "settings": {
     "index.percolator.map_unmapped_fields_as_text": true,
-    "index.mapping.total_fields.limit": 30,
-    "index.query.default_field" : ["_data.*"]
+    "index.mapping.total_fields.limit": 500,
+    "index.query.default_field": ["_data.*"],
+    "index.highlight.max_analyzed_offset": 10000000,
+    "analysis": {
+      "tokenizer": {
+        "url_tokenizer": {
+          "type": "pattern",
+          "pattern": "\\.|(\\:\\/\\/)|\\/"
+        },
+        "autocomplete": {
+          "type": "edge_ngram",
+          "min_gram": 1,
+          "max_gram": 20,
+          "token_chars": ["letter"]
+        }
+      },
+      "filter": {
+        "url_stop": {
+          "type": "stop",
+          "stopwords": [
+            "http",
+            "https",
+            "ftp",
+            "www",
+            "web",
+            "cern",
+            "ch",
+            "fnal",
+            "bnl",
+            "gov"
+          ]
+        }
+      },
+      "analyzer": {
+        "url_analyzer": {
+          "type": "custom",
+          "tokenizer": "url_tokenizer",
+          "filter": ["url_stop"]
+        },
+        "autocomplete": {
+          "tokenizer": "autocomplete",
+          "filter": ["lowercase"]
+        },
+        "autocomplete_search": {
+          "tokenizer": "lowercase"
+        }
+      },
+      "normalizer": {
+        "case_insensitive_normalizer": {
+          "type": "custom",
+          "char_filter": [],
+          "filter": ["lowercase", "asciifolding"]
+        }
+      }
+    }
   },
   "mappings": {
     "numeric_detection": true,
@@ -24,39 +77,62 @@
           }
         }
       },
-      "id": {
-        "type": "keyword"
-      },
-      "category_path": {
-        "type": "keyword"
-      },
-      "event_id": {
-        "type": "keyword"
-      },
-      "contribution_id": {
-        "type": "keyword"
-      },
-      "subcontribution_id": {
-        "type": "keyword"
-      },
-      "creation_date": {
-        "type": "date",
-        "format": "YYYY-MM-DDZHH:MM"
-      },
-      "content": {
-        "type": "text",
-        "fields": {
-          "english": {
-            "type": "text",
-            "analyzer": "english"
+      "_data": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "keyword"
           },
-          "french": {
+          "category_path": {
+            "type": "keyword"
+          },
+          "event_id": {
+            "type": "keyword"
+          },
+          "contribution_id": {
+            "type": "keyword"
+          },
+          "subcontribution_id": {
+            "type": "keyword"
+          },
+          "session_id": {
+            "type": "keyword"
+          },
+          "content": {
             "type": "text",
-            "analyzer": "french"
+            "fields": {
+              "english": {
+                "type": "text",
+                "analyzer": "english"
+              },
+              "french": {
+                "type": "text",
+                "analyzer": "french"
+              }
+            }
+          },
+          "url": {
+            "type": "text",
+            "analyzer": "url_analyzer",
+            "fields": {
+              "exact_match": {
+                "type": "keyword"
+              }
+            }
           }
         }
       },
-      "custom_pid": {
+      "creation_date": {
+        "type": "date",
+        "format": "strict_date_optional_time"
+      },
+      "_updated": {
+        "type": "date"
+      },
+      "_created": {
+        "type": "date"
+      },
+      "control_number": {
         "type": "keyword"
       },
       "$schema": {
