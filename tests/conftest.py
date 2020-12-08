@@ -33,7 +33,7 @@ def user(db, app):
     user = User(email='test@example.com', active=True)
     db.session.add(user)
 
-    role = Role(name='CernSearch-Administrators@cern.ch')
+    role = Role(name='search-admin')
     role.users.append(user)
     db.session.add(role)
 

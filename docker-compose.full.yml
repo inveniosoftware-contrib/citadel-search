@@ -50,7 +50,7 @@ services:
     command: [
       "/bin/bash",
       "-c",
-      "celery worker -A ${WORKER_APP} -l DEBUG --autoscale=10,1"
+      "celery -A ${WORKER_APP} worker -l DEBUG --autoscale=10,1"
     ]
     healthcheck:
       test: ["CMD", "celery inspect ping -A ${WORKER_APP} -d celery@$$(hostname)"]

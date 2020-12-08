@@ -24,7 +24,7 @@ from cern_search_rest_api.modules.cernsearch.permissions import (record_create_p
                                                                  record_update_permission_factory)
 from elasticsearch_dsl import A
 from flask import request
-from invenio_oauthclient.contrib import cern
+from invenio_oauthclient.contrib import cern_openid
 from invenio_records_rest import config as irr_config
 from invenio_records_rest.facets import terms_filter
 from kombu import Exchange, Queue
@@ -42,31 +42,27 @@ THEME_SEARCHBAR = False
 # OAuth Client
 # ============
 
-CERN_REMOTE_APP = copy.deepcopy(cern.REMOTE_APP)
+OAUTHCLIENT_CERN_OPENID_ALLOWED_ROLES = ["search-user", "search-admin"]
+
+CERN_REMOTE_APP = copy.deepcopy(cern_openid.REMOTE_APP)
 CERN_REMOTE_APP["params"].update(dict(request_token_params={
-    "resource": os.getenv('CERN_SEARCH_REMOTE_APP_RESOURCE', 'test-cern-search.cern.ch'),
-    "scope": "Name Email Bio Groups",
+    "scope": "openid",
 }))
 
-CERN_REMOTE_APP["authorized_handler"] = \
-    'cern_search_rest_api.modules.cernsearch.handlers:cern_authorized_signup_handler'
-
 OAUTHCLIENT_REMOTE_APPS = dict(
-    cern=CERN_REMOTE_APP,
+    cern_openid=CERN_REMOTE_APP,
 )
 
 # OAuth REST Client
 # ============
 
-OAUTH_REMOTE_APP = copy.deepcopy(cern.REMOTE_REST_APP)
-OAUTH_REMOTE_APP["params"].update(dict(request_token_params={
-    "resource": os.getenv('CERN_SEARCH_REMOTE_APP_RESOURCE', 'test-cern-search.cern.ch'),
-    "scope": "Name Email Bio Groups Group",
+OAUTH_REMOTE_REST_APP = copy.deepcopy(cern_openid.REMOTE_REST_APP)
+OAUTH_REMOTE_REST_APP["params"].update(dict(request_token_params={
+    "scope": "openid",
 }))
-OAUTH_REMOTE_APP["authorized_handler"] = \
-    'cern_search_rest_api.modules.cernsearch.handlers:cern_authorized_signup_handler'
+
 OAUTHCLIENT_REST_REMOTE_APPS = dict(
-    cern=OAUTH_REMOTE_APP,
+    cern_openid=OAUTH_REMOTE_REST_APP,
 )
 
 # Accounts

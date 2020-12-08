@@ -7,7 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 # Use CentOS7:
-FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:d7964b30051811d72629dd35a6175e28224589c8
+FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:4cc14deb49f42c505062110461b96c12cda9b377
 ARG build_env
 
 # CERN Search installation
@@ -27,9 +27,6 @@ RUN pip install -e .
 # PID File for uWSGI
 RUN touch /${WORKING_DIR}/src/uwsgi.pid
 RUN chmod 666 /${WORKING_DIR}/src/uwsgi.pid
-
-# Patch auth
-RUN sh /${WORKING_DIR}/src/scripts/patch/oauth_patch.sh
 
 ENV LOGS_DIR=/var/log
 RUN mkdir -p ${LOGS_DIR}

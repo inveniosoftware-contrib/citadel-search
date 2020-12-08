@@ -53,7 +53,7 @@ services:
     command: [
       "/bin/bash",
       "-c",
-      "celery worker -A ${WORKER_APP} -l DEBUG --autoscale=10,1"
+      "celery -A ${WORKER_APP} worker -l DEBUG --autoscale=10,1"
     ]
     healthcheck:
       test: ["CMD", "celery inspect ping -A ${WORKER_APP} -d celery@$$(hostname)"]
@@ -76,7 +76,7 @@ services:
       test: ["CMD", "curl", "-f", "localhost:9200/_cluster/health?wait_for_status=yellow"]
       interval: 30s
       timeout: 10s
-      retries: 5
+      retries: 10
 
   kibana:
     image: docker.elastic.co/kibana/kibana-oss:7.1.1

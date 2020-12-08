@@ -141,6 +141,12 @@ class FilePermission(RecordPermission):
 
 def _granted(provides, needs):
     """Check if user provided permissions and necessary permissions match."""
+
+    current_app.logger.debug('Provides {provides} and needs: {needs}'.format(
+        provides=provides,
+        needs=needs
+    ))
+
     return provides and not set(provides).isdisjoint(set(needs))
 
 

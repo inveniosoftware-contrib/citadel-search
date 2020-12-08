@@ -27,10 +27,11 @@ invenio-db = {version = ">=1.0.5,<1.1.0",extras = ["postgresql", "versioning"]}
 invenio-files-processor = {extras = ["tika"],git = "https://github.com/carantunes/invenio-files-processor.git",ref = "1.0.2-alpha"}
 invenio-files-rest = ">=1.2.0,<1.3.0"
 invenio-indexer = ">=1.1.1,<1.2.0"
+invenio-i18n = "<1.3.0,>=1.2.0"
 invenio-jsonschemas = ">=1.1.0,<1.2.0"
 invenio-logging = {extras = ["sentry-sdk"],version = ">=1.3.0,<1.4.0"}
 invenio-oauth2server = ">=1.2.0,<1.3.0"
-invenio-oauthclient = ">=1.3.0,<1.4.0"
+invenio-oauthclient = "<1.4.0,>=1.3.5"
 invenio-records = {extras = ["postgresql"],version = ">=1.3.1,<1.4.0"}
 invenio-records-files = ">=1.2.1,<1.3.0"
 invenio-records-rest = ">=1.7.1,<1.8.0"
@@ -50,3 +51,6 @@ tika = "==1.24"
 
 [requires]
 python_version = "3.6"
+
+[pipenv]
+allow_prereleases = true

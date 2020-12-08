@@ -18,9 +18,6 @@ pipenv install --dev --skip-lock
 # Install application code and entrypoints from 'setup.py'
 pip install -e $SCRIPT_PATH/../..
 
-# Patch auth
-sh $SCRIPT_PATH/../patch/oauth_patch.sh
-
 # Build assets
 invenio collect -v
 invenio webpack buildall
