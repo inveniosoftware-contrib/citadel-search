@@ -1,31 +1,31 @@
 {
   "title": "Indico Notes schema v1.0.0",
-  "id": "http://localhost:5000/schemas/indico/notes_v1.0.0.json",
-  "$schema": "http://localhost:5000/schemas/indico/notes_v1.0.0.json",
+  "id": "http://<host:port>/schemas/indico/notes_v1.0.0.json",
+  "$schema": "http://<host:port>/schemas/indico/notes_v1.0.0.json",
   "type": "object",
   "properties": {
     "_access": {
       "type": "object",
       "properties": {
-        "owner":{
+        "owner": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "read":{
+        "read": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "update":{
+        "update": {
           "type": "array",
           "items": {
             "type": "string"
           }
         },
-        "delete":{
+        "delete": {
           "type": "array",
           "items": {
             "type": "string"
@@ -33,41 +33,52 @@
         }
       }
     },
-    "id": {
-      "type": "string",
-      "description": "Notes id."
-    },
-    "category_path": {
-      "type": "array",
-      "items": {
-        "type": "string"
-      },
-      "description": "Notes category path (ordered array)."
-    },
-    "event_id": {
-      "type": "string",
-      "description": "Notes id."
-    },
-    "contribution_id": {
-      "type": "string",
-      "description": "Notes id.",
-      "required": false
-    },
-    "subcontribution_id": {
-      "type": "string",
-      "description": "Notes id.",
-      "required": false
+    "_data": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "integer",
+          "description": "Notes id."
+        },
+        "category_path": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Notes category path (ordered array)."
+        },
+        "event_id": {
+          "type": "integer",
+          "description": "Notes id."
+        },
+        "contribution_id": {
+          "type": "integer",
+          "description": "Notes id.",
+          "required": false
+        },
+        "subcontribution_id": {
+          "type": "integer",
+          "description": "Notes id.",
+          "required": false
+        },
+        "session_id": {
+          "type": "integer",
+          "description": "Notes id.",
+          "required": false
+        },
+        "content": {
+          "type": "string",
+          "description": "Attachments content."
+        },
+        "url": {
+          "type": "string",
+          "description": "Full path Note URL"
+        }
+      }
     },
     "creation_date": {
       "type": "string",
       "description": "Attachments creation date."
-    },
-    "content": {
-      "type": "string",
-      "description": "Attachments content."
-    },
-    "custom_pid": {
-      "type": "string"
     },
     "$schema": {
       "type": "string"

@@ -197,6 +197,19 @@ RECORDS_REST_FACETS = {
             'name_match': simple_query_string("_data.name"),
             'url_match': simple_query_string("url"),
         }
+    },
+    'indico': {
+        'aggs': {
+            'event_type': {
+                'terms': {'field': '_data.event_type'}
+            },
+            'speakers_chairs': {
+                'terms': {'field': '_data.speakers_chairs.exact_match'}
+            },
+            'list_of_persons': {
+                'terms': {'field': '_data.list_of_persons.exact_match'}
+            }
+        }
     }
 }
 
