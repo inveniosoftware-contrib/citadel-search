@@ -1,6 +1,15 @@
 Changes
 =======
 
+**Version 1.5.0-beta (released 2020-12-08)**
+
+Changes:
+- [SEARCH-108] Facets: querystring + url filter
+- [SEARCH-114] Limit access to alias instances GET /records
+- Add Indico schemas and aggregations
+
+----
+
 **Version 1.4.0-beta (released 2020-09-08)**
 
 Changes:
