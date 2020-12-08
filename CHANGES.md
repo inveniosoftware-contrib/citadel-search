@@ -7,6 +7,8 @@ Changes:
 - [SEARCH-108] Facets: querystring + url filter
 - [SEARCH-114] Limit access to alias instances GET /records
 - Add Indico schemas and aggregations
+- [SEARCH-107] Switch to new cern oauth
+- [SEARCH-115] refactor archives (add discourse and notifications archives)
 
 ----
 
