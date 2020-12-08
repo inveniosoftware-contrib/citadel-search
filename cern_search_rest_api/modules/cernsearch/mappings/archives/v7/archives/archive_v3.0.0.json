@@ -1,10 +1,10 @@
 {
   "settings": {
-    "index.percolator.map_unmapped_fields_as_string": true,
-    "index.mapping.total_fields.limit": 100
+    "index.percolator.map_unmapped_fields_as_text": true,
+    "index.mapping.total_fields.limit": 100,
+    "index.query.default_field" : ["_data.*"]
   },
   "mappings": {
-    "archive_v2.0.0": {
       "dynamic": "strict",
       "numeric_detection": true,
       "properties": {
@@ -63,7 +63,7 @@
           }
         },
         "group": {
-          "enabled": false
+          "type": "keyword"
         },
         "date": {
           "type": "date",
@@ -86,5 +86,4 @@
         }
       }
     }
-  }
 }

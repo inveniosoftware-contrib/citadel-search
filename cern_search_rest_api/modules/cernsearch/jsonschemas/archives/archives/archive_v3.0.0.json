@@ -1,0 +1,79 @@
+{
+  "title": "Archive schema v3.0.0",
+  "id": "http://<host:port>/schemas/archives/archive_v3.0.0.json",
+  "$schema": "http://<host:port>/schemas/archives/archive_v3.0.0.json",
+  "type": "object",
+  "properties": {
+    "_access": {
+      "type": "object",
+      "properties": {
+        "owner": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "read": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "update": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "delete": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "_data": {
+      "type": "object",
+      "properties": {
+        "from": {
+          "type": "string",
+          "description": "Mail header from."
+        },
+        "subject": {
+          "type": "string",
+          "description": "Mail header subject."
+        },
+        "attachments": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "Mail attachments filenames."
+        },
+        "body": {
+          "type": "string",
+          "description": "Mail body."
+        }
+      }
+    },
+    "mailid": {
+      "type": "string",
+      "description": "Mail Id."
+    },
+    "date": {
+      "type": "string",
+      "description": "Mail header date."
+    },
+    "group": {
+      "type": "string",
+      "description": "Group name."
+    },
+    "control_number": {
+      "type": "string"
+    },
+    "$schema": {
+      "type": "string"
+    }
+  }
+}

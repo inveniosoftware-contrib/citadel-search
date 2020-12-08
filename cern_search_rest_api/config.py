@@ -95,6 +95,9 @@ SEARCH_DOC_PIPELINES = ast.literal_eval(os.getenv('CERN_SEARCH_DOC_PIPELINES', '
 # Alias instance - don't allow updates, allow only search
 SEARCH_INSTANCE_IMMUTABLE = ast.literal_eval(os.getenv('CERN_SEARCH_INSTANCE_IMMUTABLE', 'False'))
 
+# File indexer capabilities enabled
+SEARCH_FILE_INDEXER = ast.literal_eval(os.getenv('CERN_SEARCH_FILE_INDEXER', 'True'))
+
 # Records REST configuration
 # ===========================
 
@@ -166,34 +169,36 @@ def aggs_filter(field):
     return inner
 
 
-RECORDS_REST_FACETS = {
-    'webservices': {
-        'aggs': {
-            'collection': {
-                'terms': {'field': 'collection'}
-            },
-            'type_format': {
-                'terms': {'field': 'type_format'}
-            },
-            'author': regex_aggregation('_data.authors.exact_match', 'authors_suggest'),
-            'site': regex_aggregation('_data.site.exact_match', 'sites_suggest'),
-            'keyword': regex_aggregation('_data.keywords.exact_match', 'keywords_suggest')
+cern_rest_facets = {
+    'aggs': {
+        'collection': {
+            'terms': {'field': 'collection'}
         },
-        'filters': {
-            'collection': terms_filter("collection"),
-            'type_format': terms_filter("type_format"),
-            'author': terms_filter("_data.authors.exact_match"),
-            'site': terms_filter("_data.site.exact_match"),
-            'keyword': terms_filter("_data.keywords.exact_match"),
+        'type_format': {
+            'terms': {'field': 'type_format'}
         },
-        'matches': {
-            'author_match': simple_query_string("_data.authors"),
-            'keyword_match': simple_query_string("_data.keywords"),
-            'site_match': simple_query_string("_data.site"),
-            'name_match': simple_query_string("_data.name"),
-            'url_match': simple_query_string("url"),
-        }
+        'author': regex_aggregation('_data.authors.exact_match', 'authors_suggest'),
+        'site': regex_aggregation('_data.site.exact_match', 'sites_suggest'),
+        'keyword': regex_aggregation('_data.keywords.exact_match', 'keywords_suggest')
     },
+    'filters': {
+        'collection': terms_filter("collection"),
+        'type_format': terms_filter("type_format"),
+        'author': terms_filter("_data.authors.exact_match"),
+        'site': terms_filter("_data.site.exact_match"),
+        'keyword': terms_filter("_data.keywords.exact_match"),
+    },
+    'matches': {
+        'author_match': simple_query_string("_data.authors"),
+        'keyword_match': simple_query_string("_data.keywords"),
+        'site_match': simple_query_string("_data.site"),
+        'name_match': simple_query_string("_data.name"),
+        'url_match': simple_query_string("url"),
+    }
+}
+RECORDS_REST_FACETS = {
+    'cernsearchqa-*': cern_rest_facets,
+    'webservices': cern_rest_facets,
     'indico': {
         'aggs': {
             'event_type': {
@@ -209,19 +214,22 @@ RECORDS_REST_FACETS = {
     }
 }
 
-RECORDS_REST_SORT_OPTIONS = {
-    'webservices': {
-        'bestmatch': {
-            'fields': ['-_score'],
-            'title': 'Best match',
-            'default_order': 'asc',
-        },
-        'mostrecent': {
-            'fields': ['_updated'],
-            'title': 'Newest',
-            'default_order': 'asc',
-        }
+cern_sort_options = {
+    'bestmatch': {
+        'fields': ['-_score'],
+        'title': 'Best match',
+        'default_order': 'asc',
     },
+    'mostrecent': {
+        'fields': ['_updated'],
+        'title': 'Newest',
+        'default_order': 'asc',
+    }
+}
+
+RECORDS_REST_SORT_OPTIONS = {
+    'webservices': cern_sort_options,
+    'cernsearchqa-*': cern_sort_options,
     'edms': {
         'bestmatch': {
             'fields': ['-_score'],
@@ -311,5 +319,5 @@ SEARCH_CLIENT_CONFIG = dict(
     maxsize=int(os.getenv("ELASTICSEARCH_MAX_SIZE", 5)),
 )
 
-# FILE
+# Processes file metadata
 PROCESS_FILE_META = ast.literal_eval(os.getenv("CERN_SEARCH_PROCESS_FILE_META", 'False'))
