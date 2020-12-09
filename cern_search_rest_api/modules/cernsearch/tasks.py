@@ -12,7 +12,7 @@ from celery import shared_task
 from celery.exceptions import MaxRetriesExceededError, Reject
 from flask import current_app
 from invenio_files_processor.errors import InvalidProcessor
-from invenio_files_processor.processors.tika import TikaProcessor
+from invenio_files_processor.processors.tika.unpack import UnpackProcessor
 from invenio_files_processor.proxies import current_processors
 from invenio_files_rest.models import ObjectVersion
 
@@ -30,7 +30,7 @@ def process_file_async(self, bucket_id, key_id):
         current_app.logger.debug(f"Processing file {bucket_id}:{key_id}")
 
         obj = ObjectVersion.get(bucket_id, key_id)  # type: ObjectVersion
-        processor = current_processors.get_processor(name=TikaProcessor.id())  # type: TikaProcessor
+        processor = current_processors.get_processor(name=UnpackProcessor.id)  # type: UnpackProcessor
         processor.process(obj)
 
         current_app.logger.debug(f"Processed file {bucket_id}:{key_id}")

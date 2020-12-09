@@ -10,8 +10,9 @@
 from unittest.mock import patch
 
 from celery.exceptions import MaxRetriesExceededError, Reject, Retry
+from invenio_files_processor.processors.tika.unpack import UnpackProcessor
+
 from cern_search_rest_api.modules.cernsearch.tasks import process_file_async
-from invenio_files_processor.processors.tika import TikaProcessor
 from pytest import raises
 
 
@@ -34,7 +35,7 @@ class TestProcessFileAsync:
         process_file_async('00000000-0000-0000-0000-000000000000', 'test.pdf')
 
         object_version_get_mock.assert_called_once_with('00000000-0000-0000-0000-000000000000', 'test.pdf')
-        get_processor_mock.assert_called_once_with(name=TikaProcessor.id())
+        get_processor_mock.assert_called_once_with(name=UnpackProcessor.id)
         get_processor_mock.return_value.process.assert_called_once_with(object_version)
 
     @patch('cern_search_rest_api.modules.cernsearch.tasks.ObjectVersion.get', side_effect=Exception())

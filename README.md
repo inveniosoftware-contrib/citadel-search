@@ -16,7 +16,7 @@ documents and search among them when needed!
 
 Read more on the makefile.
 
-- **Docker + Pipenv: Read more on the makefile**
+- **Docker + Poetry: Read more on the makefile**
 1. Run `make local-env MODE=test`
 2. Follow [instructions](#tls---how-to-install-certificate) to install certificate.
 

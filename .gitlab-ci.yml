@@ -62,8 +62,8 @@ build_base_image:
       - merge_requests
     changes:
       - Dockerfile-base
-      - Pipfile
-      - Pipfile.lock
+      - pyproject.toml
+      - poetry.lock
   when: manual
   variables:
     DOCKER_FILE: Dockerfile-base
@@ -77,8 +77,8 @@ validate-base-image-updated:
       - merge_requests
     changes:
       - Dockerfile-base
-      - Pipfile
-      - Pipfile.lock
+      - pyproject.toml
+      - poetry.lock
   script:
     - git diff --name-only origin/$CI_MERGE_REQUEST_TARGET_BRANCH_NAME | grep -q -E "(^|[^-])\bDockerfile\b([^-]|$)"
 

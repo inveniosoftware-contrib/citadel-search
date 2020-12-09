@@ -20,8 +20,10 @@ RUN yum update -y && \
 
 # CERN Search installation
 WORKDIR /${WORKING_DIR}/src
-ADD ./Pipfile /${WORKING_DIR}/src/Pipfile
-ADD ./Pipfile.lock /${WORKING_DIR}/src/Pipfile.lock
+ADD ./poetry.lock /${WORKING_DIR}/src
+ADD ./pyproject.toml /${WORKING_DIR}/src
 
 # Install dependencies globally
-RUN pipenv install --system --deploy
+RUN pip install poetry && \
+    poetry config virtualenvs.create false && \
+    poetry install --no-dev --no-root

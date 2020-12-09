@@ -109,23 +109,23 @@ lint:
 .PHONY: lint
 
 ###################  Local development helpful directives  ####################
-###################           (pipenv + docker)            ####################
+###################           (poetry + docker)            ####################
 #
 # Usage:
 # make logs                     # displays log outputs from running services
-# make build-local-env          # build pipenv, create and start containers
+# make build-local-env          # build poetry env, create and start containers
 # make check-requirements-local # check requirements
 # make local-env                # build virtual environment, load fixtures and starts api
 # make populate-instance-local  # create database, tables and indices
 # make serve-api-local          # start serving api
-# make shell-local-env          # start bash inside pipenv
-# make destroy-local-env        # stop and remove containers, networks, images, and volume and pipenv
-# make reload-local-env         # restart containers, networks, images, and volume and pipenv
+# make shell-local-env          # start bash inside poetry
+# make destroy-local-env        # stop and remove containers, networks, images, and volume and poetry env
+# make reload-local-env         # restart containers, networks, images, and volume and poetry env
 # make load-fixtures-local      # loads fixtures
 # make local-test               # runs tests
 # make local-lint               # runs linting tools
 
-PIPENV_DOTENV := .pipenv.env
+POETRY_DOTENV := .poetry.env
 PYTHON_VERSION_FILE := .python-version
 PYTHON_VERSION := $(cat $(PYTHON_VERSION_FILE) | xargs)
 PIPENV_DOCKER_FILE := docker-compose.yml
@@ -140,32 +140,31 @@ check-requirements-local:
 
 build-local-env: check-requirements-local
 	docker-compose -f $(PIPENV_DOCKER_FILE) up -d --build --remove-orphans
-	PIPENV_DOTENV_LOCATION=$(PIPENV_DOTENV) pipenv run sh scripts/pipenv/bootstrap
+	sh with_env.sh $(POETRY_DOTENV) poetry run sh scripts/pipenv/bootstrap
 .PHONY: build-local-env
 
 populate-instance-local:
-	PIPENV_DOTENV_LOCATION=$(PIPENV_DOTENV) pipenv run sh scripts/pipenv/populate-instance.sh
+	sh with_env.sh $(POETRY_DOTENV) poetry run sh scripts/pipenv/populate-instance.sh
 .PHONY: populate-instance-local
 
 load-fixtures-local:
-	PIPENV_DOTENV_LOCATION=$(PIPENV_DOTENV) pipenv run sh scripts/create-test-user.sh
+	sh with_env.sh $(POETRY_DOTENV) poetry run sh scripts/create-test-user.sh
 .PHONY: load-fixtures-local
 
 serve-api-local:
-	PIPENV_DOTENV_LOCATION=$(PIPENV_DOTENV) pipenv run sh scripts/pipenv/server
+	sh with_env.sh $(POETRY_DOTENV) poetry run sh scripts/pipenv/server
 .PHONY: serve-api-local
 
 local-env: build-local-env populate-instance-local serve-api-local
 .PHONY: local-env
 
 shell-local-env:
-	PIPENV_DOTENV_LOCATION=$(PIPENV_DOTENV) pipenv shell
+	sh with_env.sh $(POETRY_DOTENV) poetry shell
 .PHONY: shell-local-env
 
 destroy-local-env:
 	docker-compose -f $(PIPENV_DOCKER_FILE) down --volumes
 	docker-compose -f $(PIPENV_DOCKER_FILE) rm -f
-	pipenv --rm
 .PHONY: destroy-local-env
 
 reload-local-env: destroy-local-env local-env
@@ -173,12 +172,12 @@ reload-local-env: destroy-local-env local-env
 
 local-test:
 	@echo running tests...;
-	pipenv run pytest tests -v;
+	sh with_env.sh $(POETRY_DOTENV) poetry run pytest tests -v;
 .PHONY: local-test
 
 local-lint:
 	@echo running isort...;
-	pipenv run isort -rc -c -df;
+	sh with_env.sh $(POETRY_DOTENV) poetry run isort -rc -c -df .;
 	@echo running flake8...;
-	pipenv run flake8 --max-complexity 10 --ignore E501,D401
+	sh with_env.sh $(POETRY_DOTENV) poetry run flake8 --max-complexity 10 --ignore E501,D401
 .PHONY: local-lint

@@ -7,17 +7,17 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 # Use CentOS7:
-FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:4cc14deb49f42c505062110461b96c12cda9b377
+FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:3b6147ba87cd87992329c2dfaf4ba5f5d42ecf27
 ARG build_env
 
 # CERN Search installation
 WORKDIR /${WORKING_DIR}/src
 ADD . /${WORKING_DIR}/src
 
-RUN pip freeze
+RUN python -V && pip -V
 
 # If env is development, install development dependencies
-RUN if [ "$build_env" != "prod" ]; then pipenv install --system --ignore-pipfile --deploy --dev; fi
+RUN if [ "$build_env" != "prod" ]; then poetry install --no-root; fi
 
 RUN pip freeze
 

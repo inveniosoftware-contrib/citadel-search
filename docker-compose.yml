@@ -1,7 +1,7 @@
-# To be used with pipenv locally
+# To be used with poetry locally
 #
 # Requires:
-#  - pipenv
+#  - poetry
 #  - python@3.6.0
 
 version: "2.3"

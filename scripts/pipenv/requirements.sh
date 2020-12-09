@@ -6,10 +6,10 @@ else
     exit 1;
 fi
 
-# check pipenv installed
-if [[ "$(pipenv --version)" =~ "pipenv, version" ]]; then
-    echo pipenv is installed
+# check poetry installed
+if [[ "$(poetry --version)" =~ "poetry, version" ]]; then
+    echo poetry is installed
 else
-    echo pipenv is not installed. Aborting.
+    echo poetry is not installed. Aborting.
     exit 1;
 fi

@@ -1,3 +1,4 @@
+#!/usr/bin/env bash
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
@@ -6,11 +7,6 @@
 # CERN Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-[aliases]
-test = pytest
-
-[tool:pytest]
-env_files =
-    # uncomment according to the environment being used
-    .env
-    #.poetry.env
+env_file="$1"
+cmd="${@:2}"
+bash -c "source $env_file && $cmd"

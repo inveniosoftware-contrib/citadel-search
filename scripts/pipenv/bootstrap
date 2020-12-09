@@ -13,7 +13,7 @@ readonly SYS_PREFIX=$(python -c "import sys; print(sys.prefix)")
 readonly INVENIO_INSTANCE_PATH="$SYS_PREFIX/var/instance"
 
 # Installs all packages specified in Pipfile (to avoid OS incompabilities)
-pipenv install --dev --skip-lock
+poetry install --no-root
 
 # Install application code and entrypoints from 'setup.py'
 pip install -e $SCRIPT_PATH/../..
