@@ -2,22 +2,23 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Record API."""
-from cern_search_rest_api.modules.cernsearch.fetchers import recid_fetcher
-from cern_search_rest_api.modules.cernsearch.utils import default_record_to_mapping
 from invenio_files_rest.models import Bucket
 from invenio_pidstore.models import PersistentIdentifier
 from invenio_records.errors import MissingModelError
 from invenio_records_files.api import FilesMixin, Record
 from invenio_records_files.models import RecordsBuckets
 
-BUCKET_KEY = '_bucket'
-BUCKET_CONTENT_KEY = '_bucket_content'
+from cern_search_rest_api.modules.cernsearch.fetchers import recid_fetcher
+from cern_search_rest_api.modules.cernsearch.utils import default_record_to_mapping
+
+BUCKET_KEY = "_bucket"
+BUCKET_CONTENT_KEY = "_bucket_content"
 
 
 class CernSearchFilesMixin(FilesMixin):
@@ -45,7 +46,7 @@ class CernSearchFilesMixin(FilesMixin):
         """Set files' extracted content from data."""
         current_files = self.files_content
         if current_files:
-            raise RuntimeError('Can not update existing files.')
+            raise RuntimeError("Can not update existing files.")
         for key in data:
             current_files[key] = data[key]
 
@@ -94,7 +95,7 @@ class CernSearchRecord(Record, CernSearchFilesMixin):
 
         mapping = default_record_to_mapping(data)
         if mapping is not None:
-            buckets_allowed = BUCKET_KEY in mapping['properties']
+            buckets_allowed = BUCKET_KEY in mapping["properties"]
 
         return buckets_allowed
 

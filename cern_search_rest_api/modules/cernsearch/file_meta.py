@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -15,7 +15,7 @@ FILE_EXT_COLLECTIONS = {
     "Document": ["doc", "docx", "odt", "pages", "rtf", "tex", "wpd", "txt"],
     "PDF": ["pdf"],
     "Sheet": ["ods", "xlsx", "xlsm", "xls", "numbers"],
-    "Slides": ["ppt", "pptx", "pps", "odp", "key"]
+    "Slides": ["ppt", "pptx", "pps", "odp", "key"],
 }
 
 FILE_EXT_DEFAULT_COLLECTION = "Other"
@@ -27,23 +27,23 @@ def extract_metadata_from_processor(metadata):
     """Prepare metadata from processor."""
     extracted = {}
 
-    if metadata.get('Author'):
-        authors = metadata['Author']
-        extracted['authors'] = authors.strip(' ') if isinstance(authors, str) else ', '.join(authors)
-    if metadata.get('Content-Type'):
-        extracted['content_type'] = mime_type_to_file_collection(metadata['Content-Type'])
-    if metadata.get('title'):
-        extracted['title'] = metadata['title']
-    if metadata.get('Keywords'):
-        keywords = metadata['Keywords']
+    if metadata.get("Author"):
+        authors = metadata["Author"]
+        extracted["authors"] = authors.strip(" ") if isinstance(authors, str) else ", ".join(authors)
+    if metadata.get("Content-Type"):
+        extracted["content_type"] = mime_type_to_file_collection(metadata["Content-Type"])
+    if metadata.get("title"):
+        extracted["title"] = metadata["title"]
+    if metadata.get("Keywords"):
+        keywords = metadata["Keywords"]
         if not isinstance(keywords, list):
             keywords = keywords.split(",")
 
         # strip
-        keywords = [keyword.strip(' ') for keyword in keywords]
-        extracted['keywords'] = keywords
-    if metadata.get('Creation-Date'):
-        extracted['creation_date'] = metadata['Creation-Date']
+        keywords = [keyword.strip(" ") for keyword in keywords]
+        extracted["keywords"] = keywords
+    if metadata.get("Creation-Date"):
+        extracted["creation_date"] = metadata["Creation-Date"]
 
     return extracted
 

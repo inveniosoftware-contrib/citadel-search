@@ -1,9 +1,10 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 """Test helpers."""
 
@@ -17,16 +18,16 @@ def get_headers(token=None):
     """Build headers."""
     return {
         "Accept": "application/json",
-        'Content-Type': 'application/json',
-        'Authorization': f"Bearer {token or current_app.config['API_TOKEN']}"
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {token or current_app.config['API_TOKEN']}",
     }
 
 
 def get_schemas_endpoint(schema):
     """Build schemas endpoint."""
-    host_setting = current_app.config['JSONSCHEMAS_HOST']
-    url_scheme = current_app.config['JSONSCHEMAS_URL_SCHEME']
-    schemas_path = current_app.config['JSONSCHEMAS_ENDPOINT']
+    host_setting = current_app.config["JSONSCHEMAS_HOST"]
+    url_scheme = current_app.config["JSONSCHEMAS_URL_SCHEME"]
+    schemas_path = current_app.config["JSONSCHEMAS_ENDPOINT"]
     url_path = "{path}/{schema}".format(path=schemas_path, schema=schema)
 
     return urlunparse((url_scheme, host_setting, url_path, "", "", ""))

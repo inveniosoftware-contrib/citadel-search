@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -27,16 +27,16 @@ from invenio_files_rest.models import ObjectVersion
 def process_file_async(self, bucket_id, key_id):
     """Process file with processor tika."""
     try:
-        current_app.logger.debug(f"Processing file {bucket_id}:{key_id}")
+        current_app.logger.debug("Processing file %s:%s", bucket_id, key_id)
 
         obj = ObjectVersion.get(bucket_id, key_id)  # type: ObjectVersion
         processor = current_processors.get_processor(name=UnpackProcessor.id)  # type: UnpackProcessor
         processor.process(obj)
 
-        current_app.logger.debug(f"Processed file {bucket_id}:{key_id}")
+        current_app.logger.debug("Processed file %s:%s", bucket_id, key_id)
     except InvalidProcessor:
         # Because we use use reject_on_worker_lost, we need to handle occasional processed files been requeued.
-        current_app.logger.debug(f"Requeued file {bucket_id}:{key_id} already processed")
+        current_app.logger.debug("Requeued file %s:%s already processed", bucket_id, key_id)
     except Exception:
         try:
             raise self.retry()

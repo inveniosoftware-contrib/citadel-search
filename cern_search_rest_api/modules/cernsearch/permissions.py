@@ -2,13 +2,12 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 """Access control for Citadel Search."""
 
-from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
 from flask import current_app
 from flask_security import current_user
 from invenio_files_rest.models import Bucket, MultipartObject, ObjectVersion
@@ -16,9 +15,11 @@ from invenio_records import Record
 from invenio_records_files.api import FileObject
 from invenio_records_files.models import RecordsBuckets
 
+from cern_search_rest_api.modules.cernsearch.utils import get_user_provides
+
 
 def _is_instance_immutable():
-    return current_app.config['SEARCH_INSTANCE_IMMUTABLE']
+    return current_app.config["SEARCH_INSTANCE_IMMUTABLE"]
 
 
 def record_permission_factory(record=None, action=None):
@@ -56,27 +57,27 @@ def files_permission_factory(obj=None, action=None):
 
 def record_create_permission_factory(record=None):
     """Create permission factory."""
-    return record_permission_factory(record=record, action='create')
+    return record_permission_factory(record=record, action="create")
 
 
 def record_read_permission_factory(record=None):
     """Read permission factory."""
-    return record_permission_factory(record=record, action='read')
+    return record_permission_factory(record=record, action="read")
 
 
 def record_list_permission_factory(record=None):
     """Read permission factory."""
-    return record_permission_factory(record=record, action='list')
+    return record_permission_factory(record=record, action="list")
 
 
 def record_update_permission_factory(record=None):
     """Update permission factory."""
-    return record_permission_factory(record=record, action='update')
+    return record_permission_factory(record=record, action="update")
 
 
 def record_delete_permission_factory(record=None):
     """Delete permission factory."""
-    return record_permission_factory(record=record, action='delete')
+    return record_permission_factory(record=record, action="delete")
 
 
 class RecordPermission(object):
@@ -88,11 +89,11 @@ class RecordPermission(object):
     - Delete access given to record owners.
     """
 
-    create_actions = ['create']
-    read_actions = ['read']
-    list_actions = ['list']
-    update_actions = ['update']
-    delete_actions = ['delete']
+    create_actions = ["create"]
+    read_actions = ["read"]
+    list_actions = ["list"]
+    update_actions = ["update"]
+    delete_actions = ["delete"]
 
     def __init__(self, record, func, user):
         """Initialize a file permission object."""
@@ -133,19 +134,15 @@ class FilePermission(RecordPermission):
     """
 
     create_actions = []
-    read_actions = ['object-read']  # GET /files/file
+    read_actions = ["object-read"]  # GET /files/file
     list_actions = []
-    update_actions = ['bucket-update']  # PUT /files/file
-    delete_actions = ['object-delete']  # DELETE /files/file
+    update_actions = ["bucket-update"]  # PUT /files/file
+    delete_actions = ["object-delete"]  # DELETE /files/file
 
 
 def _granted(provides, needs):
     """Check if user provided permissions and necessary permissions match."""
-
-    current_app.logger.debug('Provides {provides} and needs: {needs}'.format(
-        provides=provides,
-        needs=needs
-    ))
+    current_app.logger.debug("Provides %s and needs: %s", provides, needs)
 
     return provides and not set(provides).isdisjoint(set(needs))
 
@@ -157,7 +154,7 @@ def _user_granted(needs):
 
 def has_owner_permission(user, record=None):
     """Check if user is authenticated and has create access."""
-    log_action(user, 'CREATE/OWNER')
+    log_action(user, "CREATE/OWNER")
 
     if _is_instance_immutable():
         return False
@@ -167,8 +164,8 @@ def has_owner_permission(user, record=None):
         return user.is_authenticated
     # Second authentication phase, record level
     if user.is_authenticated:
-        admin_access = current_app.config.get('ADMIN_ACCESS_GROUPS', '')
-        admin_access = admin_access.split(',')
+        admin_access = current_app.config.get("ADMIN_ACCESS_GROUPS", "")
+        admin_access = admin_access.split(",")
 
         return _user_granted(admin_access)
 
@@ -178,48 +175,46 @@ def has_owner_permission(user, record=None):
 def has_list_permission(user, record=None):
     """Check if user is authenticated and has create access."""
     # permissions are handled in the ES QUERY
-    log_action(user, 'LIST')
+    log_action(user, "LIST")
     return True
 
 
 def has_update_permission(user, record):
     """Check if user is authenticated and has update access."""
-    log_action(user, 'UPDATE')
+    log_action(user, "UPDATE")
 
     if _is_instance_immutable():
         return False
 
     if user.is_authenticated:
         # Allow based in the '_access' key
-        update_access = get_access_set(record['_access'], 'update')
-        delete_access = get_access_set(record['_access'], 'delete')
-        owner_access = get_access_set(record['_access'], 'owner')
+        update_access = get_access_set(record["_access"], "update")
+        delete_access = get_access_set(record["_access"], "delete")
+        owner_access = get_access_set(record["_access"], "owner")
 
         # The user is owner of the collection/schema
         # The user belongs to any access group, meaning the list is disjoint
         # Then grant access
         if has_owner_permission(user, record) or (
-                _user_granted(update_access)
-                or _user_granted(delete_access)
-                or _user_granted(owner_access)
+            _user_granted(update_access) or _user_granted(delete_access) or _user_granted(owner_access)
         ):
-            current_app.logger.debug('Group sets not disjoint, user allowed')
+            current_app.logger.debug("Group sets not disjoint, user allowed")
             return True
     return False
 
 
 def has_read_record_permission(user, record):
     """Check if user is authenticated and has read access. This implies reading one document."""
-    log_action(user, 'READ')
+    log_action(user, "READ")
 
     if _is_instance_immutable():
         return False
 
     # Allow based in the '_access' key
-    read_access = get_access_set(record['_access'], 'read')
-    update_access = get_access_set(record['_access'], 'update')
-    delete_access = get_access_set(record['_access'], 'delete')
-    owner_access = get_access_set(record['_access'], 'owner')
+    read_access = get_access_set(record["_access"], "read")
+    update_access = get_access_set(record["_access"], "update")
+    delete_access = get_access_set(record["_access"], "delete")
+    owner_access = get_access_set(record["_access"], "owner")
     if not read_access:
         return True
 
@@ -228,36 +223,33 @@ def has_read_record_permission(user, record):
         # The user belongs to any access group, meaning the list is disjoint
         # Then grant access
         if has_owner_permission(user, record) or (
-                _user_granted(read_access)
-                or _user_granted(update_access)
-                or _user_granted(delete_access)
-                or _user_granted(owner_access)
+            _user_granted(read_access)
+            or _user_granted(update_access)
+            or _user_granted(delete_access)
+            or _user_granted(owner_access)
         ):
-            current_app.logger.debug('Group sets not disjoint, user allowed')
+            current_app.logger.debug("Group sets not disjoint, user allowed")
             return True
     return False
 
 
 def has_delete_permission(user, record):
     """Check if user is authenticated and has delete access."""
-    log_action(user, 'DELETE')
+    log_action(user, "DELETE")
 
     if _is_instance_immutable():
         return False
 
     if user.is_authenticated:
         # Allow based in the '_access' key
-        delete_access = get_access_set(record['_access'], 'delete')
-        owner_access = get_access_set(record['_access'], 'owner')
+        delete_access = get_access_set(record["_access"], "delete")
+        owner_access = get_access_set(record["_access"], "owner")
 
         # The user is owner of the collection/schema
         # The user belongs to any access group, meaning the list is disjoint
         # Then grant access
-        if has_owner_permission(user, record) or (
-                _user_granted(delete_access)
-                or _user_granted(owner_access)
-        ):
-            current_app.logger.debug('Group sets not disjoint, user allowed')
+        if has_owner_permission(user, record) or (_user_granted(delete_access) or _user_granted(owner_access)):
+            current_app.logger.debug("Group sets not disjoint, user allowed")
             return True
     return False
 
@@ -292,15 +284,16 @@ class AdminPermission(object):
 
 def has_admin_view_permission(user):
     """Check if has admin permission."""
-    admin_access_groups = current_app.config['ADMIN_VIEW_ACCESS_GROUPS']
+    admin_access_groups = current_app.config["ADMIN_VIEW_ACCESS_GROUPS"]
     if user.is_authenticated and admin_access_groups:
-        admin_access = admin_access_groups.split(',')
+        admin_access = admin_access_groups.split(",")
 
         return _user_granted(admin_access)
     return False
 
 
 # Utility functions
+
 
 def deny(user, record):
     """Deny access."""
@@ -326,7 +319,7 @@ def is_public(data, action):
     In practice this means that the record doesn't have the ``access`` key or
     the action is not inside access or is empty.
     """
-    return '_access' not in data or not data.get('_access', {}).get(action)
+    return "_access" not in data or not data.get("_access", {}).get(action)
 
 
 def log_action(user, action):
@@ -334,9 +327,5 @@ def log_action(user, action):
     try:
         email = user.email
     except AttributeError:
-        email = 'Anonymous'
-    current_app.logger.debug('Action {action} -  user {usr} authenticated: {status}'.format(
-        action=action,
-        usr=email,
-        status=user.is_authenticated
-    ))
+        email = "Anonymous"
+    current_app.logger.debug("Action %s - user %s authenticated: %s", action, email, user.is_authenticated)

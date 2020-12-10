@@ -49,12 +49,12 @@ services:
     ports:
       - 5432:5432
     env_file:
-      - .pipenv.env
+      - .poetry.env
 
   rabbitmq:
     image: rabbitmq:3.8.2-management
     env_file:
-      - .pipenv.env
+      - .poetry.env
     restart: "always"
     ports:
       - "15672:15672"

@@ -1,25 +1,21 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 # Use CentOS7:
-FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:3b6147ba87cd87992329c2dfaf4ba5f5d42ecf27
+FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:1baab88940e876b2bea33d551bf5ed424d0607de
 ARG build_env
 
 # CERN Search installation
 WORKDIR /${WORKING_DIR}/src
 ADD . /${WORKING_DIR}/src
 
-RUN python -V && pip -V
-
 # If env is development, install development dependencies
-RUN if [ "$build_env" != "prod" ]; then poetry install --no-root; fi
-
-RUN pip freeze
+RUN if [ "$build_env" != "prod" ]; then poetry install --no-root --no-interaction --no-ansi; fi
 
 # Install CSaS
 RUN pip install -e .

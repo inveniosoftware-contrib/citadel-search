@@ -1,0 +1,15 @@
+.env*
+.flake8
+.gitignore
+.gitlab-ci.yml
+.isort.cfg
+.pre-commit-config.yaml
+docker-compose*
+.poetry.env
+.python-version
+AUTHORS.md
+CONTRIBUTING.md
+LICENSE
+.logging.yaml
+docker
+with_env.sh

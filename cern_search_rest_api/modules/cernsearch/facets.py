@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -32,9 +32,9 @@ def regex_aggregation(field, query_param):
     def inner():
         value = request.values.get(query_param, type=text_type)
         if value:
-            return A('terms', field=field, include=f'.*{value}.*')
+            return A("terms", field=field, include=f".*{value}.*")
         else:
-            return A('terms', field=field)
+            return A("terms", field=field)
 
     return inner
 
@@ -47,7 +47,7 @@ def match_filter(field):
     """
 
     def inner(values):
-        return Q("match", **{field: ' '.join(values)})
+        return Q("match", **{field: " ".join(values)})
 
     return inner
 
@@ -61,7 +61,7 @@ def query_string(field):
 
     def inner(values):
         return Q(
-            'query_string',
+            "query_string",
             query=f"{field}:({' '.join(values)})",
             rewrite="top_terms_1000",  # calculates score for wildcards queries
         )
@@ -77,45 +77,41 @@ def simple_query_string(field):
     """
 
     def inner(values):
-        return Q(
-            'simple_query_string',
-            query=' '.join(values),
-            fields=[field]
-        )
+        return Q("simple_query_string", query=" ".join(values), fields=[field])
 
     return inner
 
 
 def match_phrase_filter(field):
-    """Create a match_phrase or match query. [WIP: missing checking if inside value there's a string]
+    """Create a match_phrase or match query. [WIP: missing checking if inside value there's a string].
 
     :param field: Field name.
     :returns: Function that returns the match query.
     """
 
     def inner(values):
-        current_app.logger.warning(f"match_phrase_filter: {values}")
+        current_app.logger.warning("match_phrase_filter: %s", values)
 
         matches = []
         phrase_matches = []
         for value in values:
-            current_app.logger.warning(f"value: {value}")
+            current_app.logger.warning("value: %s", value)
 
-            if not value.startswith("\""):
+            if not value.startswith('"'):
                 matches.append(value)
 
                 continue
 
-            if value.endswith("\"") and len(value) > 1:
+            if value.endswith('"') and len(value) > 1:
                 phrase_matches.append(value)
 
-        query_match = Q("match", **{field: ' '.join(matches)})
-        query_match_phrase = Q("match_phrase", **{field: ' '.join(phrase_matches)})
+        query_match = Q("match", **{field: " ".join(matches)})
+        query_match_phrase = Q("match_phrase", **{field: " ".join(phrase_matches)})
 
-        current_app.logger.warning(**{field: ' '.join(matches)})
+        current_app.logger.warning(**{field: " ".join(matches)})
 
         if matches and phrase_matches:
-            return Q('bool', must=[query_match, query_match_phrase])
+            return Q("bool", must=[query_match, query_match_phrase])
 
         if phrase_matches:
             return query_match_phrase
@@ -160,7 +156,7 @@ def saas_facets_factory(search, index):
     """
     urlkwargs = MultiDict()
 
-    facets = current_app.config['RECORDS_REST_FACETS'].get(index)
+    facets = current_app.config["RECORDS_REST_FACETS"].get(index)
     if facets is not None:
         # Match filter
         search, urlkwargs = _match_filter(search, urlkwargs, facets.get("matches", {}))

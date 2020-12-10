@@ -101,12 +101,9 @@ test: stop-env build-env pytest
 .PHONY: test
 
 lint:
-	docker-compose -f $(DOCKER_FILE) exec -T $(SERVICE_NAME) /bin/bash -c \
-		"echo running isort...; \
-		isort -rc -c -df; \
-		echo running flake8...; \
-		flake8 --max-complexity 10 --ignore E501,D401"
+	pre-commit run --all-files --show-diff-on-failure
 .PHONY: lint
+
 
 ###################  Local development helpful directives  ####################
 ###################           (poetry + docker)            ####################
@@ -176,8 +173,5 @@ local-test:
 .PHONY: local-test
 
 local-lint:
-	@echo running isort...;
-	sh with_env.sh $(POETRY_DOTENV) poetry run isort -rc -c -df .;
-	@echo running flake8...;
-	sh with_env.sh $(POETRY_DOTENV) poetry run flake8 --max-complexity 10 --ignore E501,D401
+	poetry run pre-commit run --all-files --show-diff-on-failure;
 .PHONY: local-lint

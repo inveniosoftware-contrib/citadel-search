@@ -1,6 +1,6 @@
 # Indico Instance
 
-No denormalization has been used due to the nature of the user use cases. There is a high number of updates, which would result in an even higher number of updates to handle the denormalized information. Application-side joins are used instead. 
+No denormalization has been used due to the nature of the user use cases. There is a high number of updates, which would result in an even higher number of updates to handle the denormalized information. Application-side joins are used instead.
 
 For the analysis, tokenizing and steeming the ``standard`` analyzed is used by default, with multifields for ``english`` and ``french`` analyzers.
 

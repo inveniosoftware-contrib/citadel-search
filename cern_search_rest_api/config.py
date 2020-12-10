@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -14,20 +14,23 @@ import ast
 import copy
 import os
 
-from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
-from cern_search_rest_api.modules.cernsearch.facets import regex_aggregation, simple_query_string
-from cern_search_rest_api.modules.cernsearch.indexer import CernSearchRecordIndexer
-from cern_search_rest_api.modules.cernsearch.permissions import (record_create_permission_factory,
-                                                                 record_delete_permission_factory,
-                                                                 record_list_permission_factory,
-                                                                 record_read_permission_factory,
-                                                                 record_update_permission_factory)
 from elasticsearch_dsl import A
 from flask import request
 from invenio_oauthclient.contrib import cern_openid
 from invenio_records_rest import config as irr_config
 from invenio_records_rest.facets import terms_filter
 from kombu import Exchange, Queue
+
+from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
+from cern_search_rest_api.modules.cernsearch.facets import regex_aggregation, simple_query_string
+from cern_search_rest_api.modules.cernsearch.indexer import CernSearchRecordIndexer
+from cern_search_rest_api.modules.cernsearch.permissions import (
+    record_create_permission_factory,
+    record_delete_permission_factory,
+    record_list_permission_factory,
+    record_read_permission_factory,
+    record_update_permission_factory,
+)
 
 
 def _(x):
@@ -45,9 +48,13 @@ THEME_SEARCHBAR = False
 OAUTHCLIENT_CERN_OPENID_ALLOWED_ROLES = ["search-user", "search-admin"]
 
 CERN_REMOTE_APP = copy.deepcopy(cern_openid.REMOTE_APP)
-CERN_REMOTE_APP["params"].update(dict(request_token_params={
-    "scope": "openid",
-}))
+CERN_REMOTE_APP["params"].update(
+    dict(
+        request_token_params={
+            "scope": "openid",
+        }
+    )
+)
 
 OAUTHCLIENT_REMOTE_APPS = dict(
     cern_openid=CERN_REMOTE_APP,
@@ -57,9 +64,13 @@ OAUTHCLIENT_REMOTE_APPS = dict(
 # ============
 
 OAUTH_REMOTE_REST_APP = copy.deepcopy(cern_openid.REMOTE_REST_APP)
-OAUTH_REMOTE_REST_APP["params"].update(dict(request_token_params={
-    "scope": "openid",
-}))
+OAUTH_REMOTE_REST_APP["params"].update(
+    dict(
+        request_token_params={
+            "scope": "openid",
+        }
+    )
+)
 
 OAUTHCLIENT_REST_REMOTE_APPS = dict(
     cern_openid=OAUTH_REMOTE_REST_APP,
@@ -75,28 +86,28 @@ SERVER_NAME = os.getenv("CERN_SEARCH_SERVER_NAME")
 # Admin
 # =====
 
-ADMIN_PERMISSION_FACTORY = 'cern_search_rest_api.modules.cernsearch.permissions:admin_permission_factory'
+ADMIN_PERMISSION_FACTORY = "cern_search_rest_api.modules.cernsearch.permissions:admin_permission_factory"
 
 # JSON Schemas configuration
 # ==========================
 
-JSONSCHEMAS_ENDPOINT = '/schemas'
-JSONSCHEMAS_HOST = '0.0.0.0'
+JSONSCHEMAS_ENDPOINT = "/schemas"
+JSONSCHEMAS_HOST = "0.0.0.0"
 # Do not register the endpoints on the UI app."""
 JSONSCHEMAS_REGISTER_ENDPOINTS_UI = True
 
 # Search configuration
 # =====================
 
-SEARCH_MAPPINGS = [os.getenv('CERN_SEARCH_INSTANCE', 'test')]
-SEARCH_USE_EGROUPS = ast.literal_eval(os.getenv('CERN_SEARCH_USE_EGROUPS', 'True'))
-SEARCH_DOC_PIPELINES = ast.literal_eval(os.getenv('CERN_SEARCH_DOC_PIPELINES', '{}'))
+SEARCH_MAPPINGS = [os.getenv("CERN_SEARCH_INSTANCE", "test")]
+SEARCH_USE_EGROUPS = ast.literal_eval(os.getenv("CERN_SEARCH_USE_EGROUPS", "True"))
+SEARCH_DOC_PIPELINES = ast.literal_eval(os.getenv("CERN_SEARCH_DOC_PIPELINES", "{}"))
 
 # Alias instance - don't allow updates, allow only search
-SEARCH_INSTANCE_IMMUTABLE = ast.literal_eval(os.getenv('CERN_SEARCH_INSTANCE_IMMUTABLE', 'False'))
+SEARCH_INSTANCE_IMMUTABLE = ast.literal_eval(os.getenv("CERN_SEARCH_INSTANCE_IMMUTABLE", "False"))
 
 # File indexer capabilities enabled
-SEARCH_FILE_INDEXER = ast.literal_eval(os.getenv('CERN_SEARCH_FILE_INDEXER', 'True'))
+SEARCH_FILE_INDEXER = ast.literal_eval(os.getenv("CERN_SEARCH_FILE_INDEXER", "True"))
 
 # Records REST configuration
 # ===========================
@@ -106,41 +117,38 @@ SEARCH_FILE_INDEXER = ast.literal_eval(os.getenv('CERN_SEARCH_FILE_INDEXER', 'Tr
 _Record_PID = 'pid(recid, record_class="cern_search_rest_api.modules.cernsearch.api:CernSearchRecord")'  # TODO
 
 RECORDS_FILES_REST_ENDPOINTS = {
-    'RECORDS_REST_ENDPOINTS': {
-        'docid': '/files',
+    "RECORDS_REST_ENDPOINTS": {
+        "docid": "/files",
     }
 }
 
-FILES_REST_PERMISSION_FACTORY = 'cern_search_rest_api.modules.cernsearch.permissions:files_permission_factory'
+FILES_REST_PERMISSION_FACTORY = "cern_search_rest_api.modules.cernsearch.permissions:files_permission_factory"
 
 RECORDS_REST_ENDPOINTS = dict(
     docid=dict(
-        pid_type='recid',
-        pid_fetcher='recid',
-        pid_minter='recid',
+        pid_type="recid",
+        pid_fetcher="recid",
+        pid_minter="recid",
         default_endpoint_prefix=True,
-        default_media_type='application/json',
-        item_route='/record/<{0}:pid_value>'.format(_Record_PID),
-        list_route='/records/',
-        links_factory_imp='invenio_records_rest.links:default_links_factory',
+        default_media_type="application/json",
+        item_route="/record/<{0}:pid_value>".format(_Record_PID),
+        list_route="/records/",
+        links_factory_imp="invenio_records_rest.links:default_links_factory",
         record_class=CernSearchRecord,
         indexer_class=CernSearchRecordIndexer,
         record_serializers={
-            'application/json': ('cern_search_rest_api.modules.cernsearch.serializers'
-                                 ':json_v1_response'),
+            "application/json": ("cern_search_rest_api.modules.cernsearch.serializers" ":json_v1_response"),
         },
         record_loaders={
-            'application/json': ('cern_search_rest_api.modules.cernsearch.loaders:'
-                                 'csas_loader'),
-            'application/json-patch+json': lambda: request.get_json(force=True)
+            "application/json": ("cern_search_rest_api.modules.cernsearch.loaders:" "csas_loader"),
+            "application/json-patch+json": lambda: request.get_json(force=True),
         },
-        search_class='cern_search_rest_api.modules.cernsearch.search.RecordCERNSearch',
-        search_index=os.getenv('CERN_SEARCH_INSTANCE', 'test'),
+        search_class="cern_search_rest_api.modules.cernsearch.search.RecordCERNSearch",
+        search_index=os.getenv("CERN_SEARCH_INSTANCE", "test"),
         search_serializers={
-            'application/json': ('cern_search_rest_api.modules.cernsearch.serializers'
-                                 ':json_v1_search'),
+            "application/json": ("cern_search_rest_api.modules.cernsearch.serializers" ":json_v1_search"),
         },
-        search_factory_imp='cern_search_rest_api.modules.cernsearch.search.csas_search_factory',
+        search_factory_imp="cern_search_rest_api.modules.cernsearch.search.csas_search_factory",
         max_result_window=10000,
         read_permission_factory_imp=record_read_permission_factory,
         list_permission_factory_imp=record_list_permission_factory,
@@ -148,9 +156,9 @@ RECORDS_REST_ENDPOINTS = dict(
         update_permission_factory_imp=record_update_permission_factory,
         delete_permission_factory_imp=record_delete_permission_factory,
         suggesters={
-            'phrase': {
-                'completion': {
-                    'field': 'suggest_keywords',
+            "phrase": {
+                "completion": {
+                    "field": "suggest_keywords",
                 }
             },
         },
@@ -164,90 +172,82 @@ def aggs_filter(field):
     :param field: Field name.
     :returns: Function that returns the Terms query.
     """
+
     def inner(values):
-        return A('terms', field=field, include=f'.*{values[0]}.*')
+        return A("terms", field=field, include=f".*{values[0]}.*")
+
     return inner
 
 
 cern_rest_facets = {
-    'aggs': {
-        'collection': {
-            'terms': {'field': 'collection'}
-        },
-        'type_format': {
-            'terms': {'field': 'type_format'}
-        },
-        'author': regex_aggregation('_data.authors.exact_match', 'authors_suggest'),
-        'site': regex_aggregation('_data.site.exact_match', 'sites_suggest'),
-        'keyword': regex_aggregation('_data.keywords.exact_match', 'keywords_suggest')
+    "aggs": {
+        "collection": {"terms": {"field": "collection"}},
+        "type_format": {"terms": {"field": "type_format"}},
+        "author": regex_aggregation("_data.authors.exact_match", "authors_suggest"),
+        "site": regex_aggregation("_data.site.exact_match", "sites_suggest"),
+        "keyword": regex_aggregation("_data.keywords.exact_match", "keywords_suggest"),
     },
-    'filters': {
-        'collection': terms_filter("collection"),
-        'type_format': terms_filter("type_format"),
-        'author': terms_filter("_data.authors.exact_match"),
-        'site': terms_filter("_data.site.exact_match"),
-        'keyword': terms_filter("_data.keywords.exact_match"),
+    "filters": {
+        "collection": terms_filter("collection"),
+        "type_format": terms_filter("type_format"),
+        "author": terms_filter("_data.authors.exact_match"),
+        "site": terms_filter("_data.site.exact_match"),
+        "keyword": terms_filter("_data.keywords.exact_match"),
     },
-    'matches': {
-        'author_match': simple_query_string("_data.authors"),
-        'keyword_match': simple_query_string("_data.keywords"),
-        'site_match': simple_query_string("_data.site"),
-        'name_match': simple_query_string("_data.name"),
-        'url_match': simple_query_string("url"),
-    }
+    "matches": {
+        "author_match": simple_query_string("_data.authors"),
+        "keyword_match": simple_query_string("_data.keywords"),
+        "site_match": simple_query_string("_data.site"),
+        "name_match": simple_query_string("_data.name"),
+        "url_match": simple_query_string("url"),
+    },
 }
 RECORDS_REST_FACETS = {
-    'cernsearchqa-*': cern_rest_facets,
-    'webservices': cern_rest_facets,
-    'indico': {
-        'aggs': {
-            'event_type': {
-                'terms': {'field': '_data.event_type'}
-            },
-            'speakers_chairs': {
-                'terms': {'field': '_data.speakers_chairs.exact_match'}
-            },
-            'list_of_persons': {
-                'terms': {'field': '_data.list_of_persons.exact_match'}
-            }
+    "cernsearchqa-*": cern_rest_facets,
+    "webservices": cern_rest_facets,
+    "indico": {
+        "aggs": {
+            "event_type": {"terms": {"field": "_data.event_type"}},
+            "speakers_chairs": {"terms": {"field": "_data.speakers_chairs.exact_match"}},
+            "list_of_persons": {"terms": {"field": "_data.list_of_persons.exact_match"}},
         }
-    }
+    },
 }
 
 cern_sort_options = {
-    'bestmatch': {
-        'fields': ['-_score'],
-        'title': 'Best match',
-        'default_order': 'asc',
+    "bestmatch": {
+        "fields": ["-_score"],
+        "title": "Best match",
+        "default_order": "asc",
     },
-    'mostrecent': {
-        'fields': ['_updated'],
-        'title': 'Newest',
-        'default_order': 'asc',
-    }
+    "mostrecent": {
+        "fields": ["_updated"],
+        "title": "Newest",
+        "default_order": "asc",
+    },
 }
 
 RECORDS_REST_SORT_OPTIONS = {
-    'webservices': cern_sort_options,
-    'cernsearchqa-*': cern_sort_options,
-    'edms': {
-        'bestmatch': {
-            'fields': ['-_score'],
-            'title': 'Best match',
-            'default_order': 'asc',
+    "webservices": cern_sort_options,
+    "cernsearchqa-*": cern_sort_options,
+    "edms": {
+        "bestmatch": {
+            "fields": ["-_score"],
+            "title": "Best match",
+            "default_order": "asc",
         },
-        'mostrecent': {
-            'fields': ['_updated'],
-            'title': 'Newest',
-            'default_order': 'asc',
-        }
-    }
+        "mostrecent": {
+            "fields": ["_updated"],
+            "title": "Newest",
+            "default_order": "asc",
+        },
+    },
 }
 
-RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS = copy.deepcopy(
-    irr_config.RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS)
-RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS['mapper_parsing_exception'] = \
-    'cern_search_rest_api.modules.cernsearch.views:elasticsearch_mapper_parsing_exception_handler'
+RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS = copy.deepcopy(irr_config.RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS)
+RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS[
+    "mapper_parsing_exception"
+] = "cern_search_rest_api.modules.cernsearch.views:elasticsearch_mapper_parsing_exception_handler"
 
 # App
 # ===
@@ -258,8 +258,8 @@ APP_HEALTH_BLUEPRINT_ENABLED = True
 # ====
 
 REST_ENABLE_CORS = True
-CORS_SEND_WILDCARD = ast.literal_eval(os.getenv('CERN_SEARCH_CORS_SEND_WILDCARD', 'False'))
-CORS_SUPPORTS_CREDENTIALS = ast.literal_eval(os.getenv('CERN_SEARCH_CORS_SUPPORTS_CREDENTIALS', 'True'))
+CORS_SEND_WILDCARD = ast.literal_eval(os.getenv("CERN_SEARCH_CORS_SEND_WILDCARD", "False"))
+CORS_SUPPORTS_CREDENTIALS = ast.literal_eval(os.getenv("CERN_SEARCH_CORS_SUPPORTS_CREDENTIALS", "True"))
 
 # Flask Security
 # ==============
@@ -274,44 +274,44 @@ SESSION_COOKIE_SECURE = True
 
 # Celery Configuration
 # ====================
-FILES_PROCESSOR_QUEUE = os.getenv("CERN_SEARCH_FILES_PROCESSOR_QUEUE", 'files_processor')
-FILES_PROCESSOR_QUEUE_DLX = os.getenv("CERN_SEARCH_FILES_PROCESSOR_QUEUE_DLX", 'files_processor_dlx')
-FILES_PROCESSOR_EXCHANGE = os.getenv("CERN_SEARCH_FILES_PROCESSOR_EXCHANGE", 'default')
-FILES_PROCESSOR_EXCHANGE_DLX = os.getenv("CERN_SEARCH_FILES_PROCESSOR_EXCHANGE_DLX", 'dlx')
+FILES_PROCESSOR_QUEUE = os.getenv("CERN_SEARCH_FILES_PROCESSOR_QUEUE", "files_processor")
+FILES_PROCESSOR_QUEUE_DLX = os.getenv("CERN_SEARCH_FILES_PROCESSOR_QUEUE_DLX", "files_processor_dlx")
+FILES_PROCESSOR_EXCHANGE = os.getenv("CERN_SEARCH_FILES_PROCESSOR_EXCHANGE", "default")
+FILES_PROCESSOR_EXCHANGE_DLX = os.getenv("CERN_SEARCH_FILES_PROCESSOR_EXCHANGE_DLX", "dlx")
 
 #: URL of message broker for Celery (default is RabbitMQ).
-CELERY_BROKER_URL = os.getenv('INVENIO_CELERY_BROKER_URL', 'amqp://guest:guest@localhost:5672')
+CELERY_BROKER_URL = os.getenv("INVENIO_CELERY_BROKER_URL", "amqp://guest:guest@localhost:5672")
 #: URL of backend for result storage (default is Redis).
-CELERY_RESULT_BACKEND = os.getenv('INVENIO_CELERY_RESULT_BACKEND', 'redis://localhost:6379/2')
+CELERY_RESULT_BACKEND = os.getenv("INVENIO_CELERY_RESULT_BACKEND", "redis://localhost:6379/2")
 
 CELERY_TASK_QUEUES = {
     Queue(
         name=FILES_PROCESSOR_QUEUE,
-        exchange=Exchange(FILES_PROCESSOR_EXCHANGE, type='direct'),
+        exchange=Exchange(FILES_PROCESSOR_EXCHANGE, type="direct"),
         routing_key=FILES_PROCESSOR_QUEUE,
         queue_arguments={
-            'x-dead-letter-exchange': FILES_PROCESSOR_EXCHANGE_DLX,
-            'x-dead-letter-routing-key': FILES_PROCESSOR_QUEUE_DLX
-        }
+            "x-dead-letter-exchange": FILES_PROCESSOR_EXCHANGE_DLX,
+            "x-dead-letter-routing-key": FILES_PROCESSOR_QUEUE_DLX,
+        },
     ),
-    Queue('celery', Exchange('celery'), routing_key='celery')
+    Queue("celery", Exchange("celery"), routing_key="celery"),
 }
 
 CELERY_TASK_ROUTES = {
-    'cern_search_rest_api.modules.cernsearch.tasks.process_file_async': {
-        'queue': FILES_PROCESSOR_QUEUE,
-        'routing_key': FILES_PROCESSOR_QUEUE,
+    "cern_search_rest_api.modules.cernsearch.tasks.process_file_async": {
+        "queue": FILES_PROCESSOR_QUEUE,
+        "routing_key": FILES_PROCESSOR_QUEUE,
     }
 }
 
-CELERY_TASK_DEFAULT_QUEUE = 'celery'
+CELERY_TASK_DEFAULT_QUEUE = "celery"
 
 CELERY_BROKER_POOL_LIMIT = os.getenv("BROKER_POOL_LIMIT", None)
 
 SQLALCHEMY_ENGINE_OPTIONS = {
-    'pool_size': int(os.getenv("SQLALCHEMY_POOL_SIZE", 5)),
-    'max_overflow': int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 10)),
-    'pool_recycle': int(os.getenv("SQLALCHEMY_POOL_RECYCLE", 300)),  # in seconds
+    "pool_size": int(os.getenv("SQLALCHEMY_POOL_SIZE", 5)),
+    "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 10)),
+    "pool_recycle": int(os.getenv("SQLALCHEMY_POOL_RECYCLE", 300)),  # in seconds
 }
 
 SEARCH_CLIENT_CONFIG = dict(
@@ -320,4 +320,4 @@ SEARCH_CLIENT_CONFIG = dict(
 )
 
 # Processes file metadata
-PROCESS_FILE_META = ast.literal_eval(os.getenv("CERN_SEARCH_PROCESS_FILE_META", 'False'))
+PROCESS_FILE_META = ast.literal_eval(os.getenv("CERN_SEARCH_PROCESS_FILE_META", "False"))

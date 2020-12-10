@@ -2,22 +2,19 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
 """Persistent identifier fetcher."""
 
 from invenio_pidstore.fetchers import FetchedPID
 
-from .providers import CERNSearchRecordIdProvider
-
 
 def recid_fetcher(record_uuid, data):
     """Fetch PID from record."""
     return FetchedPID(
-        # provider=CERNSearchRecordIdProvider,
-        pid_type='recid',
-        pid_value=str(data['recid'])
+        pid_type="recid",
+        pid_value=str(data["recid"]),
     )

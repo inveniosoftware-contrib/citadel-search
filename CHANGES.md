@@ -16,7 +16,7 @@ Changes:
 
 Changes:
 
-- [SEARCH-86] Bump to Invenio 3.3 
+- [SEARCH-86] Bump to Invenio 3.3
 - [NI] Generate certificate with a Certificate Authority
 
 ----
@@ -28,21 +28,21 @@ Changes:
 - [SEARCH-102] EDMS schemas updates
 - Limit content of files on ~100MB
 
----- 
+----
 **Version 1.3.2-beta (released 2020-08-20)**
 
 Changes:
 
 - [NI] Add sentry-sdk dependency
 
----- 
+----
 **Version 1.3.1-beta (released 2020-08-18)**
 
 Changes:
 
 - [SEARCH-86] Upgrade to invenio 3.3
 
----- 
+----
 **Version 1.3.0-beta (released 2020-07-06)**
 
 Changes:
@@ -56,7 +56,7 @@ Changes:
 - [SEARCH-92] Add codimd schemas
 - [NI] Add openshift-dev CI
 
----- 
+----
 
 **Version 1.2.1-beta (released 2020-05-28)**
 
@@ -71,7 +71,7 @@ Changes:
     - Make public records available without login
     - Only view admin accounts can use the access query param
 
----- 
+----
 
 **Version 1.2-beta (released 2020-05-14)**
 
@@ -81,7 +81,7 @@ Changes:
     - Instead of `invenio index run` now should use `invenio utils runindex`
 - [NI] fix indico jonschemas
 
----- 
+----
 
 **Version 1.1.2-beta (released 2020-05-14)**
 
@@ -89,7 +89,7 @@ Changes:
 - Update full compose
 - [SEARCH-67] Remove binary mappings
 
----- 
+----
 
 **Version 1.1.1-beta (released 2020-04-28)**
 
@@ -160,7 +160,7 @@ Changes:
 **Version 1.0.2-beta (released 2020-03-23)**
 
 Changes:
-- [SEARCH-47] Bump tika to 1.24 
+- [SEARCH-47] Bump tika to 1.24
 
 ----
 
@@ -239,4 +239,4 @@ Features:
 
 Fixes:
 
-- Document creation should just check if the user is authenticated in the first iteration. Permissions over the schema are checked on the second iteration. 
+- Document creation should just check if the user is authenticated in the first iteration. Permissions over the schema are checked on the second iteration.

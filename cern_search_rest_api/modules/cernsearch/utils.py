@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -19,8 +19,8 @@ from invenio_search.utils import prefix_index
 
 def get_user_provides():
     """Extract the user's provides from g."""
-    current_app.logger.debug(f'Identity: {g.identity}')
-    current_app.logger.debug(f'Current User: {current_user}')
+    current_app.logger.debug("Identity: %s", g.identity)
+    current_app.logger.debug("Current User: %s", current_user)
 
     return [need.value for need in g.identity.provides]
 
@@ -35,17 +35,19 @@ def record_from_index(record):
     :returns: Tuple (index, doc_type).
     """
     index_names = current_search.mappings.keys()
-    schema = record.get('metadata').get('$schema', '')
+    schema = record.get("metadata").get("$schema", "")
     if isinstance(schema, dict):
-        schema = schema.get('$ref', '')
+        schema = schema.get("$ref", "")
 
     index, doc_type = schema_to_index(schema, index_names=index_names)
 
     if index and doc_type:
         return index, doc_type
     else:
-        return (current_app.config['INDEXER_DEFAULT_INDEX'],
-                current_app.config['INDEXER_DEFAULT_DOC_TYPE'])
+        return (
+            current_app.config["INDEXER_DEFAULT_INDEX"],
+            current_app.config["INDEXER_DEFAULT_DOC_TYPE"],
+        )
 
 
 def default_record_to_mapping(record):
@@ -59,18 +61,18 @@ def default_record_to_mapping(record):
     """
     index, doc = default_record_to_index(record)
     index = prefix_index(index)
-    current_app.logger.debug('Using index {idx} and doc {doc}'.format(idx=index, doc=doc))
+    current_app.logger.debug("Using index %s and doc %s", index, doc)
 
     mapping = current_search_client.indices.get_mapping([index])
     if mapping is not None:
         doc_type = next(iter(mapping))
-        current_app.logger.debug('Using mapping for {idx}'.format(idx=index))
-        current_app.logger.debug('Mapping {mapping}'.format(mapping=mapping))
+        current_app.logger.debug("Using mapping for %s", index)
+        current_app.logger.debug("Mapping %s", mapping)
 
         if ES_VERSION[0] >= 7:
-            return mapping[doc_type]['mappings']
+            return mapping[doc_type]["mappings"]
 
-        return mapping[doc_type]['mappings'][doc]
+        return mapping[doc_type]["mappings"][doc]
 
     return None
 

@@ -1,9 +1,10 @@
+#!/usr/bin/python
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
-# CERN Search is free software; you can redistribute it and/or modify it
+# Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 """Pytest configuration.
 
@@ -30,32 +31,32 @@ def app(app, logger):
 @pytest.fixture()
 def user(db, app):
     """File system location."""
-    user = User(email='test@example.com', active=True)
+    user = User(email="test@example.com", active=True)
     db.session.add(user)
 
-    role = Role(name='search-admin')
+    role = Role(name="search-admin")
     role.users.append(user)
     db.session.add(role)
 
     db.session.commit()
 
-    token = Token.create_personal('test', user.id)
+    token = Token.create_personal("test", user.id)
     db.session.commit()
 
-    app.config['API_TOKEN'] = token.access_token
-    app.config['SEARCH_USE_EGROUPS'] = True
+    app.config["API_TOKEN"] = token.access_token
+    app.config["SEARCH_USE_EGROUPS"] = True
 
     yield user
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def app_config(app_config):
     """Application configuration fixture."""
     # Missing because they're set in invenio base image:
     # More info: https://github.com/inveniosoftware/docker-invenio#environment-variables
-    app_config['WORKING_DIR'] = '/opt/invenio'
-    app_config['USER_ID'] = 1000
-    app_config['INSTANCE_PATH'] = '/opt/invenio/var/instance'
+    app_config["WORKING_DIR"] = "/opt/invenio"
+    app_config["USER_ID"] = 1000
+    app_config["INSTANCE_PATH"] = "/opt/invenio/var/instance"
 
     return app_config
 
@@ -66,7 +67,7 @@ def logger(appctx, caplog):
     current_app.logger.setLevel(logging.DEBUG)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture(scope="module")
 def instance_path():
     """Connect instance path.
 

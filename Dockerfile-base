@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 #
 # This file is part of CERN Search.
-# Copyright (C) 2018-2019 CERN.
+# Copyright (C) 2018-2021 CERN.
 #
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
@@ -16,14 +16,17 @@ RUN yum update -y && \
         openssl \
         openldap-devel \
         https://linuxsoft.cern.ch/cern/centos/7/cern/x86_64/Packages/CERN-CA-certs-20180516-1.el7.cern.noarch.rpm \
-        mailcap
+        mailcap \
+        https://packages.endpoint.com/rhel/7/os/x86_64/endpoint-repo-1.7-1.x86_64.rpm && \
+    yum upgrade -y git
 
 # CERN Search installation
 WORKDIR /${WORKING_DIR}/src
-ADD ./poetry.lock /${WORKING_DIR}/src
-ADD ./pyproject.toml /${WORKING_DIR}/src
+COPY poetry.lock pyproject.toml /${WORKING_DIR}/src/
 
 # Install dependencies globally
-RUN pip install poetry && \
-    poetry config virtualenvs.create false && \
-    poetry install --no-dev --no-root
+RUN curl -sSL https://raw.githubusercontent.com/python-poetry/poetry/master/get-poetry.py | python
+ENV PATH="${PATH}:/root/.poetry/bin"
+
+RUN poetry config virtualenvs.create false -vvv && \
+    poetry install --no-root --no-dev --no-interaction --no-ansi
