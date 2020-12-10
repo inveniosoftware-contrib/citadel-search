@@ -85,7 +85,7 @@ validate-base-image-updated:
 
 # Lint
 lint:
-  image: python:3.6
+  image: python:3.8
   stage: test
   only:
     refs:

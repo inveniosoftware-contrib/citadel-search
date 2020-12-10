@@ -6,8 +6,8 @@
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 
-# Use CentOS7:
-FROM inveniosoftware/centos7-python:3.6
+# Use CentOS8:
+FROM inveniosoftware/centos8-python:3.8
 
 # Install pre-requisites
 RUN yum update -y && \
@@ -15,10 +15,11 @@ RUN yum update -y && \
         gcc \
         openssl \
         openldap-devel \
-        https://linuxsoft.cern.ch/cern/centos/7/cern/x86_64/Packages/CERN-CA-certs-20180516-1.el7.cern.noarch.rpm \
-        mailcap \
-        https://packages.endpoint.com/rhel/7/os/x86_64/endpoint-repo-1.7-1.x86_64.rpm && \
-    yum upgrade -y git
+        https://linuxsoft.cern.ch/cern/centos/8/CERN/x86_64/Packages/CERN-CA-certs-20200530-1.el8.cern.noarch.rpm \
+        mailcap
+
+# Symlink python
+RUN ln -nsf /usr/bin/python3.8 /usr/bin/python
 
 # CERN Search installation
 WORKDIR /${WORKING_DIR}/src
