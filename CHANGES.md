@@ -1,6 +1,16 @@
 Changes
 =======
 
+**Version 1.6.0-beta (released 2020-12-10)**
+
+Changes:
+
+- Switch from pipenv to poetry
+- Fix linting
+- Bump python version 3.8
+
+----
+
 **Version 1.5.0-beta (released 2020-12-08)**
 
 Changes:
