@@ -1,6 +1,15 @@
 Changes
 =======
 
+**Version 1.6.1-beta (released 2020-01-19)**
+
+Changes:
+
+- ES timeout configurable
+- New query parameter: exclude (ES source filtering)
+
+----
+
 **Version 1.6.0-beta (released 2020-12-10)**
 
 Changes:
