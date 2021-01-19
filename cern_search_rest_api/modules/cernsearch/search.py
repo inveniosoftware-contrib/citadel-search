@@ -126,6 +126,10 @@ def search_factory(self, search: RecordCERNSearch, query_parser=None):
     if highlights:
         search = search.highlight_options(encoder="html").highlight(*highlights)
 
+    excludes = request.args.getlist("exclude", None)
+    if excludes:
+        search = search.source(excludes=excludes)
+
     explain = request.args.get("explain", None)
     if explain:
         search = search.extra(explain=explain)

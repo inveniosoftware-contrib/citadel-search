@@ -317,6 +317,7 @@ SQLALCHEMY_ENGINE_OPTIONS = {
 SEARCH_CLIENT_CONFIG = dict(
     # allow up to 25 connections to each node
     maxsize=int(os.getenv("ELASTICSEARCH_MAX_SIZE", 5)),
+    timeout=int(os.getenv("ELASTICSEARCH_TIMEOUT", 10)),
 )
 
 # Processes file metadata
