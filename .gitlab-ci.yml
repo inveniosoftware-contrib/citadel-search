@@ -131,7 +131,6 @@ build_test_version_manual:
       - merge_requests
   when: manual
   variables:
-    BUILD_ARG: build_env=dev
     TO: ${CI_REGISTRY_IMAGE}:$CI_COMMIT_REF_SLUG
 
 ### Create tag in OpenShift.
@@ -198,8 +197,6 @@ build_dev_version:
   extends: .build_image
   only:
     - dev
-  variables:
-    BUILD_ARG: build_env=dev
 
 ### Import image into OpenShift.
 import_image_dev_branch_prod:

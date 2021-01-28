@@ -14,11 +14,11 @@ ARG build_env
 WORKDIR /${WORKING_DIR}/src
 ADD . /${WORKING_DIR}/src
 
-# If env is development, install development dependencies
-RUN if [ "$build_env" != "prod" ]; then poetry install --no-root --no-interaction --no-ansi; fi
-
 # Install CSaS
-RUN pip install -e .
+# If env is development, installs also development dependencies.
+RUN if [ "$build_env" != "prod" ]; \
+    then poetry install --no-root --no-interaction --no-ansi && python setup.py develop --no-deps; \
+    else python setup.py install --no-deps; fi
 
 # PID File for uWSGI
 RUN touch /${WORKING_DIR}/src/uwsgi.pid
