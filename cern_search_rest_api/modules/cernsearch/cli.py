@@ -7,14 +7,17 @@
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 """Click command-line utilities."""
+import json
 
 import click
 from flask.cli import with_appcontext
-from invenio_indexer.tasks import process_bulk_queue
 from invenio_pidstore.models import PersistentIdentifier, PIDStatus
 from invenio_records.models import RecordMetadata
+from invenio_search import current_search
+from invenio_search.cli import es_version_check
 
 from cern_search_rest_api.modules.cernsearch.indexer import CernSearchRecordIndexer
+from cern_search_rest_api.modules.cernsearch.indexer_tasks import process_bulk_queue
 
 
 def abort_if_false(ctx, param, value):
@@ -125,7 +128,20 @@ def reindex(pid_type, id_list, doc_type=None):
         if doc_type:
             query = query.filter(RecordMetadata.json.op("->>")("$schema").contains(doc_type))
 
-        query = (x[0] for x in query.values(PersistentIdentifier.object_uuid))
+        query = (x[0] for x in query.yield_per(100).values(PersistentIdentifier.object_uuid))
 
     CernSearchRecordIndexer().bulk_index(query)
     click.secho('Execute "run" command to process the queue!', fg="yellow")
+
+
+@utils.command("index-init")
+@click.argument("index_name")
+@click.option("-f", "--force", is_flag=True, default=False)
+@click.option("-v", "--verbose", is_flag=True, default=False)
+@with_appcontext
+@es_version_check
+def index_init(index_name, force, verbose):
+    """Init index by its name."""
+    results = list(current_search.create(index_list=[index_name], ignore_existing=force))
+    if verbose:
+        click.echo(json.dumps(results))

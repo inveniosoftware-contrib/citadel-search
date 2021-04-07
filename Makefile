@@ -32,7 +32,7 @@ build-env:
 .PHONY: build-env
 
 rebuild-env:
-	docker-compose -f $(DOCKER_FILE) up -d --build --remove-orphans
+	docker-compose -f $(DOCKER_FILE) build --no-cache --parallel
 .PHONY: rebuild-env
 
 es-setup:

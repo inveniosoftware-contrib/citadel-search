@@ -53,22 +53,22 @@
           "document_id": {
             "type": "keyword",
             "normalizer": "case_accent_normalizer",
-            "boost": 2
+            "boost": 5
           },
           "document_id_version": {
             "type": "keyword",
             "normalizer": "case_accent_normalizer",
-            "boost": 2
+            "boost": 5
           },
           "cern_id": {
             "type": "keyword",
             "normalizer": "case_accent_normalizer",
-            "boost": 2
+            "boost": 5
           },
           "cern_id_version": {
             "type": "keyword",
             "normalizer": "case_accent_normalizer",
-            "boost": 2
+            "boost": 5
           },
           "external_reference": {
             "type": "text",

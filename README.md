@@ -13,8 +13,8 @@ documents and search among them when needed!
 1. Run `make env MODE=test`
 2. Follow [instructions](#tls---how-to-install-certificate) to install certificate.
 3. Chrome https://localhost
-
-Read more on the makefile.
+Note: When sending records in this setup set the `$schema` field as `"https://0.0.0.0/schemas/<instance>/<record>.json"`
+Read more on the makefile and the Docs.
 
 - **Docker + Poetry: Read more on the makefile**
 1. Run `make local-env MODE=test`

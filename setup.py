@@ -69,7 +69,10 @@ setup(
         "invenio_base.blueprints": [
             "health_check = cern_search_rest_api.modules.cernsearch.views:build_health_blueprint"
         ],
-        "invenio_celery.tasks": ["cern-search = cern_search_rest_api.modules.cernsearch.tasks"],
+        "invenio_celery.tasks": [
+            "cern-search = cern_search_rest_api.modules.cernsearch.tasks",
+            "cern-search-indexer_tasks = cern_search_rest_api.modules.cernsearch.indexer_tasks",
+        ],
         "flask.commands": ["utils = cern_search_rest_api.modules.cernsearch.cli:utils"],
     },
     classifiers=[

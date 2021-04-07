@@ -1,6 +1,15 @@
 Changes
 =======
 
+**Version 1.7.0-beta (released 2020-04-07)**
+
+Changes:
+
+- Decrease max file content size to 1MB
+- [EDMS] Document mapping weights update
+
+----
+
 **Version 1.6.1-beta (released 2020-01-19)**
 
 Changes:
