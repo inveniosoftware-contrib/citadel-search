@@ -1,6 +1,23 @@
 Changes
 =======
 
+
+**Version 1.8.0-beta (released 2020-06-10)**
+
+Changes:
+
+- Add indico and lcagenda filters and schemas
+- Improve error handling
+- Celery improvements: logging and worker_proc_alive_timeout
+- Add index to records buckets
+- Config CERN_SEARCH_PROCESS_FILE_META can be a bool or a list of fields
+- New config CERN_SEARCH_COPY_TO_METADATA allows copying stored fields to metadata
+- Add nested filter facet
+- Support gzip access list
+- Support default operator query param
+
+----
+
 **Version 1.7.0-beta (released 2020-04-07)**
 
 Changes:
