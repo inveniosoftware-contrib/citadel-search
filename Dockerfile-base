@@ -17,7 +17,7 @@ RUN yum update -y && yum install -y \
         https://linuxsoft.cern.ch/cern/centos/8/CERN/x86_64/Packages/CERN-CA-certs-20200530-1.el8.cern.noarch.rpm \
         mailcap
 
-# Uninstall python3.6 due to poetry bug (and leave node)
+# Uninstall python3.6 due to poetry bug (but don't unistall node)
 # https://github.com/python-poetry/poetry/issues/3463
 RUN rpm -e --nodeps python36 && node -v
 
