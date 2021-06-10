@@ -32,7 +32,7 @@ class CERNSearch(object):
         app.register_blueprint(blueprint_record_files_content)
 
         current_celery.steps["worker"].add(DeclareDeadletter)
-
+        current_celery.conf.update(app.config["CELERYCONF_V6"])
         self.register_signals(app)
 
         app.extensions["cern-search"] = self
@@ -47,19 +47,18 @@ class CERNSearch(object):
     def register_signals(self, app):
         """Register signals."""
         if app.config["SEARCH_FILE_INDEXER"]:
-            from cern_search_rest_api.modules.cernsearch.indexer import (
-                index_file_content,
-            )
+            from invenio_files_processor.signals import file_processed
+            from invenio_files_rest.signals import file_deleted, file_uploaded
+            from invenio_indexer.signals import before_record_index
+            from invenio_records.signals import after_record_delete
+
+            from cern_search_rest_api.modules.cernsearch.indexer import index_file_content
             from cern_search_rest_api.modules.cernsearch.receivers import (
                 file_deleted_listener,
                 file_processed_listener,
                 file_uploaded_listener,
                 record_deleted_listener,
             )
-            from invenio_files_processor.signals import file_processed
-            from invenio_files_rest.signals import file_deleted, file_uploaded
-            from invenio_indexer.signals import before_record_index
-            from invenio_records.signals import after_record_delete
 
             file_uploaded.connect(file_uploaded_listener)
             file_processed.connect(file_processed_listener)

@@ -8,7 +8,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 """Custom errors."""
 
-from invenio_rest.errors import RESTValidationError
+from invenio_rest.errors import RESTException, RESTValidationError
 
 
 class InvalidRecordFormatError(RESTValidationError):
@@ -32,3 +32,32 @@ class ObjectNotFoundError(SearchError):
     def __str__(self):
         """Return description."""
         return f"{self.message} not found."
+
+
+class Error(object):
+    """Represents a generic error.
+
+    .. note:: This is not an actual exception.
+    """
+
+    def __init__(self, cause: str):
+        """Init object.
+
+        :param cause: The string error.
+        """
+        self.res = dict(cause=cause)
+
+    def to_dict(self):
+        """Convert to dictionary.
+
+        :returns: A dictionary with field, message and, if initialized, the
+            HTTP status code.
+        """
+        return self.res
+
+
+class ConflictError(RESTException):
+    """Conflict Error exception."""
+
+    code = 409
+    description = "An internal error occurred due to a conflict in the internal state."

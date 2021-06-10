@@ -41,11 +41,17 @@ def file_processed_listener(app, processor_id, file: ObjectVersion, data):
     current_app.logger.debug("File processed listener: %s with processor %s", str(file), processor_id)
 
     file_content = __extract_content(data)
-    record = record_from_object_version(file)
+    if current_app.debug:
+        for key in file_content:
+            if key == "content":
+                current_app.logger.debug("File processed listener: has content %s ", bool(file_content[key]))
+            else:
+                current_app.logger.debug("File processed listener: %s - %s ", key, file_content[key])
 
+    record = record_from_object_version(file)
     persist_file_content(record, file_content, file.basename)
     CernSearchRecordIndexer().index(record)
-    # delete file from filesystem only after indexing successfully
+    # delete real file from filesystem only after indexing successfully
     delete_file_instance(file)
 
 
@@ -53,8 +59,9 @@ def file_deleted_listener(obj: ObjectVersion = None):
     """File deleted through api calls: cleanup files and reindex."""
     current_app.logger.debug("File deleted listener: %s", str(obj))
 
-    delete_record_file(obj)
     record = record_from_object_version(obj)
+
+    delete_record_file(record, obj)
     CernSearchRecordIndexer().index(record)
 
 

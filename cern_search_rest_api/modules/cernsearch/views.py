@@ -23,11 +23,17 @@ from typing import Callable
 from flask import Blueprint, Response, current_app, json, make_response, request, url_for
 from invenio_db import db
 from invenio_files_rest.serializer import json_serializer
-from invenio_files_rest.views import ObjectResource
+from invenio_files_rest.views import ObjectResource, need_bucket_permission
 from invenio_indexer.utils import default_record_to_index
 from invenio_records_files.serializer import serializer_mapping
+from invenio_records_files.views import pass_bucket_id
 from invenio_records_rest import current_records_rest
-from invenio_records_rest.errors import InvalidDataRESTError, UnsupportedMediaRESTError
+from invenio_records_rest.errors import (
+    InvalidDataRESTError,
+    InvalidQueryRESTError,
+    PIDResolveRESTError,
+    UnsupportedMediaRESTError,
+)
 from invenio_records_rest.utils import obj_or_import_string
 from invenio_records_rest.views import create_error_handlers as records_rest_error_handlers
 from invenio_records_rest.views import need_record_permission, pass_record
@@ -35,19 +41,34 @@ from invenio_rest import ContentNegotiatedMethodView
 from invenio_search import current_search_client
 from six import iteritems
 from six.moves.urllib.parse import urljoin
+from sqlalchemy.exc import SQLAlchemyError
 
 from cern_search_rest_api.modules.cernsearch.api import CernSearchRecord
-from cern_search_rest_api.modules.cernsearch.errors import InvalidRecordFormatError
+from cern_search_rest_api.modules.cernsearch.errors import ConflictError, Error, InvalidRecordFormatError
 from cern_search_rest_api.modules.cernsearch.search import RecordCERNSearch
+
+
+def elasticsearch_query_parsing_exception_handler(error):
+    """Handle query parsing exceptions from ElasticSearch."""
+    current_app.logger.warning(error.info)
+    description = "The syntax of the search query is invalid."
+
+    return InvalidQueryRESTError(description=description, errors=[Error(str(error))]).get_response()
 
 
 def elasticsearch_mapper_parsing_exception_handler(error):
     """Handle mapper parsing exceptions from ElasticSearch."""
-    description = (
-        f"The format of the record is invalid. "
-        f"{error.info['error']['root_cause']}. {error.info['error']['caused_by']['reason']}"
-    )
-    return InvalidRecordFormatError(description=description).get_response()
+    current_app.logger.warning(error.info)
+    description = "The format of the record is invalid."
+
+    return InvalidRecordFormatError(description=description, errors=[Error(str(error))]).get_response()
+
+
+def elasticsearch_version_conflict_engine_exception_handler(error):
+    """Handle mapper parsing exceptions from ElasticSearch."""
+    current_app.logger.warning(error.info)
+
+    return ConflictError(errors=[Error(str(error))]).get_response()
 
 
 def create_error_handlers(blueprint):
@@ -94,7 +115,7 @@ def build_blueprint_record_files_content(app):
             invenio_records_files_content.add_url_rule(
                 "{rec_item_route}{files_path_name}/<path:key>".format(**locals()),
                 view_func=object_view,
-                methods=["GET"],
+                methods=["GET", "PUT"],
             )
 
     return invenio_records_files_content
@@ -181,11 +202,32 @@ def pass_bucket_content_id(f: Callable):
     return decorate
 
 
+def pass_record_debug(f):
+    """Decorate to retrieve persistent identifier and record.
+
+    This decorator will resolve the ``pid_value`` parameter from the route
+    pattern and resolve it to a PID and a record, which are then available in
+    the decorated function as ``pid`` and ``record`` kwargs respectively.
+    """
+
+    @wraps(f)
+    def inner(self, pid_value, *args, **kwargs):
+        try:
+            pid, record = request.view_args["pid_value"].data
+            return f(self, pid=pid, record=record, *args, **kwargs)
+        except SQLAlchemyError:
+            current_app.logger.exception("Unexpected SQLAlchemyError:")
+            raise PIDResolveRESTError(pid_value)
+
+    return inner
+
+
 class SearchRecordObjectResource(ObjectResource):
     """RecordObject item resource."""
 
     @pass_record
     @pass_bucket_content_id
+    @need_bucket_permission("object-read")
     def get(self, pid: int, record: CernSearchRecord, **kwargs):
         """Get object or list parts of a multpart upload.
 
@@ -195,6 +237,19 @@ class SearchRecordObjectResource(ObjectResource):
         :returns: A Flask response.
         """
         return super(SearchRecordObjectResource, self).get(**kwargs)
+
+    # DEBUG - overwrite pass_record
+    @pass_record_debug
+    @pass_bucket_id
+    def put(self, pid, record, **kwargs):
+        """Update a new object or upload a part of a multipart upload.
+
+        :param pid: The pid value of the record to get the bucket from.
+        :kwargs: contains all the parameters used by the ObjectResource view in
+            Invenio-Files-Rest
+        :returns: A Flask response.
+        """
+        return super(SearchRecordObjectResource, self).put(**kwargs)
 
 
 class UBQRecordResource(ContentNegotiatedMethodView):

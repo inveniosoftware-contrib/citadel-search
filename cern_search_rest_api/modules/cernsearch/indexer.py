@@ -10,7 +10,6 @@
 import json as json_lib
 from json import JSONDecodeError
 
-from celery.utils.log import get_task_logger
 from flask import current_app
 from invenio_files_rest.storage import FileStorage
 from invenio_indexer.api import RecordIndexer
@@ -34,8 +33,6 @@ CREATION_KEY = "creation_date"
 # Hard limit on content on 1MB due to ES limitations
 # Ref: https://www.elastic.co/guide/en/elasticsearch/reference/7.1/general-recommendations.html#maximum-document-size
 CONTENT_HARD_LIMIT = int(1 * 1024 * 1024)
-
-logger = get_task_logger(__name__)
 
 
 class CernSearchRecordIndexer(RecordIndexer):
@@ -88,61 +85,74 @@ def index_file_content(
     if not record.files and not record.files_content:
         return
 
+    # Reindex in case file_processor job is lost
     if not record.files_content:
-        file_obj = next(record.files)
-        logger.warning("Not file content, retrying file: %s in %s", file_obj.obj.basename, record.id)
+        file_obj = next(iter(record.files))
+        current_app.logger.warning("No file content, retrying file: %s in %s", file_obj.obj.basename, record.id)
         process_file_async.delay(str(file_obj.obj.bucket_id), file_obj.obj.key)
         return
 
-    for file_obj in record.files_content:
-        logger.debug("Index file content: %s in %s", file_obj.obj.basename, record.id)
+    # Index first or none
+    file_obj = next(iter(record.files_content))
+    if not file_obj.obj.file.readable:
+        current_app.logger.warning("Could not index file not readable: %s in %s", file_obj.obj.basename, record.id)
+        return
 
-        json[FILE_KEY] = file_obj.obj.basename
+    current_app.logger.debug("Index file content: %s in %s", file_obj.obj.basename, record.id)
 
-        storage = file_obj.obj.file.storage()  # type: FileStorage
-        with storage.open(mode=READ_WRITE_MODE_BINARY) as fp:
-            try:
-                file_content = json_lib.load(fp)
-            except JSONDecodeError:
-                logger.error("File content contains invalid json: %s in %s", file_obj.obj.basename, record.id)
-                return
+    json[FILE_KEY] = file_obj.obj.basename
 
-            check_file_content_limit(file_content, file_obj.obj.basename, record.id)
+    storage = file_obj.obj.file.storage()  # type: FileStorage
+    with storage.open(mode=READ_WRITE_MODE_BINARY) as fp:
+        try:
+            file_content = json_lib.load(fp)
+        except JSONDecodeError:
+            current_app.logger.error("File content contains invalid json: %s in %s", file_obj.obj.basename, record.id)
+            return
 
-            json[DATA_KEY][CONTENT_KEY] = file_content["content"]
+        check_file_content_limit(file_content, file_obj.obj.basename, record.id)
 
-            if current_app.config.get("PROCESS_FILE_META"):
-                index_metadata(file_content, json, file_obj.obj.basename)
+        json[DATA_KEY][CONTENT_KEY] = file_content["content"]
 
-        # Index first or none
-        break
+        if current_app.config.get("PROCESS_FILE_META"):
+            index_metadata(file_content, json, file_obj.obj.basename)
 
 
 def index_metadata(file_content, json, file_name):
     """Extract metadata from file to be indexed."""
-    metadata = extract_metadata_from_processor(file_content["metadata"])
+    metadata = extract_metadata_from_processor(file_content.get("metadata"))
 
-    if metadata.get("authors"):
+    index_specific_meta = isinstance(current_app.config.get("PROCESS_FILE_META"), list)
+    indexable_meta = current_app.config.get("PROCESS_FILE_META")
+
+    def should_index(field):
+        return not index_specific_meta or (index_specific_meta and field in indexable_meta)
+
+    if metadata.get("authors") and should_index(AUTHORS_KEY):
         json[DATA_KEY][AUTHORS_KEY] = metadata.get("authors")
-    if metadata.get("content_type"):
+
+    if metadata.get("content_type") and should_index(COLLECTION_KEY):
         json[COLLECTION_KEY] = metadata["content_type"]
-    if metadata.get("title"):
+
+    if metadata.get("title") and should_index(NAME_KEY):
         json[DATA_KEY][NAME_KEY] = metadata["title"]
-    if metadata.get("keywords"):
+
+    if metadata.get("keywords") and should_index(KEYWORDS_KEY):
         json[DATA_KEY][KEYWORDS_KEY] = metadata["keywords"]
-    if metadata.get("creation_date"):
+
+    if metadata.get("creation_date") and should_index(CREATION_KEY):
         json[CREATION_KEY] = metadata["creation_date"]
 
-    if "." in file_name:
+    if "." in file_name and should_index(FILE_FORMAT_KEY):
         json[FILE_FORMAT_KEY] = file_name.split(".")[-1]
 
 
 def check_file_content_limit(file_content, file_name, record_id):
     """Check file content limit and truncate if necessary."""
-    file_content["content"] = file_content.get("content", "")
-    if not file_content["content"]:
-        logger.error("No file content: %s in %s", file_name, record_id)
+    if "content" not in file_content:
+        current_app.logger.warning("No file content: %s in %s", file_name, record_id)
 
+    file_content["content"] = file_content.get("content", "")
     if len(str(file_content["content"])) > CONTENT_HARD_LIMIT:
-        logger.warning("Truncated file content: %s in %s", file_name, record_id)
+        current_app.logger.warning("Truncated file content: %s in %s", file_name, record_id)
         file_content["content"] = str(file_content["content"])[:CONTENT_HARD_LIMIT]

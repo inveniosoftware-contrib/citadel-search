@@ -76,8 +76,8 @@ def test_file_deleted_listener(
     obj = record_with_file.files["hello.txt"]
     file_deleted_listener(obj)
 
-    delete_record_file_mock.assert_called_once_with(obj)
     record_from_object_version_mock.assert_called_once_with(obj)
+    delete_record_file_mock.assert_called_once_with(record, obj)
     record_indexer_mock.assert_called_once()
 
 

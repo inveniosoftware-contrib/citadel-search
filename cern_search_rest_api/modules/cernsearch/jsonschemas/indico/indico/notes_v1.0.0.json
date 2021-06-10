@@ -36,49 +36,88 @@
     "_data": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "integer",
-          "description": "Notes id."
-        },
-        "category_path": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Notes category path (ordered array)."
-        },
-        "event_id": {
-          "type": "integer",
-          "description": "Notes id."
-        },
-        "contribution_id": {
-          "type": "integer",
-          "description": "Notes id.",
-          "required": false
-        },
-        "subcontribution_id": {
-          "type": "integer",
-          "description": "Notes id.",
-          "required": false
-        },
-        "session_id": {
-          "type": "integer",
-          "description": "Notes id.",
-          "required": false
+        "title": {
+          "type": "string",
+          "description": "Note title"
         },
         "content": {
           "type": "string",
-          "description": "Attachments content."
+          "description": "Note content"
         },
-        "url": {
+        "persons": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "affiliation": {
+              "type": "string"
+            }
+          },
+          "description": "The user who created the revision"
+        },
+        "site": {
           "type": "string",
-          "description": "Full path Note URL"
+          "description": "Global search required site"
         }
       }
     },
-    "creation_date": {
+    "note_id": {
+      "type": "integer",
+      "description": "Note id"
+    },
+    "type": {
       "type": "string",
-      "description": "Attachments creation date."
+      "description": "The generic record type"
+    },
+    "event_id": {
+      "type": "integer",
+      "description": "Note event id"
+    },
+    "contribution_id": {
+      "type": "integer",
+      "description": "Note contribution id",
+      "required": false
+    },
+    "subcontribution_id": {
+      "type": "integer",
+      "description": "Note subcontribution id",
+      "required": false
+    },
+    "session_id": {
+      "type": "integer",
+      "description": "Note session id",
+      "required": false
+    },
+    "category_id": {
+      "type": "integer",
+      "description": "Category id"
+    },
+    "created_dt": {
+      "type": "string",
+      "description": "Note creation date"
+    },
+    "category_path": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Detailed category path"
+    },
+    "url": {
+      "type": "string",
+      "description": "Event URL"
     },
     "$schema": {
       "type": "string"

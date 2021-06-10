@@ -27,6 +27,9 @@ def extract_metadata_from_processor(metadata):
     """Prepare metadata from processor."""
     extracted = {}
 
+    if not metadata:
+        return extracted
+
     if metadata.get("Author"):
         authors = metadata["Author"]
         extracted["authors"] = authors.strip(" ") if isinstance(authors, str) else ", ".join(authors)
@@ -50,6 +53,12 @@ def extract_metadata_from_processor(metadata):
 
 def mime_type_to_file_collection(mime_type):
     """Convert mime type to a friendly name collection."""
+    if isinstance(mime_type, list):
+        mime_type = mime_type[0]
+
+    if not isinstance(mime_type, str):
+        return FILE_EXT_DEFAULT_COLLECTION
+
     extensions = mimetypes.guess_all_extensions(mime_type.split(";")[0], strict=False)
     if not extensions:
         return FILE_EXT_DEFAULT_COLLECTION

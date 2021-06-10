@@ -121,8 +121,8 @@ def match_phrase_filter(field):
     return inner
 
 
-def _create_match_dsl(urlkwargs, definitions):
-    """Create a match DSL expression."""
+def _query_factory_dsl(urlkwargs, definitions):
+    """Create a list with query definitions applied to url args."""
     filters = []
     for name, filter_factory in definitions.items():
         values = request.values.getlist(name, type=text_type)
@@ -136,10 +136,21 @@ def _create_match_dsl(urlkwargs, definitions):
 
 def _match_filter(search, urlkwargs, definitions):
     """Ingest match filter in query."""
-    matches, urlkwargs = _create_match_dsl(urlkwargs, definitions)
+    matches, urlkwargs = _query_factory_dsl(urlkwargs, definitions)
 
     for match_ in matches:
         search = search.query(match_)
+
+    return (search, urlkwargs)
+
+
+def _nested_filter(search, urlkwargs, definitions):
+    """Ingest nested bool filter in query."""
+    for path, definition in definitions.items():
+        nested, urlkwargs = _query_factory_dsl(urlkwargs, definition)
+
+        if nested:
+            search = search.query(Q("nested", path=path, query=Q("bool", filter=nested)))
 
     return (search, urlkwargs)
 
@@ -160,5 +171,7 @@ def saas_facets_factory(search, index):
     if facets is not None:
         # Match filter
         search, urlkwargs = _match_filter(search, urlkwargs, facets.get("matches", {}))
+        # Nested filter
+        search, urlkwargs = _nested_filter(search, urlkwargs, facets.get("nested", {}))
 
     return (search, urlkwargs)

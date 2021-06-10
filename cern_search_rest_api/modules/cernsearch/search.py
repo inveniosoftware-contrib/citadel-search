@@ -7,6 +7,10 @@
 # Citadel Search is free software; you can redistribute it and/or modify it
 # under the terms of the MIT License; see LICENSE file for more details.
 """Search utilities."""
+import base64
+import json
+import zlib
+
 from elasticsearch_dsl import Q
 from flask import current_app, request
 from flask_login import current_user
@@ -66,16 +70,37 @@ def cern_search_filter():
     return Q("bool", filter=cern_filter)
 
 
+def extract_egroups_from_query():
+    """Get egroups from access params (access or access_gz).
+
+    Eg: How to build access_gz:
+        if len(access_string) > 1024:
+            access_string_gz = base64.b64encode(zlib.compress(access_string.encode(), level=9))
+    """
+    egroups = request.args.get("access", "")
+    if egroups:
+        return set(egroups.split(","))
+
+    egroups_gz = request.args.get("access_gz", "")
+    if egroups_gz:
+        egroups_gz_str = zlib.decompress(base64.b64decode(egroups_gz.encode())).decode()
+        if egroups_gz_str:
+            return set(egroups_gz_str.split(","))
+
+    return set()
+
+
 def get_egroups():
     """Get egroups from access param, config or authenticated user."""
-    egroups = request.args.get("access", None)
+    egroups = extract_egroups_from_query()
+
     # If access rights are sent and is admin_view_account
     if egroups and has_admin_view_permission(current_user):
         try:
             if current_app.config["SEARCH_USE_EGROUPS"]:
-                return ["{0}@cern.ch".format(egroup) for egroup in egroups.split(",")]
+                return ["{0}@cern.ch".format(egroup) for egroup in egroups]
             else:
-                return egroups.split(",")
+                return list(egroups)
         except AttributeError:
             return None
 
@@ -103,8 +128,11 @@ def search_factory(self, search: RecordCERNSearch, query_parser=None):
 
     def _csas_query_parser(qstr=None):
         """Parse with Q() from elasticsearch_dsl."""
-        default_multifields_type = "best_fields"
-        multifields_type = request.args.get("type", default_multifields_type)
+        default_multifields_qtype = "best_fields"
+        default_operator = "OR"
+
+        operator = request.args.get("default_operator", default_operator)
+        multifields_type = request.args.get("qtype", default_multifields_qtype)
 
         if qstr:
             return Q(
@@ -112,6 +140,7 @@ def search_factory(self, search: RecordCERNSearch, query_parser=None):
                 query=qstr,
                 rewrite="top_terms_1000",  # calculates score for wildcards queries
                 type=multifields_type,
+                default_operator=operator,
             )
         return Q()
 
@@ -119,6 +148,8 @@ def search_factory(self, search: RecordCERNSearch, query_parser=None):
 
     search_index = getattr(search, "_original_index", search._index)[0]
     search, urlkwargs = saas_facets_factory(search, search_index)
+
+    current_app.logger.debug("Search object: %s", str(json.dumps(search.to_dict())))
 
     search = search.params(search_type="dfs_query_then_fetch")  # search across all shards
 
@@ -133,6 +164,8 @@ def search_factory(self, search: RecordCERNSearch, query_parser=None):
     explain = request.args.get("explain", None)
     if explain:
         search = search.extra(explain=explain)
+
+    search = search.extra(stored_fields=["*"], _source=True)
 
     return search, urlkwargs
 

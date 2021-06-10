@@ -41,3 +41,4 @@ class CSASRecordSearchSchemaJSONV1(RecordSchemaJSONV1):
 
     highlight = fields.Raw()
     explanation = fields.Raw()
+    stored = fields.Raw()

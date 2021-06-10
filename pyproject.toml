@@ -25,7 +25,7 @@ invenio-logging = {version = ">=1.3.0,<1.4.0", extras = ["sentry-sdk"]}
 invenio-oauth2server = ">=1.2.0,<1.3.0"
 invenio-oauthclient = "<1.4.0,>=1.3.5"
 invenio-records = {version = ">=1.3.1,<1.4.0", extras = ["postgresql"]}
-invenio-records-files = ">=1.2.1,<1.3.0"
+invenio-records-files = {git = "https://github.com/carantunes/invenio-records-files.git", tag = "v1.2.2"}
 invenio-records-rest = ">=1.7.1,<1.8.0"
 invenio-rest = ">=1.2.1,<1.3.0"
 invenio-search = {version = ">=1.3.1,<1.4.0", extras = ["elasticsearch7"]}

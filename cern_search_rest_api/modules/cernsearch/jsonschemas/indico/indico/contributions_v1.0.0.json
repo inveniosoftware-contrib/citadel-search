@@ -36,53 +36,103 @@
     "_data": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "integer",
-          "description": "Contributions id."
-        },
-        "category_path": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Contributions category path (ordered array)."
-        },
-        "event_id": {
-          "type": "integer",
-          "description": "Event id."
-        },
         "location": {
-          "type": "string",
-          "description": "Contributions location."
+          "type": "object",
+          "description": "Contribution location",
+          "properties": {
+            "venue_name": {
+              "type": "string"
+            },
+            "room_name": {
+              "type": "string"
+            },
+            "address": {
+              "type": "string"
+            }
+          }
         },
         "title": {
           "type": "string",
-          "description": "Contributions title."
+          "description": "Contribution title"
         },
         "description": {
           "type": "string",
-          "description": "Contributions description."
+          "description": "Contribution description"
         },
-        "list_of_persons": {
+        "persons": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "affiliation": {
+                "type": "string"
+              }
+            }
           },
-          "description": "Contributions person's name, affiliation."
+          "description": "Contribution person's name, affiliation"
         },
-        "url": {
+        "site": {
           "type": "string",
-          "description": "Full path Contribution URL"
+          "description": "Global search required site"
         }
       }
     },
-    "start_date": {
+    "type": {
       "type": "string",
-      "description": "Contributions start date."
+      "description": "The generic record type"
     },
-    "end_date": {
+    "type_format": {
       "type": "string",
-      "description": "Contributions end date."
+      "description": "Contribution type"
+    },
+    "contribution_id": {
+      "type": "integer",
+      "description": "Contribution id"
+    },
+    "event_id": {
+      "type": "integer",
+      "description": "Event id"
+    },
+    "category_id": {
+      "type": "integer",
+      "description": "Category id"
+    },
+    "start_dt": {
+      "type": "string",
+      "description": "Contribution start date"
+    },
+    "end_dt": {
+      "type": "string",
+      "description": "Contribution end date"
+    },
+    "duration": {
+      "type": "integer",
+      "description": "Contribution duration"
+    },
+    "category_path": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Detailed category path"
+    },
+    "url": {
+      "type": "string",
+      "description": "Contribution URL"
     },
     "$schema": {
       "type": "string"

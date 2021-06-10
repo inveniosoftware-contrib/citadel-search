@@ -30,7 +30,8 @@
             "ch",
             "fnal",
             "bnl",
-            "gov"
+            "gov",
+            "indico"
           ]
         }
       },
@@ -46,6 +47,14 @@
         },
         "autocomplete_search": {
           "tokenizer": "lowercase"
+        },
+        "text_analyzer": {
+          "tokenizer": "standard",
+          "char_filter": ["html_strip"],
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
         }
       },
       "normalizer": {
@@ -58,6 +67,7 @@
     }
   },
   "mappings": {
+    "dynamic": "strict",
     "numeric_detection": true,
     "properties": {
       "_access": {
@@ -80,18 +90,9 @@
       "_data": {
         "type": "object",
         "properties": {
-          "id": {
-            "type": "keyword"
-          },
-          "category_path": {
-            "type": "keyword"
-          },
-          "event_type": {
-            "type": "keyword",
-            "eager_global_ordinals": true
-          },
-          "location": {
+          "title": {
             "type": "text",
+            "copy_to": "_data.name",
             "fields": {
               "english": {
                 "type": "text",
@@ -103,21 +104,23 @@
               }
             }
           },
-          "title": {
+          "name": {
             "type": "text",
+            "store": true,
+            "analyzer": "english",
             "fields": {
-              "english": {
-                "type": "text",
-                "analyzer": "english"
-              },
               "french": {
                 "type": "text",
                 "analyzer": "french"
+              },
+              "exact_match": {
+                "type": "keyword"
               }
             }
           },
           "description": {
             "type": "text",
+            "analyzer": "text_analyzer",
             "fields": {
               "english": {
                 "type": "text",
@@ -129,17 +132,166 @@
               }
             }
           },
-          "speakers_chairs": {
+          "location": {
+            "type": "object",
+            "properties": {
+              "venue_name": {
+                "type": "keyword",
+                "eager_global_ordinals": true,
+                "fields": {
+                  "exact_match_case_insensitive": {
+                    "type": "keyword",
+                    "eager_global_ordinals": true,
+                    "normalizer": "case_insensitive_normalizer"
+                  }
+                }
+              },
+              "room_name": {
+                "type": "keyword",
+                "eager_global_ordinals": true,
+                "normalizer": "case_insensitive_normalizer"
+              },
+              "address": {
+                "type": "text",
+                "fields": {
+                  "english": {
+                    "type": "text",
+                    "analyzer": "english"
+                  },
+                  "french": {
+                    "type": "text",
+                    "analyzer": "french"
+                  }
+                }
+              }
+            }
+          },
+          "persons": {
+            "type": "nested",
+            "properties": {
+              "name": {
+                "type": "keyword",
+                "eager_global_ordinals": true,
+                "copy_to": ["_data.authors", "_data.persons_index.name"],
+                "fields": {
+                  "exact_match_case_insensitive": {
+                    "type": "keyword",
+                    "normalizer": "case_insensitive_normalizer",
+                    "eager_global_ordinals": true
+                  }
+                }
+              },
+              "affiliation": {
+                "type": "keyword",
+                "eager_global_ordinals": true,
+                "copy_to": "_data.persons_index.affiliation",
+                "fields": {
+                  "exact_match_case_insensitive": {
+                    "type": "keyword",
+                    "eager_global_ordinals": true,
+                    "normalizer": "case_insensitive_normalizer"
+                  }
+                }
+              }
+            }
+          },
+          "persons_index": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "text",
+                "fields": {
+                  "exact_match_case_insensitive": {
+                    "type": "keyword",
+                    "eager_global_ordinals": true,
+                    "normalizer": "case_insensitive_normalizer"
+                  }
+                }
+              },
+              "affiliation": {
+                "type": "text",
+                "fields": {
+                  "exact_match_case_insensitive": {
+                    "type": "keyword",
+                    "eager_global_ordinals": true,
+                    "normalizer": "case_insensitive_normalizer"
+                  }
+                }
+              }
+            }
+          },
+          "authors": {
+            "type": "text",
+            "store" : true,
+            "fields": {
+              "exact_match": {
+                "type": "keyword",
+                "eager_global_ordinals": true
+              }
+            }
+          },
+          "keywords": {
             "type": "text",
             "fields": {
-              "english": {
-                "type": "text",
-                "analyzer": "english"
-              },
-              "french": {
-                "type": "text",
-                "analyzer": "french"
-              },
+              "exact_match": {
+                "type": "keyword",
+                "normalizer": "case_insensitive_normalizer",
+                "eager_global_ordinals": true
+              }
+            }
+          },
+          "site": {
+            "type": "text",
+            "analyzer": "url_analyzer",
+            "fields": {
+              "exact_match": {
+                "type": "keyword",
+                "normalizer": "case_insensitive_normalizer",
+                "eager_global_ordinals": true
+              }
+            }
+          }
+        }
+      },
+      "type": {
+        "type": "keyword",
+        "copy_to": "type_any"
+      },
+      "collection": {
+        "type": "keyword",
+        "store" : true,
+        "eager_global_ordinals": true
+      },
+      "type_format": {
+        "type": "keyword",
+        "copy_to": ["type_any", "collection"]
+      },
+      "type_any": {
+        "type": "keyword"
+      },
+      "event_id": {
+        "type": "keyword"
+      },
+      "category_id": {
+        "type": "keyword"
+      },
+      "start_dt": {
+        "type": "date",
+        "format": "strict_date_optional_time"
+      },
+      "end_dt": {
+        "type": "date",
+        "format": "strict_date_optional_time"
+      },
+      "category_path": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "keyword"
+          },
+          "title": {
+            "type": "text",
+            "fields": {
               "exact_match": {
                 "type": "keyword",
                 "eager_global_ordinals": true
@@ -147,27 +299,13 @@
             }
           },
           "url": {
-            "type": "text",
-            "analyzer": "url_analyzer",
-            "fields": {
-              "exact_match": {
-                "type": "keyword"
-              }
-            }
+            "type": "keyword"
           }
         }
       },
-      "creation_date": {
-        "type": "date",
-        "format": "strict_date_optional_time"
-      },
-      "start_date": {
-        "type": "date",
-        "format": "strict_date_optional_time"
-      },
-      "end_date": {
-        "type": "date",
-        "format": "strict_date_optional_time"
+      "url": {
+        "type": "text",
+        "analyzer": "url_analyzer"
       },
       "_updated": {
         "type": "date"

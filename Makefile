@@ -31,6 +31,11 @@ build-env:
 	docker-compose -f $(DOCKER_FILE) up -d --remove-orphans
 .PHONY: build-env
 
+
+es:
+	docker-compose -f docker-compose.es.yml up -d --remove-orphans
+.PHONY: es
+
 rebuild-env:
 	docker-compose -f $(DOCKER_FILE) build --no-cache --parallel
 .PHONY: rebuild-env

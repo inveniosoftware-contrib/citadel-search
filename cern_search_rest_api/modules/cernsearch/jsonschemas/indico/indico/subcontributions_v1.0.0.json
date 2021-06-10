@@ -36,49 +36,103 @@
     "_data": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "integer",
-          "description": "Subcontributions id."
-        },
-        "category_path": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Subcontributions category path (ordered array)."
-        },
-        "event_id": {
-          "type": "integer",
-          "description": "Event id."
-        },
-        "contribution_id": {
-          "type": "integer",
-          "description": "Contribution id."
-        },
-        "location": {
-          "type": "string",
-          "description": "Subcontributions location."
-        },
         "title": {
           "type": "string",
-          "description": "Subcontributions title."
+          "description": "Subcontribution title"
         },
         "description": {
           "type": "string",
-          "description": "Subcontributions description."
+          "description": "Subcontribution description."
         },
-        "list_of_persons": {
+        "location": {
+          "type": "object",
+          "description": "Event location",
+          "properties": {
+            "venue_name": {
+              "type": "string"
+            },
+            "room_name": {
+              "type": "string"
+            },
+            "address": {
+              "type": "string"
+            }
+          }
+        },
+        "persons": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "affiliation": {
+                "type": "string"
+              }
+            }
           },
-          "description": "Subcontributions person's name, affiliation."
+          "description": "Subcontribution person's name/affiliation"
         },
-        "url": {
+        "site": {
           "type": "string",
-          "description": "Full path Subcontributions URL"
+          "description": "Global search required site"
         }
       }
+    },
+    "subcontribution_id": {
+      "type": "integer",
+      "description": "Subcontribution id"
+    },
+    "type": {
+      "type": "string",
+      "description": "The generic record type"
+    },
+    "event_id": {
+      "type": "integer",
+      "description": "Subcontribution event id"
+    },
+    "contribution_id": {
+      "type": "integer",
+      "description": "Contribution id"
+    },
+    "category_id": {
+      "type": "integer",
+      "description": "Category id"
+    },
+    "start_dt": {
+      "type": "string",
+      "description": "Subcontribution start date"
+    },
+    "end_dt": {
+      "type": "string",
+      "description": "Subcontribution end date"
+    },
+    "duration": {
+      "type": "integer",
+      "description": "Subcontribution duration"
+    },
+    "category_path": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Detailed category path"
+    },
+    "url": {
+      "type": "string",
+      "description": "Subcontribution URL"
     },
     "$schema": {
       "type": "string"

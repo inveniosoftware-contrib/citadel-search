@@ -32,7 +32,12 @@
         "type": "object",
         "properties": {
           "title": {
-            "type": "keyword"
+            "type": "keyword",
+            "copy_to": "_data.name"
+          },
+          "name": {
+            "type": "keyword",
+            "store": true
           },
           "description": {
             "type": "text",

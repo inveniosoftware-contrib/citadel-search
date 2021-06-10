@@ -53,7 +53,7 @@ services:
     command: [
       "/bin/bash",
       "-c",
-      "celery -A ${WORKER_APP} worker -l DEBUG --autoscale=10,1"
+      "celery -A ${WORKER_APP} worker -l WARNING --autoscale=10,1"
     ]
     healthcheck:
       test: ["CMD", "celery inspect ping -A ${WORKER_APP} -d celery@$$(hostname)"]
@@ -67,6 +67,7 @@ services:
       - "9200:9200"
       - "9300:9300"
     environment:
+      ES_JAVA_OPTS: "-Xms750m -Xmx750m"
       discovery.type: single-node
     networks:
       - default
@@ -74,7 +75,7 @@ services:
       - es-data:/usr/share/elasticsearch/data
     healthcheck:
       test: ["CMD", "curl", "-f", "localhost:9200/_cluster/health?wait_for_status=yellow"]
-      interval: 30s
+      interval: 5s
       timeout: 10s
       retries: 10
 

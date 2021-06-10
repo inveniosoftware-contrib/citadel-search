@@ -36,48 +36,95 @@
     "_data": {
       "type": "object",
       "properties": {
-        "id": {
-          "type": "integer",
-          "description": "Attachments id."
-        },
-        "category_path": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "Attachments category path (ordered array)."
-        },
-        "event_id": {
-          "type": "integer",
-          "description": "Event id."
-        },
-        "contribution_id": {
-          "type": "integer",
-          "description": "Contribution id.",
-          "required": false
-        },
-        "subcontribution_id": {
-          "type": "integer",
-          "description": "Event id.",
-          "required": false
+        "title": {
+          "type": "string",
+          "description": "Attachment title"
         },
         "filename": {
           "type": "string",
-          "description": "Attachments filename."
+          "description": "Attachment filename"
         },
         "content": {
           "type": "string",
-          "description": "Attachments content."
+          "description": "Attachment content"
         },
-        "url": {
+        "persons": {
+          "type": "object",
+          "properties": {
+            "name": {
+              "type": "string"
+            },
+            "affiliation": {
+              "type": "string"
+            }
+          },
+          "description": "The user who uploaded the file"
+        },
+        "site": {
           "type": "string",
-          "description": "Full path Attachment URL"
+          "description": "Global search required site"
         }
       }
     },
-    "creation_date": {
+    "type": {
       "type": "string",
-      "description": "Attachments creation date."
+      "description": "The generic record type"
+    },
+    "type_format": {
+      "type": "string",
+      "description": "Attachment type"
+    },
+    "attachment_id": {
+      "type": "integer",
+      "description": "Attachment id"
+    },
+    "folder_id": {
+      "type": "integer",
+      "description": "Folder id"
+    },
+    "event_id": {
+      "type": "integer",
+      "description": "Event id"
+    },
+    "contribution_id": {
+      "type": "integer",
+      "description": "Contribution id",
+      "required": false
+    },
+    "subcontribution_id": {
+      "type": "integer",
+      "description": "Subcontribution id",
+      "required": false
+    },
+    "category_id": {
+      "type": "integer",
+      "description": "Category id"
+    },
+    "modified_dt": {
+      "type": "string",
+      "description": "The date the attachment was created/modified"
+    },
+    "category_path": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer"
+          },
+          "title": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string"
+          }
+        }
+      },
+      "description": "Detailed category path"
+    },
+    "url": {
+      "type": "string",
+      "description": "Attachment URL"
     },
     "$schema": {
       "type": "string"

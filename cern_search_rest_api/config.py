@@ -14,6 +14,7 @@ import ast
 import copy
 import os
 
+from elasticsearch.exceptions import TransportError
 from elasticsearch_dsl import A
 from flask import request
 from invenio_oauthclient.contrib import cern_openid
@@ -31,6 +32,7 @@ from cern_search_rest_api.modules.cernsearch.permissions import (
     record_read_permission_factory,
     record_update_permission_factory,
 )
+from cern_search_rest_api.modules.cernsearch.views import elasticsearch_version_conflict_engine_exception_handler
 
 
 def _(x):
@@ -109,6 +111,9 @@ SEARCH_INSTANCE_IMMUTABLE = ast.literal_eval(os.getenv("CERN_SEARCH_INSTANCE_IMM
 # File indexer capabilities enabled
 SEARCH_FILE_INDEXER = ast.literal_eval(os.getenv("CERN_SEARCH_FILE_INDEXER", "True"))
 
+# Copy to fields are moved to metadata
+SEARCH_COPY_TO_METADATA = ast.literal_eval(os.getenv("CERN_SEARCH_COPY_TO_METADATA", "False"))
+
 # Records REST configuration
 # ===========================
 
@@ -162,6 +167,9 @@ RECORDS_REST_ENDPOINTS = dict(
                 }
             },
         },
+        error_handlers={
+            TransportError: elasticsearch_version_conflict_engine_exception_handler,
+        },
     )
 )
 
@@ -202,52 +210,122 @@ cern_rest_facets = {
         "url_match": simple_query_string("url"),
     },
 }
+indico_date_ranges = [
+    {"key": "Over a year ago", "to": "now-1y/y"},
+    {"key": "Up to a year ago", "from": "now-1y/y", "to": "now"},
+    {"key": "Up to a month ago", "from": "now-1M/M", "to": "now"},
+    {"key": "Up to a week ago", "from": "now-1w/w", "to": "now"},
+    {"key": "Today", "from": "now/d", "to": "now"},
+    {"key": "Tomorrow", "from": "now+1d/d", "to": "now+2d/d"},
+    {"key": "This week", "from": "now/w", "to": "now+1w/w"},
+    {"key": "Next week", "from": "now+1w/w", "to": "now+2w/w"},
+    {"key": "After next week", "from": "now+2w/w"},
+]
 RECORDS_REST_FACETS = {
     "cernsearchqa-*": cern_rest_facets,
     "webservices": cern_rest_facets,
     "indico": {
         "aggs": {
-            "event_type": {"terms": {"field": "_data.event_type"}},
-            "speakers_chairs": {"terms": {"field": "_data.speakers_chairs.exact_match"}},
-            "list_of_persons": {"terms": {"field": "_data.list_of_persons.exact_match"}},
-        }
+            "type_format": {"terms": {"field": "type_format"}},
+            "author": {"terms": {"field": "_data.authors.exact_match"}},
+            "person": {
+                "nested": {"path": "_data.persons"},
+                "aggs": {
+                    "name": {
+                        "terms": {"field": "_data.persons.name.exact_match_case_insensitive"},
+                        "aggs": {"most_common": {"terms": {"size": 1, "field": "_data.persons.name"}}},
+                    },
+                    "affiliation": {
+                        "terms": {"field": "_data.persons.affiliation.exact_match_case_insensitive"},
+                        "aggs": {"most_common": {"terms": {"size": 1, "field": "_data.persons.affiliation"}}},
+                    },
+                },
+            },
+            "venue": {
+                "terms": {"field": "_data.location.venue_name.exact_match_case_insensitive"},
+                "aggs": {"most_common": {"terms": {"size": 1, "field": "_data.location.venue_name"}}},
+            },
+            "keyword": {"terms": {"field": "_data.keywords.exact_match"}},
+            "start_range": {"date_range": {"field": "start_dt", "format": "yyyy-MM-dd", "ranges": indico_date_ranges}},
+            "end_range": {"date_range": {"field": "end_dt", "format": "yyyy-MM-dd", "ranges": indico_date_ranges}},
+            "category": {"terms": {"field": "category_path.title.exact_match"}},
+        },
+        "post_filters": {
+            "event_id": terms_filter("event_id"),
+            "type_format": terms_filter("type_format"),
+            "type": terms_filter("type"),
+            "person_name": terms_filter("_data.persons_index.name.exact_match_case_insensitive"),
+            "author": terms_filter("_data.authors.exact_match"),
+            "person_affiliation": terms_filter("_data.persons_index.affiliation.exact_match_case_insensitive"),
+            "venue": terms_filter("_data.location.venue_name"),
+            "keyword": terms_filter("_data.keywords.exact_match"),
+            "category": terms_filter("category_path.title.exact_match"),
+            "category_id": terms_filter("category_path.id"),
+            "exact_category_id": terms_filter("category_id"),
+        },
+        "nested": {
+            "_data.persons": {
+                "nperson": terms_filter("_data.persons.name"),
+                "naffiliation": terms_filter("_data.persons.affiliation"),
+            }
+        },
     },
 }
 
 cern_sort_options = {
     "bestmatch": {
-        "fields": ["-_score"],
+        "fields": ["-_score", "-_updated"],
         "title": "Best match",
-        "default_order": "asc",
+        "default_order": "desc",
     },
     "mostrecent": {
-        "fields": ["_updated"],
+        "fields": ["-_updated"],
         "title": "Newest",
-        "default_order": "asc",
+        "default_order": "desc",
     },
 }
-
 RECORDS_REST_SORT_OPTIONS = {
     "webservices": cern_sort_options,
     "cernsearchqa-*": cern_sort_options,
-    "edms": {
+    "edms": cern_sort_options,
+    "indico": {
         "bestmatch": {
-            "fields": ["-_score"],
+            "fields": ["-_score", "-start_dt"],
             "title": "Best match",
-            "default_order": "asc",
+            "default_order": "desc",
         },
         "mostrecent": {
-            "fields": ["_updated"],
+            "fields": ["-start_dt"],
             "title": "Newest",
-            "default_order": "asc",
+            "default_order": "desc",
         },
     },
 }
+
+default_sort_options = dict(
+    query="bestmatch",
+    noquery="mostrecent",
+)
+RECORDS_REST_DEFAULT_SORT = dict(
+    indico=default_sort_options,
+    edms=default_sort_options,
+    archives=default_sort_options,
+    webservices=default_sort_options,
+    test=default_sort_options,
+)
 
 RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS = copy.deepcopy(irr_config.RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS)
 RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS[
     "mapper_parsing_exception"
 ] = "cern_search_rest_api.modules.cernsearch.views:elasticsearch_mapper_parsing_exception_handler"
+
+RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS[
+    "query_parsing_exception"
+] = "cern_search_rest_api.modules.cernsearch.views:elasticsearch_query_parsing_exception_handler"
+
+RECORDS_REST_ELASTICSEARCH_ERROR_HANDLERS[
+    "query_shard_exception"
+] = "cern_search_rest_api.modules.cernsearch.views:elasticsearch_query_parsing_exception_handler"
 
 # App
 # ===
@@ -271,6 +349,21 @@ SECURITY_CONFIRMABLE = False
 SECURITY_REGISTERABLE = False  # Avoid user registration outside of CERN SSO
 SECURITY_RECOVERABLE = False  # Avoid user password recovery
 SESSION_COOKIE_SECURE = True
+
+SQLALCHEMY_ENGINE_OPTIONS = {
+    "pool_size": int(os.getenv("SQLALCHEMY_POOL_SIZE", 5)),
+    "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 10)),
+    "pool_recycle": int(os.getenv("SQLALCHEMY_POOL_RECYCLE", 300)),  # in seconds
+}
+
+SEARCH_CLIENT_CONFIG = dict(
+    # allow up to 25 connections to each node
+    maxsize=int(os.getenv("ELASTICSEARCH_MAX_SIZE", 5)),
+    timeout=int(os.getenv("ELASTICSEARCH_TIMEOUT", 10)),
+)
+
+# Processes file metadata
+PROCESS_FILE_META = ast.literal_eval(os.getenv("CERN_SEARCH_PROCESS_FILE_META", "False"))
 
 # Celery Configuration
 # ====================
@@ -308,17 +401,9 @@ CELERY_TASK_DEFAULT_QUEUE = "celery"
 
 CELERY_BROKER_POOL_LIMIT = os.getenv("BROKER_POOL_LIMIT", None)
 
-SQLALCHEMY_ENGINE_OPTIONS = {
-    "pool_size": int(os.getenv("SQLALCHEMY_POOL_SIZE", 5)),
-    "max_overflow": int(os.getenv("SQLALCHEMY_MAX_OVERFLOW", 10)),
-    "pool_recycle": int(os.getenv("SQLALCHEMY_POOL_RECYCLE", 300)),  # in seconds
+CELERY_TASK_CREATE_MISSING_QUEUES = True
+
+CELERYCONF_V6 = {
+    # Fix: https://github.com/celery/celery/issues/1926
+    "worker_proc_alive_timeout": 10.0
 }
-
-SEARCH_CLIENT_CONFIG = dict(
-    # allow up to 25 connections to each node
-    maxsize=int(os.getenv("ELASTICSEARCH_MAX_SIZE", 5)),
-    timeout=int(os.getenv("ELASTICSEARCH_TIMEOUT", 10)),
-)
-
-# Processes file metadata
-PROCESS_FILE_META = ast.literal_eval(os.getenv("CERN_SEARCH_PROCESS_FILE_META", "False"))

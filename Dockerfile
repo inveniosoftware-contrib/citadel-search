@@ -7,7 +7,7 @@
 # under the terms of the MIT License; see LICENSE file for more details.
 
 # Use CentOS7:
-FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:1b4abb66064462b81cacb82f9047d7f05e92f72f
+FROM gitlab-registry.cern.ch/webservices/cern-search/cern-search-rest-api/cern-search-rest-api-base:b8a11ad40fd7ab069e460badb83a42c73b5d5b7b
 ARG build_env
 
 # CERN Search installation
@@ -33,10 +33,13 @@ ENV TIKA_LOG_PATH=${LOGS_DIR}
 
 # Install UI
 USER invenio
+
+# Collect static files
 RUN invenio collect -v
-RUN invenio webpack buildall
-# Move static files to instance folder
 RUN cp /${WORKING_DIR}/src/static/images/cernsearchicon.png ${INVENIO_INSTANCE_PATH}/static/images/cernsearchicon.png
+
+# Build assets
+RUN invenio webpack buildall
 
 EXPOSE 5000
 
