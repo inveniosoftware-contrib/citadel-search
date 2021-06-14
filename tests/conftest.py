@@ -20,6 +20,7 @@ import pytest
 from flask import current_app
 from invenio_accounts.models import Role, User
 from invenio_oauth2server.models import Token
+from sqlalchemy_continuum import versioning_manager
 
 
 @pytest.fixture()
@@ -75,3 +76,11 @@ def instance_path():
     `os.path.join(sys.prefix, 'var/instance/static')`
     """
     pass
+
+
+@pytest.fixture(scope="function")
+def db(db):
+    """Re-initialize versioning."""
+    versioning_manager.track_session(db.session)
+
+    yield db

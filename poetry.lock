@@ -979,7 +979,7 @@ ua-parser = ">=0.7.3"
 admin = ["Flask-Admin (>=1.3.0)"]
 all = ["Flask-Admin (>=1.3.0)", "Sphinx (>=3)", "check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-invenio (>=1.4.0)", "selenium (>=3.0.1)"]
 docs = ["Sphinx (>=3)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
 postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.0)", "isort (>=4.3.0)", "mock (>=2.0.0)", "pydocstyle (>=1.0.0)", "pytest-invenio (>=1.4.0)", "selenium (>=3.0.1)"]
@@ -1132,6 +1132,7 @@ description = "Database management for Invenio."
 category = "main"
 optional = false
 python-versions = "*"
+develop = false
 
 [package.dependencies]
 Flask-Alembic = ">=2.0.1"
@@ -1149,6 +1150,12 @@ mysql = ["pymysql (>=0.10.1)"]
 postgresql = ["psycopg2-binary (>=2.8.6)"]
 tests = ["pytest-invenio (>=1.4.0)", "cryptography (>=2.1.4)", "mock (>=4.0.0)"]
 versioning = ["SQLAlchemy-Continuum (>=1.3.11)"]
+
+[package.source]
+type = "git"
+url = "https://github.com/carantunes/invenio-db.git"
+reference = "1.0.10"
+resolved_reference = "1f0901ae2eeaef1dc709fe1f6fc628f87a1866e4"
 
 [[package]]
 name = "invenio-files-processor"
@@ -1404,7 +1411,7 @@ werkzeug = ">=0.14.1"
 admin = ["Flask-Admin (>=1.3.0)"]
 all = ["Sphinx (>=1.7.2)", "Flask-Admin (>=1.3.0)", "check-manifest (>=0.25)", "coverage (>=4.5.3)", "Flask-Menu (>=0.5.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.3.0)", "pydocstyle (>=3.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.6.4,<5.0.0)"]
 docs = ["Sphinx (>=1.7.2)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
 postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["check-manifest (>=0.25)", "coverage (>=4.5.3)", "Flask-Menu (>=0.5.0)", "invenio-admin (>=1.0.0)", "isort (>=4.3.0)", "mock (>=1.3.0)", "pydocstyle (>=3.0.0)", "pytest-cov (>=2.7.1)", "pytest-pep8 (>=1.0.6)", "pytest (>=4.6.4,<5.0.0)"]
@@ -1427,7 +1434,7 @@ invenio-records-rest = ">=1.6.3"
 [package.extras]
 all = ["Sphinx (>=3)", "invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "mock (>=1.3.0)", "pytest-invenio (>=1.4.0)"]
 docs = ["Sphinx (>=3)"]
-mysql = ["invenio-db[versioning,mysql] (>=1.0.0)"]
+mysql = ["invenio-db[mysql,versioning] (>=1.0.0)"]
 postgresql = ["invenio-db[postgresql,versioning] (>=1.0.0)"]
 sqlite = ["invenio-db[versioning] (>=1.0.0)"]
 tests = ["invenio-indexer (>=1.1.0)", "invenio-search[elasticsearch6] (>=1.2.0)", "mock (>=1.3.0)", "pytest-invenio (>=1.4.0)"]
@@ -2709,7 +2716,7 @@ timezone = ["python-dateutil"]
 [metadata]
 lock-version = "1.1"
 python-versions = "^3.8"
-content-hash = "764c24c7abbe19616fdc8f767edd05795cd2d37e850cd46ddb189fee773d094b"
+content-hash = "1067a43b96dc601ba5bf7e51e653b4702d70499de4a145698b0a0c4646f5d50b"
 
 [metadata.files]
 alembic = [
@@ -3102,10 +3109,7 @@ invenio-config = [
     {file = "invenio-config-1.0.3.tar.gz", hash = "sha256:9d10492b49a46703f0ac028ce8ab78b5ff1c72b180ecb4ffcee5bf49682d1e6c"},
     {file = "invenio_config-1.0.3-py2.py3-none-any.whl", hash = "sha256:238ab074991e7f0d6ee7ebc6eb2f5e41658749dd977ab6e86476e862c0efaf28"},
 ]
-invenio-db = [
-    {file = "invenio-db-1.0.9.tar.gz", hash = "sha256:bc65e82c350a908c4802399d39ae01cde051195ef42e0bc396c6a63e0a75bf50"},
-    {file = "invenio_db-1.0.9-py2.py3-none-any.whl", hash = "sha256:c8861a665af5cbb3645d4fde5cc0e04354a108a3d5b4cf2c3eee5d252da5d534"},
-]
+invenio-db = []
 invenio-files-processor = [
     {file = "invenio-files-processor-0.1.0.tar.gz", hash = "sha256:c9345dc7de0a5fc3f981fb12baee04d5e19b95fcbcd06dabc4bd27206d4c30c4"},
     {file = "invenio_files_processor-0.1.0-py2.py3-none-any.whl", hash = "sha256:e288258bf072fe5db7808dbc69a4fce55552dd14317edfaa68892941c2f6bc5d"},

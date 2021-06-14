@@ -2,13 +2,62 @@
   "settings": {
     "index.percolator.map_unmapped_fields_as_text": true,
     "index.mapping.total_fields.limit": 500,
+    "index.number_of_shards": 5,
+    "index.max_ngram_diff": 100,
     "index.query.default_field": [
       "_data.*"
     ],
     "analysis": {
+      "tokenizer": {
+        "keyword_edge_ngram": {
+          "type": "edge_ngram",
+          "min_gram": 2,
+          "max_gram": 100,
+          "token_chars": [
+            "letter",
+            "digit",
+            "whitespace",
+            "punctuation",
+            "symbol"
+          ]
+        },
+        "keyword_ngram": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 50,
+          "token_chars": [
+            "letter",
+            "digit",
+            "whitespace",
+            "punctuation",
+            "symbol"
+          ]
+        }
+      },
       "analyzer": {
         "case_accent_analyzer": {
           "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "wildcard_edge": {
+          "tokenizer": "keyword_edge_ngram",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "wildcard": {
+          "tokenizer": "keyword_ngram",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "lowercase_keyword_analyzer": {
+          "tokenizer": "keyword",
           "filter": [
             "lowercase",
             "asciifolding"
@@ -61,8 +110,9 @@
             "boost": 5
           },
           "cern_id": {
-            "type": "keyword",
-            "normalizer": "case_accent_normalizer",
+            "type": "text",
+            "analyzer": "wildcard",
+            "search_analyzer": "lowercase_keyword_analyzer",
             "boost": 5
           },
           "cern_id_version": {
@@ -105,6 +155,12 @@
                 "type": "keyword",
                 "normalizer": "case_accent_normalizer",
                 "boost": 1.5
+              },
+              "wildcard": {
+                "type": "text",
+                "analyzer": "wildcard",
+                "search_analyzer": "lowercase_keyword_analyzer",
+                "boost": 1.5
               }
             }
           },
@@ -122,6 +178,12 @@
                 "type": "text",
                 "boost": 1.25,
                 "analyzer": "french"
+              },
+              "wildcard": {
+                "type": "text",
+                "analyzer": "wildcard",
+                "search_analyzer": "lowercase_keyword_analyzer",
+                "boost": 1.25
               }
             }
           },
@@ -131,6 +193,12 @@
               "full_name": {
                 "type": "text",
                 "analyzer": "case_accent_analyzer",
+                "boost": 1.2
+              },
+              "wildcard": {
+                "type": "text",
+                "analyzer": "wildcard",
+                "search_analyzer": "lowercase_keyword_analyzer",
                 "boost": 1.2
               },
               "email": {
@@ -159,6 +227,12 @@
                 "type": "keyword",
                 "normalizer": "case_accent_normalizer",
                 "boost": 1.4
+              },
+              "wildcard": {
+                "type": "text",
+                "analyzer": "wildcard",
+                "search_analyzer": "lowercase_keyword_analyzer",
+                "boost": 1.5
               }
             }
           },

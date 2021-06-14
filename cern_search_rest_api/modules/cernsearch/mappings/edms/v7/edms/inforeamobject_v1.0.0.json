@@ -2,13 +2,42 @@
   "settings": {
     "index.percolator.map_unmapped_fields_as_text": true,
     "index.mapping.total_fields.limit": 500,
+    "index.max_ngram_diff": 100,
     "index.query.default_field": [
       "_data.*"
     ],
     "analysis": {
+      "tokenizer": {
+        "keyword_ngram": {
+          "type": "ngram",
+          "min_gram": 3,
+          "max_gram": 50,
+          "token_chars": [
+            "letter",
+            "digit",
+            "whitespace",
+            "punctuation",
+            "symbol"
+          ]
+        }
+      },
       "analyzer": {
         "case_accent_analyzer": {
           "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "wildcard": {
+          "tokenizer": "keyword_ngram",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        },
+        "lowercase_keyword_analyzer": {
+          "tokenizer": "keyword",
           "filter": [
             "lowercase",
             "asciifolding"
@@ -50,14 +79,30 @@
         "type": "object",
         "properties": {
           "code": {
-            "type": "keyword",
-            "normalizer": "case_accent_normalizer",
-            "boost": 1.5
+            "type": "text",
+            "analyzer": "wildcard",
+            "search_analyzer": "lowercase_keyword_analyzer",
+            "boost": 1.5,
+            "fields": {
+              "exact_match": {
+                "type": "keyword",
+                "normalizer": "case_accent_normalizer",
+                "boost": 1.5
+              }
+            }
           },
           "other_id": {
-            "type": "keyword",
-            "normalizer": "case_accent_normalizer",
-            "boost": 1.4
+            "type": "text",
+            "analyzer": "wildcard",
+            "search_analyzer": "lowercase_keyword_analyzer",
+            "boost": 1.4,
+            "fields": {
+              "exact_match": {
+                "type": "keyword",
+                "normalizer": "case_accent_normalizer",
+                "boost": 1.4
+              }
+            }
           },
           "class": {
             "type": "keyword",
