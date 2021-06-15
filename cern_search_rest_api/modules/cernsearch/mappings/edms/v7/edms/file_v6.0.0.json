@@ -3,7 +3,7 @@
     "index.percolator.map_unmapped_fields_as_text": true,
     "index.mapping.total_fields.limit": 500,
     "index.highlight.max_analyzed_offset": 10000000,
-    "index.number_of_shards": 5,
+    "index.number_of_shards": 10,
     "index.max_ngram_diff": 100,
     "index.query.default_field": [
       "_data.*"
