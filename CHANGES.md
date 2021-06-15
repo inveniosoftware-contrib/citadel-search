@@ -1,18 +1,22 @@
 Changes
 =======
 
-Update EDMS mappings
+**Version 1.8.2-beta (released 2020-06-15)**
+
+Changes:
+
+- [EDMS] Update mappings shards
+
+----
 
 **Version 1.8.1-beta (released 2020-06-14)**
 
 Changes:
 
 - Lock invenio-db @ https://github.com/carantunes/invenio-db/commit/1f0901ae2eeaef1dc709fe1f6fc628f87a1866e4 (Fix https://github.com/kvesteri/sqlalchemy-continuum/issues/187)
-- Update EDMS mappings
+- [EDMS] Update mappings
 
 ----
-
-
 
 **Version 1.8.0-beta (released 2020-06-10)**
 
