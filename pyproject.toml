@@ -6,7 +6,7 @@ authors = ["Citadel Search <cernsearch.support@cern.ch>"]
 license = "MIT"
 
 [tool.poetry.dependencies]
-Flask = "^1.1.2"
+Flask = "^2.3.2"
 invenio-access = ">=1.4.1,<1.5.0"
 invenio-accounts = ">=1.3.0,<1.4.0"
 invenio-admin = ">=1.2.1,<1.3.0"
